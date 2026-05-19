@@ -504,13 +504,18 @@
         <div class="settings-card">
             <div class="settings-input-row">
                 <label>Ширина (px)</label>
-                <input type="range" id="g-w" min="400" max="1200" value="750" oninput="liveUpdateUI(); gVal('g-w','g-w-val')">
-                <span class="range-val" id="g-w-val">750</span>
+                <input type="range" id="g-w" min="160" max="1400" step="5" value="680" oninput="liveUpdateUI(); gVal('g-w','g-w-val')">
+                <span class="range-val" id="g-w-val">680</span>
             </div>
             <div class="settings-input-row">
                 <label>Висота (px)</label>
-                <input type="range" id="g-h" min="80" max="400" value="150" oninput="liveUpdateUI(); gVal('g-h','g-h-val')">
-                <span class="range-val" id="g-h-val">150</span>
+                <input type="range" id="g-h" min="50" max="400" step="2" value="120" oninput="liveUpdateUI(); gVal('g-h','g-h-val')">
+                <span class="range-val" id="g-h-val">120</span>
+            </div>
+            <div class="settings-input-row">
+                <label>Масштаб % <span style="color:rgba(255,255,255,0.3);font-size:10px">⚡ швидко</span></label>
+                <input type="range" id="g-scale" min="20" max="100" step="1" value="100" oninput="liveUpdateUI(); gVal('g-scale','g-scale-val')">
+                <span class="range-val" id="g-scale-val">100</span>
             </div>
             <div class="settings-input-row">
                 <label>Нахил (deg)</label>
@@ -524,13 +529,13 @@
             </div>
             <div class="settings-input-row">
                 <label>Позиція X (px)</label>
-                <input type="range" id="g-x" min="0" max="1920" value="100" oninput="liveUpdateUI(); gVal('g-x','g-x-val')">
-                <span class="range-val" id="g-x-val">100</span>
+                <input type="range" id="g-x" min="0" max="1880" step="5" value="40" oninput="liveUpdateUI(); gVal('g-x','g-x-val')">
+                <span class="range-val" id="g-x-val">40</span>
             </div>
             <div class="settings-input-row">
                 <label>Позиція Y (px)</label>
-                <input type="range" id="g-y" min="0" max="1080" value="500" oninput="liveUpdateUI(); gVal('g-y','g-y-val')">
-                <span class="range-val" id="g-y-val">500</span>
+                <input type="range" id="g-y" min="0" max="1040" step="5" value="40" oninput="liveUpdateUI(); gVal('g-y','g-y-val')">
+                <span class="range-val" id="g-y-val">40</span>
             </div>
         </div>
     </div>
@@ -878,12 +883,13 @@
         ui.drawerBg = hexToRgba(document.getElementById('c-panel').value, da);
         ui.popupBg = document.getElementById('c-popup').value;
         ui.fontFamily = document.getElementById('s-font').value;
-        ui.sbW = document.getElementById('g-w').value + 'px';
-        ui.sbH = document.getElementById('g-h').value + 'px';
-        ui.sbSkew = document.getElementById('g-skew').value + 'deg';
+        ui.sbW      = document.getElementById('g-w').value + 'px';
+        ui.sbH      = document.getElementById('g-h').value + 'px';
+        ui.sbSkew   = document.getElementById('g-skew').value + 'deg';
         ui.sbRadius = document.getElementById('g-radius').value + 'px';
-        ui.sbTop = parseInt(document.getElementById('g-y').value);
-        ui.sbLeft = parseInt(document.getElementById('g-x').value);
+        ui.sbTop    = parseInt(document.getElementById('g-y').value);
+        ui.sbLeft   = parseInt(document.getElementById('g-x').value);
+        ui.sbScale  = (document.getElementById('g-scale').value / 100).toFixed(2);
         pushState();
         renderMiniScoreboard();
     }
