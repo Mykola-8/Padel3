@@ -93,6 +93,12 @@
             -webkit-user-select: none; user-select: none;
         }
         .big-btn:active { transform: scale(0.94); opacity: 0.85; }
+        @keyframes btn-tap {
+            0%  { transform: scale(1); }
+            30% { transform: scale(0.91); box-shadow: 0 0 0 4px rgba(255,255,255,0.25); }
+            100%{ transform: scale(1); box-shadow: none; }
+        }
+        .btn-tapped { animation: btn-tap 0.28s ease forwards; }
         .big-btn small { font-size: 11px; opacity: 0.7; font-family: 'Inter', sans-serif; font-weight: 700; letter-spacing: 1px; }
         .big-btn .btn-score-preview { font-size: 38px; font-weight: 900; line-height: 1; }
         .btn-p1 { background: linear-gradient(135deg, #16a34a, #15803d); }
@@ -331,21 +337,21 @@
 
     <!-- MAIN BUTTONS -->
     <div class="btn-row">
-        <button class="big-btn btn-p1" onclick="sendAction('point',0)">
+        <button class="big-btn btn-p1" onclick="sendAction('point',0,this)">
             <span id="disp-p1-short" style="font-size:16px; margin-bottom:2px;">КОМАНДА А</span>
             <div class="btn-score-preview" id="btn-score-p1">0</div>
             <small>+1 ОЧКО</small>
         </button>
-        <button class="big-btn btn-p2" onclick="sendAction('point',1)">
+        <button class="big-btn btn-p2" onclick="sendAction('point',1,this)">
             <span id="disp-p2-short" style="font-size:16px; margin-bottom:2px;">КОМАНДА Б</span>
             <div class="btn-score-preview" id="btn-score-p2">0</div>
             <small>+1 ОЧКО</small>
         </button>
-        <button class="big-btn btn-fault" onclick="sendAction('fault')">
+        <button class="big-btn btn-fault" onclick="sendAction('fault',null,this)">
             ⚡ FAULT
             <small>ПОДВІЙНА ПОМИЛКА</small>
         </button>
-        <button class="big-btn btn-undo" onclick="sendAction('undo')">
+        <button class="big-btn btn-undo" onclick="sendAction('undo',null,this)">
             ↩ UNDO
             <small>СКАСУВАТИ</small>
         </button>
@@ -442,8 +448,11 @@
                 <input type="number" id="s-american-limit" value="15" min="1" max="30" style="width:60px" onchange="sendMode()">
             </div>
             <div class="toggle-row">
-                <div><div class="toggle-label">Golden Point</div></div>
-                <label class="switch"><input type="checkbox" id="s-golden" checked onchange="sendMode()"><span class="slider"></span></label>
+                <div>
+                    <div class="toggle-label">Deuce (Advantage)</div>
+                    <div class="toggle-sublabel">Вимк → 40:40 одразу Golden Point</div>
+                </div>
+                <label class="switch"><input type="checkbox" id="s-golden" onchange="sendMode()"><span class="slider"></span></label>
             </div>
         </div>
     </div>
@@ -635,7 +644,7 @@
         notifText: "", showFinish: false, showIntro: false, showLogo: false,
         showBoard: true, showStats: false, isGoldenPoint: true, prosetLimit: 8,
         americanLimit: 15, p1name: "Команда А", p2name: "Команда Б",
-        courtName: "COURT 1", alertKey: "", alertText: "", alertMode: ""
+        courtName: "COURT 1", alertKey: "", alertText: "", alertMode: "", faultTeam: null
     };
     let ui = {
         accentBlue: '#0055ff', ballColor: '#ccff00', teamNameColor: '#ffffff',
@@ -649,6 +658,17 @@
     let gamePointCountP1 = 0, gamePointCountP2 = 0;
     let lastAlertKey = "";
     let setTimerInterval = null;
+
+    // ─── VIBRATE + TAP ────────────────────────────────────────────
+    function vibTap(btnEl, pattern) {
+        if (navigator.vibrate) navigator.vibrate(pattern || 40);
+        if (btnEl) {
+            btnEl.classList.remove('btn-tapped');
+            void btnEl.offsetWidth;
+            btnEl.classList.add('btn-tapped');
+            setTimeout(() => btnEl.classList.remove('btn-tapped'), 300);
+        }
+    }
 
     // ─── FIREBASE PUSH ───────────────────────────────────────────
     function pushState() {
@@ -677,7 +697,10 @@
     // ─── GAME LOGIC ───────────────────────────────────────────────
     function addPoint(p) {
         historyStack.push(JSON.parse(JSON.stringify(state)));
-        if (!state.isGameActive) state.isGameActive = true;
+        if (!state.isGameActive) {
+            state.isGameActive = true;
+            if (!state._setStartTime) state._setStartTime = Date.now();
+        }
         const o = 1 - p;
 
         if (state.isAmerican) {
@@ -690,7 +713,16 @@
             else if ((state.scores[0]+state.scores[1])%2===1) state.server = 1-state.server;
         } else {
             if (state.scores[p]===3 && state.scores[o]===3) {
-                if (state.isGoldenPoint && state.deuceCycles>=2) winGame(p); else state.scores[p]=4;
+                // isGoldenPoint ВИМКНЕНО → 40:40 одразу golden point (winGame)
+                // isGoldenPoint ВКЛЮЧЕНО → deuce: adv → deuce → після 2 deuces golden
+                if (!state.isGoldenPoint) {
+                    // Галочка вимкнена: одразу golden point при 40:40
+                    winGame(p);
+                } else {
+                    // Галочка включена: класичний deuce → advantage → golden після 2 deuces
+                    if (state.deuceCycles >= 2) winGame(p);
+                    else state.scores[p] = 4;
+                }
             } else if (state.scores[p]===4) winGame(p);
             else if (state.scores[o]===4) { state.scores[o]=3; state.deuceCycles++; }
             else if (state.scores[p]===3) winGame(p);
@@ -721,6 +753,14 @@
         } else { isSetFinished = true; }
 
         if (isSetFinished) {
+            // Save set time (minutes since this set started)
+            const now = Date.now();
+            const setStart = state._setStartTime || now;
+            const elapsed = Math.round((now - setStart) / 60000);
+            if (!state.setTimes) state.setTimes = [0,0,0];
+            state.setTimes[state.activeSetIndex||0] = elapsed;
+            state._setStartTime = now;   // reset timer for next set
+
             state.setsHistory[0].push(state.games[0]);
             state.setsHistory[1].push(state.games[1]);
             state.games = [0,0]; state.isTiebreak = false;
@@ -736,8 +776,11 @@
     function computeNotif() {
         const s = state.scores; const g = state.games;
         let txt = ""; let alertText = ""; let alertMode = "";
-        const deuceLim = state.isGoldenPoint;
-        const isGP = !state.isAmerican && !state.isTiebreak && s[0]===3 && s[1]===3 && (!deuceLim || state.deuceCycles>=2);
+        // Галочка ВИМКНЕНА: 40:40 = одразу golden (але ми вже winGame, тут не потрібно показувати)
+        // Галочка ВКЛЮЧЕНА: golden тільки після 2 deuces
+        const isGP = !state.isAmerican && !state.isTiebreak && s[0]===3 && s[1]===3 &&
+                     (state.isGoldenPoint ? state.deuceCycles >= 2 : false);
+        // При вимкненій галочці 40:40 не відображаємо — одразу winGame
 
         if (state.isGameActive && !state.isTiebreak && !state.isAmerican) {
             if (isGP) {
@@ -770,13 +813,18 @@
         }
     }
 
-    function doFault() {
+    function doFault(btnEl) {
         historyStack.push(JSON.parse(JSON.stringify(state)));
+        state.faultTeam = state.server;   // команда що подавала = помилилась
+        vibTap(btnEl, [60, 40, 60]);
         addPoint(1-state.server);
+        // Clear faultTeam after overlay has time to react
+        setTimeout(() => { state.faultTeam = null; pushState(); }, 1400);
     }
 
-    function doUndo() {
+    function doUndo(btnEl) {
         if (historyStack.length > 0) {
+            vibTap(btnEl, [30, 20, 30]);
             state = historyStack.pop();
             pushState();
             updateControlUI();
@@ -858,7 +906,7 @@
             state.server = 0; state.isGameActive = false; state.isTiebreak = false;
             state.deuceCycles = 0; state.setTimes = [0,0,0]; state.activeSetIndex = 0;
             state.notifText = ""; state.showFinish = false; state.alertKey = "";
-            state.showStats = false; gamePointCountP1 = 0; gamePointCountP2 = 0;
+            state.showStats = false; state._setStartTime = null; gamePointCountP1 = 0; gamePointCountP2 = 0;
             historyStack = [];
             pushState(); updateControlUI();
         }
@@ -984,10 +1032,13 @@
     function saveAllSettings() { liveUpdateName(); liveUpdateUI(); sendMode(); closeSettings(); }
 
     // ─── EXPOSE TO WINDOW ──────────────────────────────────────────
-    window.sendAction = (type, p) => {
-        if (type==='point') addPoint(p);
-        else if (type==='fault') doFault();
-        else if (type==='undo') doUndo();
+    window.sendAction = (type, p, btnEl) => {
+        if (type==='point') {
+            vibTap(btnEl, 35);
+            addPoint(p);
+        }
+        else if (type==='fault') doFault(btnEl);
+        else if (type==='undo')  doUndo(btnEl);
         else if (type==='finish') { state.showFinish = !state.showFinish; pushState(); }
     };
     window.setServer = setServer;
