@@ -58,35 +58,67 @@
             letter-spacing: 1px; transition: 0.4s; opacity: 0; z-index: 1;
         }
         #tiebreak-panel { top: -35px; right: 25px; border-radius: 6px 6px 0 0; }
-        #golden-panel { top: -35px; left: 50%; transform: translate(-50%, 10px); border-radius: 6px 6px 0 0; }
         #proset-indicator { top: -35px; left: 40%; border-radius: 6px 6px 0 0; }
         #tiebreak-panel.active, #proset-indicator.active { opacity: 1; transform: translateY(-10px); }
-        #golden-panel.active { opacity: 1; transform: translate(-50%, -10px); }
-        #notif-panel { bottom: -35px; left: 25px; border-radius: 0 0 6px 6px; transform: translateY(-10px); }
-        #notif-panel.active { opacity: 1; transform: translateY(35px); }
         #scoreboard-main {
             flex: 1; background: var(--panel-bg); border-left: 12px solid var(--accent-blue);
             display: flex; flex-direction: column; position: relative; z-index: 2;
             border-radius: var(--sb-radius) 0 0 var(--sb-radius); transform: skewX(var(--sb-skew)); overflow: hidden;
         }
         .inner-content { transform: skewX(calc(var(--sb-skew) * -1)); height: 100%; display: flex; flex-direction: column; position: relative; }
+        /* ── GLOW RING (контур табла) ── */
+        @keyframes sb-glow-in  { 0%{opacity:0} 100%{opacity:1} }
+        @keyframes sb-glow-out { 0%{opacity:1} 100%{opacity:0} }
+
+        #sb-glow-ring {
+            position: absolute; inset: -4px; border-radius: calc(var(--sb-radius) + 4px);
+            pointer-events: none; z-index: 200; opacity: 0;
+            box-shadow: 0 0 0 2px var(--glow-color, var(--accent-blue)),
+                        0 0 24px 4px var(--glow-color, var(--accent-blue)),
+                        0 0 60px 10px var(--glow-color, var(--accent-blue));
+        }
+        #sb-glow-ring.glow-active { animation: sb-glow-in 0.35s ease forwards; }
+        #sb-glow-ring.glow-out    { animation: sb-glow-out 0.45s ease forwards; }
+
+        /* ── WIPE ALERT: букви їдуть справа наліво, закриваючи табло ── */
+        /* Контейнер-маска: overflow hidden, весь табло */
         #scoreboard-fullscreen-alert {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #1e1e24 0%, #0d0d11 100%);
-            z-index: 99; display: flex; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+            overflow: hidden; background: transparent;
+            z-index: 201; pointer-events: none;
+            display: flex; align-items: center; justify-content: flex-end;
         }
-        #scoreboard-fullscreen-alert.active { opacity: 1; }
+
+        /* Фонова плашка — їде справа наліво, закриває табло */
+        @keyframes wipe-in  { 0%{transform:translateX(100%)} 100%{transform:translateX(0%)} }
+        @keyframes wipe-out { 0%{transform:translateX(0%)}   100%{transform:translateX(-100%)} }
+
+        .alert-wipe-bg {
+            position: absolute; top: 0; right: 0; width: 100%; height: 100%;
+            background: var(--glow-color, var(--accent-blue));
+            opacity: 0.92;
+            transform: translateX(100%);
+        }
+        .alert-wipe-bg.wipe-in  { animation: wipe-in  0.32s cubic-bezier(0.4,0,0.2,1) forwards; }
+        .alert-wipe-bg.wipe-out { animation: wipe-out 0.32s cubic-bezier(0.4,0,0.2,1) forwards; }
+
+        /* Текст поверх плашки */
+        @keyframes txt-appear { 0%{opacity:0;transform:translateX(18px)} 100%{opacity:1;transform:translateX(0)} }
+        @keyframes txt-gone   { 0%{opacity:1} 100%{opacity:0} }
+
         .alert-text-content {
-            font-family: var(--team-font-family); font-size: calc(var(--sb-h) * 0.42);
+            position: relative; z-index: 1;
+            font-family: var(--team-font-family); font-size: calc(var(--sb-h) * 0.38);
             font-weight: 900; text-transform: uppercase; letter-spacing: 3px;
-            color: #ffffff; text-shadow: 0 0 30px var(--accent-blue);
-            transform: scale(0.85); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: #ffffff; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            opacity: 0; padding-right: 5%;
         }
-        #scoreboard-fullscreen-alert.active .alert-text-content { transform: scale(1); }
-        .alert-golden-theme { text-shadow: 0 0 30px var(--gold) !important; color: var(--gold) !important; }
-        .alert-tiebreak-theme { text-shadow: 0 0 35px #e74c3c !important; color: #ffffff !important; }
+        .alert-text-content.txt-show {
+            animation: txt-appear 0.22s 0.28s ease forwards,
+                       txt-gone   0.25s 1.15s ease forwards;
+        }
+        .alert-golden-theme   { color: #1a1a1a !important; }
+        .alert-tiebreak-theme { color: #ffffff !important; }
         .points-drawer {
             position: absolute; right: 0; top: 0; width: 18%; height: 100%;
             background: var(--drawer-bg); backdrop-filter: blur(12px); display: flex; flex-direction: column;
@@ -118,39 +150,66 @@
             box-shadow: 0 0 15px var(--ball-color); transition: opacity 0.3s, background 0.1s; flex-shrink: 0;
         }
         .serve-dot.active { opacity: 1; }
+        /* ── STATS OVERLAY ── */
+        @keyframes stats-in  { 0%{opacity:0;transform:translateY(30px) scale(0.96)} 100%{opacity:1;transform:translateY(0) scale(1)} }
+        @keyframes stats-out { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-20px) scale(0.97)} }
         #tv-stats-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: transparent; display: flex; align-items: center; justify-content: center;
             opacity: 0; pointer-events: none; z-index: 15000;
-            transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        #tv-stats-overlay.active { opacity: 1; }
+        #tv-stats-overlay.active   { animation: stats-in  0.55s cubic-bezier(0.25,1,0.5,1) forwards; }
+        #tv-stats-overlay.closing  { animation: stats-out 0.4s  ease forwards; }
         .stats-card {
-            background: rgba(25, 25, 30, 0.6); backdrop-filter: blur(20px);
-            width: fit-content; min-width: 420px; border-radius: 20px; padding: 40px 50px;
-            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 40px 100px rgba(0,0,0,0.6);
-            position: relative; display: flex; flex-direction: column; gap: 20px;
-            transform: translateY(40px) scale(0.95); transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+            background: transparent;
+            width: fit-content; min-width: 420px; border-radius: 20px; padding: 36px 50px;
+            position: relative; display: flex; flex-direction: column; gap: 16px;
         }
-        #tv-stats-overlay.active .stats-card { transform: translateY(0) scale(1); }
-        .stats-logo-left { position: absolute; top: 15px; left: 20px; height: 45px; max-width: 120px; object-fit: contain; }
+        .stats-logo-left  { position: absolute; top: 15px; left: 20px;  height: 45px; max-width: 120px; object-fit: contain; }
         .stats-logo-right { position: absolute; top: 15px; right: 20px; height: 45px; max-width: 120px; object-fit: contain; }
-        .stats-card-title { font-size: 14px; font-weight: bold; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; text-align: center; }
+        .stats-card-title { font-size: 13px; font-weight: 900; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 6px; text-align: center; }
         .stats-table { min-width: 350px; border-collapse: collapse; }
-        .stats-row { height: 90px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .stats-team-name { text-align: left; font-size: 34px; font-weight: bold; font-family: var(--team-font-family); padding-right: 40px; color: white; white-space: nowrap; text-transform: uppercase; }
+        .stats-row { height: 86px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .stats-team-name { text-align: left; font-size: 36px; font-weight: bold; font-family: var(--team-font-family); padding-right: 40px; color: white; white-space: nowrap; text-transform: uppercase; }
         .stats-set-column { width: 95px; text-align: center; }
-        .stats-games-num { font-size: 44px; font-weight: 900; font-family: var(--team-font-family); color: white; }
-        .stats-time-label { font-size: 15px; font-weight: bold; color: var(--accent-blue); font-family: 'Inter', sans-serif; margin-top: -2px; opacity: 0.9; }
+        .stats-games-num  { font-size: 46px; font-weight: 900; font-family: var(--team-font-family); color: white; }
+        .stats-time-label { font-size: 15px; font-weight: 900; color: #7eb8ff; font-family: 'Inter', sans-serif; margin-top: 1px; letter-spacing: 0.5px; }
+        /* ── FINISH ANIMATION ── */
+        @keyframes digit-breathe {
+            0%,100%{ transform:scale(1)   translateY(0);   opacity:1; }
+            25%    { transform:scale(1.18) translateY(-6px); opacity:1; }
+            50%    { transform:scale(0.9)  translateY(4px);  opacity:0.8; }
+            75%    { transform:scale(1.22) translateY(-10px);opacity:1; }
+        }
+        @keyframes digit-scatter {
+            0%  { opacity:1; transform:scale(1) translateY(0); filter:blur(0); }
+            60% { opacity:0.6; filter:blur(2px); }
+            100%{ opacity:0; transform:scale(0.3) translateY(var(--sy,80px)) translateX(var(--sx,0px)); filter:blur(8px); }
+        }
+        @keyframes finish-bg-in  { 0%{opacity:0} 100%{opacity:1} }
+        @keyframes finish-card-in{ 0%{opacity:0;transform:translateY(60px) scale(0.9)} 100%{opacity:1;transform:translateY(0) scale(1)} }
+
+        .sb-digit {
+            display: inline-block;
+            transition: color 0.3s;
+        }
+        .sb-digit.breathing { animation: digit-breathe 0.7s ease-in-out infinite; }
+        .sb-digit.scatter   { animation: digit-scatter 0.65s ease-in forwards; }
+
         #match-finish-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(5, 5, 5, 0.4); backdrop-filter: blur(12px);
+            background: rgba(5,5,5,0.5); backdrop-filter: blur(14px);
             display: flex; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.5s ease; z-index: 20000;
+            opacity: 0; pointer-events: none; z-index: 20000;
         }
-        #match-finish-overlay.active { opacity: 1; pointer-events: auto; }
-        .finish-card { background: var(--finish-bg); width: 720px; border: 1px solid rgba(255,255,255,0.15); border-radius: 24px; padding: 40px; box-shadow: 0 35px 80px rgba(0,0,0,0.95); display: flex; flex-direction: column; gap: 25px; text-align: center; transform: translateY(50px) scale(0.93); transition: transform 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
-        #match-finish-overlay.active .finish-card { transform: translateY(0) scale(1); }
+        #match-finish-overlay.active { animation: finish-bg-in 0.5s ease forwards; pointer-events: auto; }
+        .finish-card {
+            background: var(--finish-bg); width: 720px; border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 24px; padding: 40px; box-shadow: 0 35px 80px rgba(0,0,0,0.95);
+            display: flex; flex-direction: column; gap: 25px; text-align: center;
+            opacity: 0;
+        }
+        #match-finish-overlay.active .finish-card { animation: finish-card-in 0.55s 1.8s cubic-bezier(0.18,0.89,0.32,1.28) forwards; }
         .finish-title { font-size: 34px; font-weight: 900; letter-spacing: 4px; color: var(--accent-blue); text-transform: uppercase; margin: 0; }
         .finish-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         .finish-row { border-bottom: 1px solid rgba(255,255,255,0.06); height: 95px; }
@@ -159,8 +218,97 @@
         .finish-cell-set { width: 85px; text-align: center; }
         .finish-box-score { display: inline-block; min-width: 65px; height: 65px; line-height: 65px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; font-size: 38px; font-weight: 900; font-family: var(--team-font-family); color: #cccccc; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .finish-box-score.winner-box { background: linear-gradient(135deg, rgba(0,85,255,0.5), rgba(0,40,150,0.65)); border: 1px solid rgba(0,85,255,0.8); color: #ffffff; box-shadow: 0 0 20px rgba(0,85,255,0.5); }
-        @keyframes fault-shake { 20% { transform: skewX(calc(var(--sb-skew) * -1)) translateX(-10px); background: rgba(231,76,60,0.8); } 100% { transform: skewX(calc(var(--sb-skew) * -1)) translateX(0); background: rgba(231,76,60,0); } }
-        .fault-active-row { animation: fault-shake 1s ease-in-out; }
+        /* FAULT: wipe "DOUBLE FAULT" справа наліво поверх назви команди */
+        @keyframes fault-wipe-in  {
+            0%   { transform: translateX(100%); }
+            100% { transform: translateX(0); }
+        }
+        @keyframes fault-wipe-out {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+        @keyframes fault-txt-show {
+            0%   { opacity: 0; transform: translateX(10px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+        /* Обгортка рядка — position:relative для абсолютного overlay */
+        .player-row { position: relative; }
+        /* Червона плашка що їде справа наліво */
+        .fault-wipe-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; pointer-events: none; z-index: 20;
+        }
+        .fault-wipe-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #c0392b;
+            transform: translateX(100%);
+        }
+        .fault-wipe-label {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) translateX(12px);
+            font-family: var(--team-font-family); font-size: calc(var(--sb-h) * 0.26);
+            font-weight: 900; text-transform: uppercase; letter-spacing: 3px;
+            color: #ffffff; white-space: nowrap; opacity: 0;
+        }
+        .fault-wipe-bg.fw-in   { animation: fault-wipe-in  0.28s cubic-bezier(0.4,0,0.2,1) forwards; }
+        .fault-wipe-bg.fw-out  { animation: fault-wipe-out 0.28s cubic-bezier(0.4,0,0.2,1) forwards; }
+        .fault-wipe-label.fl-show { animation: fault-txt-show 0.22s 0.24s ease forwards; }
+
+        /* ── BOTTOM NOTIF PLANK ── */
+        @keyframes bn-slide-in  {
+            0%   { transform: translateY(0);           opacity: 0; }
+            100% { transform: translateY(calc(100% + 6px)); opacity: 1; }
+        }
+        @keyframes bn-slide-out {
+            0%   { transform: translateY(calc(100% + 6px)); opacity: 1; }
+            100% { transform: translateY(0);               opacity: 0; }
+        }
+        @keyframes bn-txt-in {
+            0%   { opacity: 0; letter-spacing: 5px; }
+            100% { opacity: 1; letter-spacing: 1.5px; }
+        }
+        #bottom-notif {
+            position: absolute;
+            bottom: 0; left: 8%; width: 84%;   /* трохи вужча — не на весь рядок */
+            height: 30px;                        /* менша висота */
+            display: flex; align-items: center; justify-content: center;
+            pointer-events: none; z-index: 50;
+            transform: translateY(0); opacity: 0;
+        }
+        .bn-bg {
+            position: absolute; inset: 0;
+            background: rgba(30,30,35,0.82);
+            border-left: 4px solid var(--bn-color, var(--accent-blue));
+            border-radius: 6px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 18px rgba(0,0,0,0.45);
+        }
+        .bn-bg::after {
+            content: '';
+            position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+            background: var(--bn-color, var(--accent-blue)); opacity: 0.5;
+        }
+        .bn-text {
+            position: relative; z-index: 1;
+            font-family: var(--team-font-family); font-size: 12px; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            color: #ffffff; opacity: 0;
+        }
+        .bn-dot {
+            position: relative; z-index: 1;
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--bn-color, var(--accent-blue));
+            box-shadow: 0 0 6px var(--bn-color, var(--accent-blue));
+            margin-right: 8px; flex-shrink: 0; opacity: 0;
+        }
+        #bottom-notif.bn-show {
+            animation: bn-slide-in 0.36s cubic-bezier(0.4,0,0.2,1) forwards;
+        }
+        #bottom-notif.bn-hide {
+            animation: bn-slide-out 0.28s cubic-bezier(0.4,0,0.2,1) forwards;
+        }
+        #bottom-notif.bn-show .bn-text { animation: bn-txt-in 0.22s 0.28s ease forwards; }
+        #bottom-notif.bn-show .bn-dot  { animation: bn-txt-in 0.18s 0.26s ease forwards; }
 
         /* VS INTRO */
         #match-intro-overlay {
@@ -182,13 +330,17 @@
     <div id="logo-container"><img id="logo-img" src="" alt=""></div>
     <div id="proset-indicator" class="popup-label">PRO-SET 8</div>
     <div id="tiebreak-panel" class="popup-label">TIE-BREAK</div>
-    <div id="golden-panel" class="popup-label">GOLDEN POINT</div>
-    <div id="notif-panel" class="popup-label">GAME POINT</div>
+    <div id="bottom-notif">
+        <div class="bn-bg"></div>
+        <div class="bn-dot"></div>
+        <div class="bn-text" id="bn-text-el"></div>
+    </div>
     <div id="drawer" class="points-drawer">
         <div class="point-box" id="p1-score">0</div>
         <div class="point-box" id="p2-score">0</div>
     </div>
     <div id="scoreboard-main">
+        <div id="sb-glow-ring"></div>
         <div class="inner-content">
             <div id="scoreboard-fullscreen-alert">
                 <div id="fullscreen-alert-text" class="alert-text-content">GAME POINT</div>
@@ -336,6 +488,38 @@
         document.getElementById('p2-score').innerText = getL(1);
         document.getElementById('drawer').classList.toggle('points-active', isGameActive);
 
+        // Fault wipe animation — "DOUBLE FAULT" справа наліво
+        const faultTeam = state.faultTeam;
+        if (faultTeam !== undefined && faultTeam !== null) {
+            const rowEl = document.getElementById(`row-${faultTeam}`);
+            if (rowEl) {
+                // Inject overlay if missing
+                let wrapEl = rowEl.querySelector('.fault-wipe-overlay');
+                if (!wrapEl) {
+                    wrapEl = document.createElement('div');
+                    wrapEl.className = 'fault-wipe-overlay';
+                    wrapEl.innerHTML = '<div class="fault-wipe-bg"></div><div class="fault-wipe-label">DOUBLE FAULT</div>';
+                    rowEl.appendChild(wrapEl);
+                }
+                const bgEl  = wrapEl.querySelector('.fault-wipe-bg');
+                const lblEl = wrapEl.querySelector('.fault-wipe-label');
+                // Reset
+                bgEl.classList.remove('fw-in','fw-out');
+                lblEl.classList.remove('fl-show');
+                void bgEl.offsetWidth;
+                // Wipe IN
+                bgEl.classList.add('fw-in');
+                setTimeout(() => lblEl.classList.add('fl-show'), 240);
+                // Wipe OUT after 1.2s
+                setTimeout(() => {
+                    lblEl.classList.remove('fl-show');
+                    bgEl.classList.remove('fw-in');
+                    bgEl.classList.add('fw-out');
+                    setTimeout(() => { bgEl.classList.remove('fw-out'); }, 320);
+                }, 1200);
+            }
+        }
+
         // Logo
         if (ui.logoSrc) document.getElementById('logo-img').src = ui.logoSrc;
         document.getElementById('logo-container').classList.toggle('active', showLogo && !!ui.logoSrc);
@@ -345,12 +529,35 @@
         document.getElementById('proset-indicator').classList.toggle('active', isProset);
         if (isProset) document.getElementById('proset-indicator').innerText = `PRO-SET ${prosetLimit}`;
 
-        const isGP = !isAmerican && !isTiebreak && scores[0]===3 && scores[1]===3;
-        document.getElementById('golden-panel').classList.toggle('active', isGP);
 
-        const bn = document.getElementById('notif-panel');
-        bn.innerText = notifText;
-        bn.classList.toggle('active', !!notifText);
+
+        // Bottom notif plank (game/break/set/break/golden point)
+        const bnEl   = document.getElementById('bottom-notif');
+        const bnText = document.getElementById('bn-text-el');
+        const notif  = state.notifText || "";
+        const prevNotif = bnEl.dataset.lastNotif || "";
+
+        if (notif && notif !== prevNotif) {
+            // Pick colour per type
+            let bnColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-blue').trim() || '#0055ff';
+            if (notif.includes('BREAK'))  bnColor = '#e67e22';
+            if (notif.includes('SET'))    bnColor = '#9b59b6';
+            if (notif.includes('GOLDEN')) bnColor = '#c8a200';
+            bnEl.style.setProperty('--bn-color', bnColor);
+
+            bnEl.dataset.lastNotif = notif;
+            bnText.textContent = notif;
+
+            // Reset animation
+            bnEl.classList.remove('bn-show', 'bn-hide');
+            void bnEl.offsetWidth;
+            bnEl.classList.add('bn-show');
+        } else if (!notif && prevNotif) {
+            bnEl.dataset.lastNotif = '';
+            bnEl.classList.remove('bn-show');
+            bnEl.classList.add('bn-hide');
+            setTimeout(() => bnEl.classList.remove('bn-hide'), 350);
+        }
 
         // Serve dots & sets
         [0,1].forEach(p => {
@@ -361,19 +568,59 @@
             document.getElementById(`serve-${p}`).classList.toggle('active', server === p);
         });
 
-        // Fullscreen alert
+        // Wipe + glow alert
         const alertKey = state.alertKey || "";
         if (alertKey && alertKey !== lastAlertKey) {
             lastAlertKey = alertKey;
-            const el = document.getElementById('scoreboard-fullscreen-alert');
+            const ring  = document.getElementById('sb-glow-ring');
+            const el    = document.getElementById('scoreboard-fullscreen-alert');
             const txtEl = document.getElementById('fullscreen-alert-text');
+
+            // Colour per mode
+            const glowMap = { golden:'#c8a200', tiebreak:'#c0392b', normal:null };
+            const glowColor = glowMap[state.alertMode] || getComputedStyle(document.documentElement).getPropertyValue('--accent-blue').trim() || '#0055ff';
+            ring.style.setProperty('--glow-color', glowColor);
+            el.style.setProperty('--glow-color', glowColor);
+
+            // Ensure wipe bg exists
+            let bg = el.querySelector('.alert-wipe-bg');
+            if (!bg) { bg = document.createElement('div'); bg.className='alert-wipe-bg'; el.insertBefore(bg, txtEl); }
+
+            // Reset animations
+            bg.classList.remove('wipe-in','wipe-out');
+            txtEl.classList.remove('txt-show');
+            void bg.offsetWidth; // reflow
+
+            // Text & theme
             txtEl.innerText = state.alertText || "";
             let cls = "alert-text-content";
-            if (state.alertMode === 'golden') cls += " alert-golden-theme";
+            if (state.alertMode === 'golden')   cls += " alert-golden-theme";
             if (state.alertMode === 'tiebreak') cls += " alert-tiebreak-theme";
             txtEl.className = cls;
-            el.classList.add('active');
-            setTimeout(() => el.classList.remove('active'), 1500);
+
+            // 1. Glow ring lights up
+            ring.classList.remove('glow-out');
+            ring.classList.add('glow-active');
+
+            // 2. Wipe bg slides in right→left
+            bg.style.background = glowColor;
+            bg.classList.add('wipe-in');
+
+            // 3. Text appears after bg arrives
+            setTimeout(() => txtEl.classList.add('txt-show'), 280);
+
+            // 4. After 1.4s — wipe bg exits left, glow fades
+            setTimeout(() => {
+                txtEl.classList.remove('txt-show');
+                bg.classList.remove('wipe-in');
+                bg.classList.add('wipe-out');
+                ring.classList.remove('glow-active');
+                ring.classList.add('glow-out');
+                setTimeout(() => {
+                    bg.classList.remove('wipe-out');
+                    ring.classList.remove('glow-out');
+                }, 400);
+            }, 1400);
         }
 
         // Stats overlay
@@ -385,7 +632,7 @@
             statsTimeout = setTimeout(() => {
                 forceShowStats = false;
                 document.getElementById('tv-stats-overlay').classList.remove('active');
-            }, 5000);
+            }, 4000);
         }
 
         // Board visibility
@@ -393,11 +640,18 @@
 
         // Intro & finish
         document.getElementById('match-intro-overlay').classList.toggle('active', showIntro);
-        if (showFinish) {
-            updateFinishPanel(state);
-            document.getElementById('match-finish-overlay').classList.add('active');
-        } else {
-            document.getElementById('match-finish-overlay').classList.remove('active');
+        const finishOverlay = document.getElementById('match-finish-overlay');
+        if (showFinish && !finishOverlay.classList.contains('active')) {
+            // 1. Animate scoreboard digits
+            animateScoreboardFinish(() => {
+                // 2. Show result card
+                updateFinishPanel(state);
+                finishOverlay.classList.add('active');
+            });
+        } else if (!showFinish) {
+            finishOverlay.classList.remove('active');
+            // Restore scoreboard digits
+            restoreScoreboardDigits();
         }
 
         // Stats logos
@@ -411,11 +665,12 @@
         const setsHistory = state.setsHistory || [[],[]];
         const games = state.games || [0,0];
         const activeSetIndex = state.activeSetIndex || 0;
-        const setTimes = state.setTimes || [0,0,0];
+        const setTimes = state.setTimes || [];   // хвилини per сет, скидаються кожен сет
 
         let totalSets = Math.min(Math.max(activeSetIndex + 1, setsHistory[0].length, 1), 3);
 
-        let headHtml = `<tr style="color:rgba(255,255,255,0.4); font-size:11px; text-transform:uppercase; height:25px;"><th style="text-align:left; padding-left:10px;">Команда</th>`;
+        let headHtml = `<tr style="color:rgba(255,255,255,0.35); font-size:11px; text-transform:uppercase; height:22px; letter-spacing:1px;">
+            <th style="text-align:left; padding-left:6px;">Команда</th>`;
         for(let s=1; s<=totalSets; s++) headHtml += `<th style="width:95px;">Set ${s}</th>`;
         headHtml += `</tr>`;
         document.getElementById('stats-table-head').innerHTML = headHtml;
@@ -426,10 +681,20 @@
             s2.push(setsHistory[1][i] !== undefined ? setsHistory[1][i] : (activeSetIndex===i ? games[1] : '-'));
         }
 
+        // Build rows — time shown under games for row1 only, bright colour
         let bodyHtml = `<tr class="stats-row"><td class="stats-team-name">${n1}</td>`;
-        for(let i=0; i<totalSets; i++) bodyHtml += `<td class="stats-set-column"><div class="stats-games-num">${s1[i]}</div><div class="stats-time-label">${s1[i] !== '-' ? `'${setTimes[i]}` : ''}</div></td>`;
+        for(let i=0; i<totalSets; i++) {
+            const t = setTimes[i];
+            const tLabel = (t !== undefined && t !== null && t > 0) ? `${t}'` : '';
+            bodyHtml += `<td class="stats-set-column">
+                <div class="stats-games-num">${s1[i]}</div>
+                ${tLabel ? `<div class="stats-time-label">${tLabel}</div>` : ''}
+            </td>`;
+        }
         bodyHtml += `</tr><tr class="stats-row" style="border:none;"><td class="stats-team-name">${n2}</td>`;
-        for(let i=0; i<totalSets; i++) bodyHtml += `<td class="stats-set-column"><div class="stats-games-num">${s2[i]}</div></td>`;
+        for(let i=0; i<totalSets; i++) {
+            bodyHtml += `<td class="stats-set-column"><div class="stats-games-num">${s2[i]}</div></td>`;
+        }
         bodyHtml += `</tr>`;
         document.getElementById('stats-table-body').innerHTML = bodyHtml;
     }
@@ -438,12 +703,61 @@
         const n1 = state.p1name || "Команда А";
         const n2 = state.p2name || "Команда Б";
         const sh = state.setsHistory || [[],[]];
+        const st = state.setTimes || [];
+        // Determine winner per set
         let html = `<tr class="finish-row"><td class="finish-team">${n1}</td>`;
-        for(let i=0;i<3;i++) html += `<td class="finish-cell-set"><span class="finish-box-score">${sh[0][i]!==undefined?sh[0][i]:'-'}</span></td>`;
+        for(let i=0;i<3;i++){
+            const v = sh[0][i]!==undefined?sh[0][i]:'-';
+            const won = sh[0][i]!==undefined && sh[1][i]!==undefined && sh[0][i]>sh[1][i];
+            html += `<td class="finish-cell-set"><span class="finish-box-score${won?' winner-box':''}">${v}</span>`;
+            if(st[i] && i===0) html += `<div style="font-size:11px;color:#7eb8ff;margin-top:2px;font-weight:900;">${st[i]}'</div>`;
+            html += `</td>`;
+        }
         html += `</tr><tr class="finish-row" style="border:none;"><td class="finish-team">${n2}</td>`;
-        for(let i=0;i<3;i++) html += `<td class="finish-cell-set"><span class="finish-box-score">${sh[1][i]!==undefined?sh[1][i]:'-'}</span></td>`;
+        for(let i=0;i<3;i++){
+            const v = sh[1][i]!==undefined?sh[1][i]:'-';
+            const won = sh[0][i]!==undefined && sh[1][i]!==undefined && sh[1][i]>sh[0][i];
+            html += `<td class="finish-cell-set"><span class="finish-box-score${won?' winner-box':''}">${v}</span>`;
+            if(st[i] && i>0) html += `<div style="font-size:11px;color:#7eb8ff;margin-top:2px;font-weight:900;">${st[i]}'</div>`;
+            html += `</td>`;
+        }
         html += `</tr>`;
         document.getElementById('finish-table-body').innerHTML = html;
+    }
+
+    // ─── FINISH ANIMATION HELPERS ──────────────────────────────
+    function animateScoreboardFinish(callback) {
+        const anchor = document.getElementById('scoreboard-anchor');
+        const digits = anchor.querySelectorAll('.set-box, .point-box, .player-name span');
+        // Phase 1: breathing
+        digits.forEach((el, i) => {
+            el.innerHTML = `<span class="sb-digit breathing" style="animation-delay:${(i%4)*0.08}s">${el.textContent}</span>`;
+        });
+        // Phase 2: scatter after 1.0s
+        setTimeout(() => {
+            digits.forEach((el, i) => {
+                const span = el.querySelector('.sb-digit');
+                if (!span) return;
+                span.classList.remove('breathing');
+                const sx = (Math.random()-0.5)*160;
+                const sy = (Math.random()*120+40)*(Math.random()>0.5?1:-1);
+                span.style.setProperty('--sx', sx+'px');
+                span.style.setProperty('--sy', sy+'px');
+                span.style.animationDelay = (i*0.04)+'s';
+                span.classList.add('scatter');
+            });
+            // Phase 3: hide board, show result
+            setTimeout(() => {
+                anchor.classList.add('hidden-board');
+                if (callback) callback();
+            }, 700);
+        }, 1000);
+    }
+
+    function restoreScoreboardDigits() {
+        const anchor = document.getElementById('scoreboard-anchor');
+        anchor.classList.remove('hidden-board');
+        // Digits will be re-rendered on next renderOverlay call
     }
 
     // ─── Читаємо номер корту з URL (?court=1, ?court=2 ...)
