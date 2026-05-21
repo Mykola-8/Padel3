@@ -668,7 +668,7 @@
             notifText: "", showFinish: false, showIntro: false, showLogo: false,
             showBoard: true, showStats: false, isGoldenPoint: true, prosetLimit: 8,
             americanLimit: 15, p1name: "Команда А", p2name: "Команда Б",
-            courtName: 'COURT ' + n, alertKey: "", alertText: "", alertMode: ""
+            courtName: 'COURT ' + n, alertKey: "", alertText: "", alertMode: "", isGoldenActive: false
         };
         historyStack = [];
         gamePointCountP1 = 0; gamePointCountP2 = 0;
@@ -764,33 +764,58 @@
             if (state.scores[p]===3 && state.scores[o]===3) {
                 // ── 40:40 ──
                 if (!state.isGoldenPoint) {
-                    // Галочка ВИМКНЕНА: одразу GOLDEN POINT → winGame (без deuce)
-                    state.alertKey = "GP_" + Date.now();
-                    state.alertText = "GOLDEN POINT"; state.alertMode = "golden";
-                    winGame(p);
-                } else {
-                    // Галочка ВКЛЮЧЕНА: deuce 2 рази → на третій golden point
-                    // deuceCycles рахується при поверненні з advantage (нижче)
-                    // 0 повернень → перший 40:40 → DEUCE #1
-                    // 1 повернення → другий 40:40 → DEUCE #2
-                    // 2 повернення → третій 40:40 → GOLDEN POINT
-                    if (state.deuceCycles >= 2) {
+                    // ── Deuce ВИМКНЕНО ──
+                    // Показуємо GOLDEN POINT анімацію, але НЕ winGame одразу.
+                    // Гравці бачать анімацію, потім наступне очко вирішує гейм.
+                    // scores залишаємо 3:3 — наступний addPoint з 3vs3 потрапить
+                    // в окремий стан isGoldenActive
+                    if (!state.isGoldenActive) {
+                        // Перший раз 40:40 — показуємо анімацію і ставимо флаг
                         state.alertKey = "GP_" + Date.now();
                         state.alertText = "GOLDEN POINT"; state.alertMode = "golden";
-                        winGame(p);
+                        state.isGoldenActive = true;
+                        // scores залишаємо 3:3 — наступне очко виграє гейм
                     } else {
+                        // Флаг вже є (не повинно потрапити сюди, але на всяк)
+                        winGame(p);
+                    }
+                } else {
+                    // ── Deuce ВКЛЮЧЕНО ──
+                    // deuceCycles рахується при поверненні з advantage
+                    // 1-й 40:40 (deuceCycles=0) → DEUCE анімація → advantage
+                    // повернення → deuceCycles=1 → знову 40:40 → GOLDEN POINT → advantage (вирішальний)
+                    // повернення → deuceCycles=2 → виграє advantage
+                    if (state.deuceCycles === 0) {
+                        // Перший 40:40 → DEUCE
                         state.alertKey = "DEUCE_" + Date.now();
                         state.alertText = "DEUCE"; state.alertMode = "deuce";
                         state.scores[p] = 4; // advantage
+                    } else {
+                        // Другий і далі 40:40 → GOLDEN POINT (вирішальний)
+                        state.alertKey = "GP_" + Date.now();
+                        state.alertText = "GOLDEN POINT"; state.alertMode = "golden";
+                        state.scores[p] = 4; // advantage — хто виграє, той виграє гейм
+                        state.isGoldenActive = true; // наступний advantage → winGame без повернень
                     }
                 }
             } else if (state.scores[p]===4) {
-                // advantage → win
+                // advantage → win (або golden point → win)
                 winGame(p);
             } else if (state.scores[o]===4) {
-                // повернення з advantage → знову 40:40, рахуємо deuce
-                state.scores[o] = 3;
-                state.deuceCycles++;
+                if (state.isGoldenActive) {
+                    // Вирішальний розіграш — якщо програли advantage, гейм закінчено
+                    // (golden point — один розіграш, повернень немає)
+                    winGame(p);
+                } else {
+                    // Повернення з advantage → знову 40:40
+                    state.scores[o] = 3;
+                    state.deuceCycles++;
+                }
+            }
+            else if (state.scores[p]===3 && state.isGoldenActive) {
+                // Deuce вимкнено: scores=3:3, флаг активний → наступне очко виграє
+                state.isGoldenActive = false;
+                winGame(p);
             }
             else if (state.scores[p]===3) winGame(p);
             else state.scores[p]++;
@@ -802,7 +827,7 @@
 
     function winGame(p) {
         state.games[p]++;
-        state.scores = [0,0]; state.deuceCycles = 0; state.isGameActive = false;
+        state.scores = [0,0]; state.deuceCycles = 0; state.isGoldenActive = false; state.isGameActive = false;
         state.server = 1-state.server;
         gamePointCountP1 = 0; gamePointCountP2 = 0;
 
@@ -1024,7 +1049,7 @@
                 scores: [0,0], games: [0,0], setsHistory: [[],[]], server: 0,
                 isGameActive: false, isTiebreak: false, isAmerican: state.isAmerican,
                 isProset: state.isProset, isGoldenPoint: state.isGoldenPoint,
-                deuceCycles: 0, setTimes: [0,0,0], activeSetIndex: 0,
+                deuceCycles: 0, isGoldenActive: false, setTimes: [0,0,0], activeSetIndex: 0,
                 notifText: "", showFinish: false, showIntro: false,
                 showLogo: state.showLogo, showBoard: true, showStats: false,
                 prosetLimit: state.prosetLimit, americanLimit: state.americanLimit,
