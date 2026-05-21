@@ -94,7 +94,7 @@
         }
         .big-btn:active { transform: scale(0.94); opacity: 0.85; }
         @keyframes btn-tap {
-            0%  { transform: scale(1); }
+            0%   { transform: scale(1); }
             30% { transform: scale(0.91); box-shadow: 0 0 0 4px rgba(255,255,255,0.25); }
             100%{ transform: scale(1); box-shadow: none; }
         }
@@ -393,7 +393,7 @@
 
 </div>
 
-<!-- ═══════════════════════════════ SETTINGS PANEL ═══════════════════════════════ -->
+<!-- SETTINGS PANEL -->
 <div id="settings-panel">
     <div id="settings-header">
         <h2>⚙️ Налаштування</h2>
@@ -591,7 +591,7 @@
         </div>
     </div>
 
-    <!-- КІНЕЦЬ МАТЧУ / СКИДАННЯ — в налаштуваннях -->
+    <!-- УПРАВЛІННЯ МАТЧЕМ -->
     <div class="settings-section">
         <div class="settings-section-title">Управління матчем</div>
         <div class="settings-card" style="padding:14px; display:flex; flex-direction:column; gap:10px;">
@@ -615,14 +615,10 @@
     <div style="height:20px"></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════ -->
-<!-- ЗАМІНІТЬ ЦЕ НА ВАШІ ДАНІ FIREBASE                  -->
-<!-- ═══════════════════════════════════════════════════ -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, set, update, get, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getDatabase, ref, set, update, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-    // ⬇️ ВСТАВТЕ ВАШІ ДАНІ FIREBASE ТУТ ⬇️
     const firebaseConfig = {
         apiKey: "AIzaSyDf6PYBjF096FRE-fUUo5boS8jsieVS9xA",
         authDomain: "padel3-overley.firebaseapp.com",
@@ -666,7 +662,7 @@
             isGameActive: false, isTiebreak: false, isAmerican: false,
             isProset: false, deuceCycles: 0, setTimes: [0,0,0], activeSetIndex: 0,
             notifText: "", showFinish: false, showIntro: false, showLogo: false,
-            showBoard: true, showStats: false, isGoldenPoint: true, prosetLimit: 8,
+            showBoard: true, showStats: false, isGoldenPoint: false, prosetLimit: 8,
             americanLimit: 15, p1name: "Команда А", p2name: "Команда Б",
             courtName: 'COURT ' + n, alertKey: "", alertText: "", alertMode: "", isGoldenActive: false
         };
@@ -690,9 +686,9 @@
         isGameActive: false, isTiebreak: false, isAmerican: false,
         isProset: false, deuceCycles: 0, setTimes: [0,0,0], activeSetIndex: 0,
         notifText: "", showFinish: false, showIntro: false, showLogo: false,
-        showBoard: true, showStats: false, isGoldenPoint: true, prosetLimit: 8,
+        showBoard: true, showStats: false, isGoldenPoint: false, prosetLimit: 8,
         americanLimit: 15, p1name: "Команда А", p2name: "Команда Б",
-        courtName: "COURT 1", alertKey: "", alertText: "", alertMode: "", faultTeam: null
+        courtName: "COURT 1", alertKey: "", alertText: "", alertMode: "", faultTeam: null, isGoldenActive: false
     };
     let ui = {
         accentBlue: '#0055ff', ballColor: '#ccff00', teamNameColor: '#ffffff',
@@ -704,8 +700,6 @@
     };
     let historyStack = [];
     let gamePointCountP1 = 0, gamePointCountP2 = 0;
-    let lastAlertKey = "";
-    let setTimerInterval = null;
 
     // ─── VIBRATE + TAP ────────────────────────────────────────────
     function vibTap(btnEl, pattern) {
@@ -718,7 +712,6 @@
         }
     }
 
-    // ─── FIREBASE PUSH ───────────────────────────────────────────
     function pushState() {
         set(gameRef, { state, ui }).catch(e => console.error(e));
     }
@@ -747,7 +740,6 @@
         historyStack.push(JSON.parse(JSON.stringify(state)));
         if (!state.isGameActive) {
             state.isGameActive = true;
-            // Стартуємо таймер сету при першому очку (якщо ще не запущений)
             if (!state._setStartTime) state._setStartTime = Date.now();
         }
         const o = 1 - p;
@@ -761,64 +753,58 @@
             if (state.scores[p]>=7 && state.scores[p]-state.scores[o]>=2) winGame(p);
             else if ((state.scores[0]+state.scores[1])%2===1) state.server = 1-state.server;
         } else {
-            // ── Спочатку перевіряємо isGoldenActive флаг ──────────────
+            // Перевіряємо чи це був безпосередньо розіграш Golden Point
             if (state.isGoldenActive) {
-                // Golden point активний — наступне очко ЗАВЖДИ вирішує гейм
-                // (і при deuce вимкнено 3:3, і при deuce включено з advantage)
                 state.isGoldenActive = false;
                 winGame(p);
-
             } else if (state.scores[p]===3 && state.scores[o]===3) {
-                // ── 40:40 ──────────────────────────────────────────────
-
+                // ── РАХУНОК 40:40 ──────────────────────────────────────────
                 if (!state.isGoldenPoint) {
-                    // ════ Deuce ВИМКНЕНО ════
-                    // Анімація GOLDEN POINT одразу при 40:40
-                    // Рахунок залишається 3:3
-                    // Наступне очко (isGoldenActive=true) вирішує гейм
+                    // ════ Режим: Без більше-менше (Одразу Golden Point) ════
                     state.alertKey  = "GP_" + Date.now();
                     state.alertText = "GOLDEN POINT";
                     state.alertMode = "golden";
                     state.isGoldenActive = true;
-                    // scores залишаються 3:3
-
+                    // Рахунок залишається 3:3 (40:40), наступний клік вирішить гейм
                 } else {
-                    // ════ Deuce ВКЛЮЧЕНО ════
-                    // deuceCycles = скільки разів було повернення з advantage
-                    // 0 повернень → перший 40:40 → DEUCE → advantage
-                    // 1 повернення → другий 40:40 → без анімації → advantage
-                    // 2 повернення → третій 40:40 → GOLDEN POINT → advantage (вирішальний)
+                    // ════ Режим: З більше-менше (Advantage) ════
+                    // deuceCycles рахує повернення з переваги на 40:40
                     if (state.deuceCycles === 0) {
-                        // Перший 40:40 → DEUCE анімація
+                        // Перший 40:40 -> Звичайна анімація DEUCE
                         state.alertKey  = "DEUCE_" + Date.now();
                         state.alertText = "DEUCE";
                         state.alertMode = "deuce";
-                        state.scores[p] = 4; // advantage
-
+                        state.scores[p] = 4; // Даємо перевагу (AD)
                     } else if (state.deuceCycles === 1) {
-                        // Другий 40:40 → без анімації → advantage
+                        // Другий 40:40 -> Граємо далі перевагу без анімації
                         state.scores[p] = 4;
-
                     } else {
-                        // Третій+ 40:40 → GOLDEN POINT → вирішальний advantage
+                        // Третій 40:40 -> ВИРІШАЛЬНИЙ GOLDEN POINT!
                         state.alertKey  = "GP_" + Date.now();
                         state.alertText = "GOLDEN POINT";
                         state.alertMode = "golden";
-                        state.scores[p] = 4;
-                        state.isGoldenActive = true; // наступний advantage → winGame, повернень немає
+                        state.isGoldenActive = true;
+                        // Рахунок фіксується на 40:40 (3:3), переваги більше немає
                     }
                 }
-
             } else if (state.scores[p]===4) {
-                // advantage → win
+                // Було AD у гравця P -> він виграє гейм
                 winGame(p);
-
             } else if (state.scores[o]===4) {
-                // повернення з advantage → знову 40:40
+                // Було AD у суперника O -> повернення на 40:40
                 state.scores[o] = 3;
                 state.deuceCycles++;
-
+                
+                // Якщо після повернення це вже 3-й за рахунком Deuce (deuceCycles >= 2), 
+                // то автоматично активуємо стан вирішального Golden Point
+                if (state.isGoldenPoint && state.deuceCycles >= 2) {
+                    state.alertKey  = "GP_" + Date.now();
+                    state.alertText = "GOLDEN POINT";
+                    state.alertMode = "golden";
+                    state.isGoldenActive = true;
+                }
             } else if (state.scores[p]===3) {
+                // Рахунок був 40:за щось менше -> чистий виграш гейму
                 winGame(p);
             } else {
                 state.scores[p]++;
@@ -849,7 +835,6 @@
         } else { isSetFinished = true; }
 
         if (isSetFinished) {
-            // Фіксуємо хвилини поточного сету
             const now = Date.now();
             const setStart = state._setStartTime || now;
             const elapsed = Math.max(1, Math.round((now - setStart) / 60000));
@@ -860,29 +845,27 @@
             state.setsHistory[1].push(state.games[1]);
             state.games = [0,0]; state.isTiebreak = false;
             state.activeSetIndex = Math.min((state.activeSetIndex||0)+1, 2);
-
-            // Скидаємо таймер для наступного сету
             state._setStartTime = Date.now();
 
             state._lastStatsIsSetEnd = true;
             state.showStats = true;
-            setTimeout(() => { state.showStats = false; state._lastStatsIsSetEnd = false; pushState(); }, 5100);
+            // Закриваємо статистику в контролері трохи раніше, щоб уникнути подвійного блимання в OBS
+            setTimeout(() => { state.showStats = false; state._lastStatsIsSetEnd = false; pushState(); }, 4800);
         } else if (isOddGame) {
-            // Непарний гейм — показуємо поточний elapsed
             state._lastStatsIsSetEnd = false;
             state.showStats = true;
-            setTimeout(() => { state.showStats = false; pushState(); }, 5100);
+            setTimeout(() => { state.showStats = false; pushState(); }, 4800);
         }
     }
 
     function computeNotif() {
         const s = state.scores; const g = state.games;
         let txt = "";
-        // alertKey вже встановлено в addPoint для deuce/golden — не перезаписуємо тут
         let alertText = ""; let alertMode = "";
 
-        if (state.isGameActive && !state.isTiebreak && !state.isAmerican) {
-            // advantage situation: показуємо game/break/set point на плашці
+        if (state.isGoldenActive) {
+            txt = "GOLDEN POINT";
+        } else if (state.isGameActive && !state.isTiebreak && !state.isAmerican) {
             for (let i=0; i<2; i++) {
                 if (s[i]>=3 && s[i]>s[1-i]) {
                     const lim = state.isProset ? (state.prosetLimit||8)-1 : 5;
@@ -890,8 +873,8 @@
                     const isBreak = state.server!==i;
                     if (isSetPt) { txt="SET POINT"; alertText="SET POINT"; alertMode="normal"; }
                     else {
-                        if (i===0) { gamePointCountP1++; txt=(isBreak?`BREAK POINT #${gamePointCountP1}`:`GAME POINT #${gamePointCountP1}`); }
-                        else { gamePointCountP2++; txt=(isBreak?`BREAK POINT #${gamePointCountP2}`:`GAME POINT #${gamePointCountP2}`); }
+                        if (i===0) { gamePointCountP1++; txt=(isBreak?`BREAK POINT`:`GAME POINT`); }
+                        else { gamePointCountP2++; txt=(isBreak?`BREAK POINT`:`GAME POINT`); }
                         alertText = isBreak ? "BREAK POINT" : "GAME POINT"; alertMode = "normal";
                     }
                 }
@@ -912,15 +895,12 @@
         historyStack.push(JSON.parse(JSON.stringify(state)));
         state.faultTeam = state.server;
         vibTap(btnEl, [60, 40, 60]);
-        // Зберігаємо alertKey що буде після addPoint
         addPoint(1-state.server);
         const pendingAlertKey  = state.alertKey;
         const pendingAlertText = state.alertText;
         const pendingAlertMode = state.alertMode;
-        // Спочатку пушимо тільки fault (без alertKey щоб не конфліктувало)
         state.alertKey = "";
         pushState();
-        // Після fault анімації (1.6с) — пушимо наступний alert
         setTimeout(() => {
             state.faultTeam = null;
             state.alertKey  = pendingAlertKey;
@@ -956,7 +936,7 @@
         state.isGoldenPoint = document.getElementById('s-golden').checked;
         state.prosetLimit = parseInt(document.getElementById('s-proset-limit').value)||8;
         state.americanLimit = parseInt(document.getElementById('s-american-limit').value)||15;
-        state.scores = [0,0]; state.isGameActive = false;
+        state.scores = [0,0]; state.isGameActive = false; state.deuceCycles = 0; state.isGoldenActive = false;
         pushState();
     }
 
@@ -1001,14 +981,6 @@
         document.getElementById(outId).textContent = document.getElementById(inId).value;
     }
 
-    function uploadLogo(event, key) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const r = new FileReader();
-        r.onload = () => { ui[key] = r.result; pushState(); };
-        r.readAsDataURL(file);
-    }
-
     function uploadLogoUI(event, key, slot) {
         const file = event.target.files[0];
         if (!file) return;
@@ -1048,7 +1020,6 @@
 
     function confirmReset() {
         if (confirm(`Скинути матч на Court ${currentCourt}?`)) {
-            // Скидаємо тільки state (рахунок + назви) — ui (кольори/розміри) зберігається
             state = {
                 scores: [0,0], games: [0,0], setsHistory: [[],[]], server: 0,
                 isGameActive: false, isTiebreak: false, isAmerican: state.isAmerican,
@@ -1057,19 +1028,17 @@
                 notifText: "", showFinish: false, showIntro: false,
                 showLogo: state.showLogo, showBoard: true, showStats: false,
                 prosetLimit: state.prosetLimit, americanLimit: state.americanLimit,
-                p1name: "", p2name: "",
+                p1name: "Команда А", p2name: "Команда Б",
                 courtName: `COURT ${currentCourt}`,
                 alertKey: "", alertText: "", alertMode: "", faultTeam: null,
                 _setStartTime: null, _lastStatsIsSetEnd: false
             };
             historyStack = [];
             gamePointCountP1 = 0; gamePointCountP2 = 0;
-            // Очищаємо поля назв в налаштуваннях
             const p1el = document.getElementById('s-p1');
             const p2el = document.getElementById('s-p2');
-            if (p1el) p1el.value = "";
-            if (p2el) p2el.value = "";
-            // ui не чіпаємо — тільки state
+            if (p1el) p1el.value = "Команда А";
+            if (p2el) p2el.value = "Команда Б";
             set(gameRef, { state, ui }).catch(e => console.error(e));
             updateControlUI();
         }
@@ -1080,14 +1049,11 @@
         const sh = state.setsHistory || [[],[]];
         const p1 = (state.p1name || "Команда А").toUpperCase();
         const p2 = (state.p2name || "Команда Б").toUpperCase();
-        const pts = [0, 15, 30, 40, "AD"];
 
-        // Apply colours to mini scoreboard
         document.getElementById('mini-main').style.background = ui.panelBg || 'rgba(60,60,60,0.7)';
         document.getElementById('mini-main').style.borderLeftColor = ui.accentBlue || '#0055ff';
         document.getElementById('mini-drawer').style.background = ui.drawerBg || 'rgba(40,40,40,0.8)';
 
-        // Skew
         const skewVal = ui.sbSkew || '0deg';
         document.getElementById('mini-sb').style.transform = `skewX(${skewVal})`;
         document.getElementById('mini-main').querySelectorAll('.mini-name,.mini-dot,.mini-sets').forEach(el => {
@@ -1097,44 +1063,29 @@
             el.style.transform = `skewX(calc(${skewVal} * -1))`;
         });
 
-        // Border radius
         const rad = ui.sbRadius || '10px';
-        document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
+        document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 `${rad}`;
         document.getElementById('mini-drawer').style.borderRadius = `0 ${rad} ${rad} 0`;
 
-        // Ball color
         document.getElementById('mini-dot-0').style.background = ui.ballColor || '#ccff00';
         document.getElementById('mini-dot-1').style.background = ui.ballColor || '#ccff00';
-        document.getElementById('mini-dot-0').style.boxShadow = `0 0 6px ${ui.ballColor||'#ccff00'}`;
-        document.getElementById('mini-dot-1').style.boxShadow = `0 0 6px ${ui.ballColor||'#ccff00'}`;
 
-        // Names
         document.getElementById('mini-p1').textContent = p1;
         document.getElementById('mini-p2').textContent = p2;
         document.getElementById('mini-p1').style.color = ui.teamNameColor || '#ffffff';
         document.getElementById('mini-p2').style.color = ui.teamNameColor || '#ffffff';
-        document.getElementById('mini-p1').style.fontFamily = ui.fontFamily || "'Oswald', sans-serif";
-        document.getElementById('mini-p2').style.fontFamily = ui.fontFamily || "'Oswald', sans-serif";
 
-        // Score
         const getL = (i) => {
             if (state.isAmerican || state.isTiebreak) return s[i];
             return s[i]===4 ? "AD" : (s[1-i]===4 ? "" : pts[s[i]]);
         };
         document.getElementById('mini-score-p1').textContent = getL(0);
         document.getElementById('mini-score-p2').textContent = getL(1);
-        document.getElementById('mini-score-p1').style.color = ui.scoreColor || '#fff';
-        document.getElementById('mini-score-p2').style.color = ui.scoreColor || '#fff';
 
-        // Drawer visibility
         document.getElementById('mini-drawer').classList.toggle('points-active', !state.isGameActive);
-
-        // Serve dots
         document.getElementById('mini-dot-0').classList.toggle('active', state.server===0);
         document.getElementById('mini-dot-1').classList.toggle('active', state.server===1);
 
-        // Sets
-        const activeIdx = state.activeSetIndex || 0;
         [0,1].forEach(p => {
             let h = "";
             sh[p].forEach(gv => h += `<div class="mini-set">${gv}</div>`);
@@ -1142,18 +1093,14 @@
             document.getElementById(`mini-sets-p${p+1}`).innerHTML = h;
         });
 
-        // Badges
         const tbBadge = document.getElementById('mini-tb-badge');
         tbBadge.textContent = state.isTiebreak ? 'TIE-BREAK' : (state.isProset ? `PRO-SET ${state.prosetLimit||8}` : '');
         tbBadge.classList.toggle('active', state.isTiebreak || state.isProset);
-        tbBadge.style.background = ui.popupBg || '#444';
 
         const notifBadge = document.getElementById('mini-notif-badge');
         notifBadge.textContent = state.notifText || '';
         notifBadge.classList.toggle('active', !!(state.notifText));
-        notifBadge.style.background = ui.popupBg || '#444';
 
-        // Also update big button score previews
         document.getElementById('btn-score-p1').textContent = getL(0);
         document.getElementById('btn-score-p2').textContent = getL(1);
     }
@@ -1170,10 +1117,9 @@
         document.getElementById('serve-p1-lbl').textContent = p1.toUpperCase().substring(0,7);
         document.getElementById('serve-p2-lbl').textContent = p2.toUpperCase().substring(0,7);
 
-        const pts2 = [0, 15, 30, 40, "AD"];
         const getL = (i) => {
             if (state.isAmerican || state.isTiebreak) return s[i];
-            return s[i]===4 ? "AD" : (s[1-i]===4 ? "" : pts2[s[i]]);
+            return s[i]===4 ? "AD" : (s[1-i]===4 ? "" : pts[s[i]]);
         };
         document.getElementById('disp-score-p1').textContent = getL(0);
         document.getElementById('disp-score-p2').textContent = getL(1);
@@ -1187,11 +1133,29 @@
         if (togBoard) togBoard.checked = state.showBoard !== false;
         document.getElementById('tog-intro').checked = !!state.showIntro;
         document.getElementById('tog-logo').checked = !!state.showLogo;
+        
+        if(document.getElementById('s-american')) document.getElementById('s-american').checked = !!state.isAmerican;
+        if(document.getElementById('s-proset')) document.getElementById('s-proset').checked = !!state.isProset;
+        if(document.getElementById('s-golden')) document.getElementById('s-golden').checked = !!state.isGoldenPoint;
 
         renderMiniScoreboard();
     }
 
     function openSettings() { document.getElementById('settings-panel').classList.add('open'); }
+    // Повністю синхронізуємо заповнення інпутів при відкритті налаштувань
+    window.openSettings = function() {
+        document.getElementById('s-p1').value = state.p1name;
+        document.getElementById('s-p2').value = state.p2name;
+        document.getElementById('s-court').value = state.courtName;
+        document.getElementById('s-american').checked = !!state.isAmerican;
+        document.getElementById('s-proset').checked = !!state.isProset;
+        document.getElementById('s-golden').checked = !!state.isGoldenPoint;
+        document.getElementById('s-proset-limit').value = state.prosetLimit || 8;
+        document.getElementById('s-american-limit').value = state.americanLimit || 15;
+        renderSponsorList();
+        refreshLogoPreviews();
+        document.getElementById('settings-panel').classList.add('open');
+    };
     function closeSettings() { document.getElementById('settings-panel').classList.remove('open'); }
     function saveAllSettings() { liveUpdateName(); liveUpdateUI(); sendMode(); closeSettings(); }
 
@@ -1256,19 +1220,9 @@
         r.readAsDataURL(file);
     }
 
-    // Init sponsor list when settings open
-    window.openSettings = function() {
-        renderSponsorList();
-        refreshLogoPreviews();
-        document.getElementById('settings-panel').classList.add('open');
-    };
-
     // ─── EXPOSE TO WINDOW ──────────────────────────────────────────
     window.sendAction = (type, p, btnEl) => {
-        if (type==='point') {
-            vibTap(btnEl, 35);
-            addPoint(p);
-        }
+        if (type==='point') { vibTap(btnEl, 35); addPoint(p); }
         else if (type==='fault') doFault(btnEl);
         else if (type==='undo')  doUndo(btnEl);
         else if (type==='finish') { state.showFinish = !state.showFinish; pushState(); }
@@ -1279,9 +1233,7 @@
     window.liveUpdateName = liveUpdateName;
     window.liveUpdateUI = liveUpdateUI;
     window.gVal = gVal;
-    window.uploadLogo = uploadLogo;
     window.confirmReset = confirmReset;
-    window.openSettings = openSettings;
     window.closeSettings = closeSettings;
     window.saveAllSettings = saveAllSettings;
     window.switchCourt = switchCourt;
@@ -1293,7 +1245,6 @@
     window.clearLogo = clearLogo;
     window.renderMiniScoreboard = renderMiniScoreboard;
 
-    // Init
     buildCourtBar();
     updateControlUI();
 </script>
