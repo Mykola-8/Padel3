@@ -764,21 +764,21 @@
             if (state.scores[p]===3 && state.scores[o]===3) {
                 // ── 40:40 ──
                 if (!state.isGoldenPoint) {
-                    // Галочка ВИМКНЕНА: кожен 40:40 = GOLDEN POINT → winGame
+                    // Галочка ВИМКНЕНА: одразу GOLDEN POINT → winGame (без deuce)
                     state.alertKey = "GP_" + Date.now();
                     state.alertText = "GOLDEN POINT"; state.alertMode = "golden";
                     winGame(p);
                 } else {
-                    // Галочка ВКЛЮЧЕНА:
-                    // deuceCycles = кількість повернень (0,1,2...)
-                    // При deuceCycles < 2 → DEUCE анімація, дати advantage
-                    // При deuceCycles >= 2 → це вирішальний → GOLDEN POINT → winGame
+                    // Галочка ВКЛЮЧЕНА: deuce 2 рази → на третій golden point
+                    // deuceCycles рахується при поверненні з advantage (нижче)
+                    // 0 повернень → перший 40:40 → DEUCE #1
+                    // 1 повернення → другий 40:40 → DEUCE #2
+                    // 2 повернення → третій 40:40 → GOLDEN POINT
                     if (state.deuceCycles >= 2) {
                         state.alertKey = "GP_" + Date.now();
                         state.alertText = "GOLDEN POINT"; state.alertMode = "golden";
                         winGame(p);
                     } else {
-                        // DEUCE: показуємо анімацію кожен раз при 40:40
                         state.alertKey = "DEUCE_" + Date.now();
                         state.alertText = "DEUCE"; state.alertMode = "deuce";
                         state.scores[p] = 4; // advantage
@@ -788,11 +788,9 @@
                 // advantage → win
                 winGame(p);
             } else if (state.scores[o]===4) {
-                // повернення з advantage → знову 40:40
-                // рахуємо deuce тут — при кожному поверненні
+                // повернення з advantage → знову 40:40, рахуємо deuce
                 state.scores[o] = 3;
                 state.deuceCycles++;
-                // наступний addPoint → scores[p]===3 && scores[o]===3 → DEUCE або GP
             }
             else if (state.scores[p]===3) winGame(p);
             else state.scores[p]++;
@@ -883,11 +881,24 @@
 
     function doFault(btnEl) {
         historyStack.push(JSON.parse(JSON.stringify(state)));
-        state.faultTeam = state.server;   // команда що подавала = помилилась
+        state.faultTeam = state.server;
         vibTap(btnEl, [60, 40, 60]);
+        // Зберігаємо alertKey що буде після addPoint
         addPoint(1-state.server);
-        // Clear faultTeam after overlay has time to react
-        setTimeout(() => { state.faultTeam = null; pushState(); }, 1400);
+        const pendingAlertKey  = state.alertKey;
+        const pendingAlertText = state.alertText;
+        const pendingAlertMode = state.alertMode;
+        // Спочатку пушимо тільки fault (без alertKey щоб не конфліктувало)
+        state.alertKey = "";
+        pushState();
+        // Після fault анімації (1.6с) — пушимо наступний alert
+        setTimeout(() => {
+            state.faultTeam = null;
+            state.alertKey  = pendingAlertKey;
+            state.alertText = pendingAlertText;
+            state.alertMode = pendingAlertMode;
+            pushState();
+        }, 1600);
     }
 
     function doUndo(btnEl) {
@@ -1007,14 +1018,31 @@
     }
 
     function confirmReset() {
-        if (confirm("Скинути весь рахунок матчу?")) {
-            state.scores = [0,0]; state.games = [0,0]; state.setsHistory = [[],[]];
-            state.server = 0; state.isGameActive = false; state.isTiebreak = false;
-            state.deuceCycles = 0; state.setTimes = [0,0,0]; state.activeSetIndex = 0;
-            state.notifText = ""; state.showFinish = false; state.alertKey = "";
-            state.showStats = false; state._setStartTime = null; state.setTimes = [0,0,0]; state._lastStatsIsSetEnd = false; gamePointCountP1 = 0; gamePointCountP2 = 0;
+        if (confirm(`Скинути матч на Court ${currentCourt}?`)) {
+            // Скидаємо тільки state (рахунок + назви) — ui (кольори/розміри) зберігається
+            state = {
+                scores: [0,0], games: [0,0], setsHistory: [[],[]], server: 0,
+                isGameActive: false, isTiebreak: false, isAmerican: state.isAmerican,
+                isProset: state.isProset, isGoldenPoint: state.isGoldenPoint,
+                deuceCycles: 0, setTimes: [0,0,0], activeSetIndex: 0,
+                notifText: "", showFinish: false, showIntro: false,
+                showLogo: state.showLogo, showBoard: true, showStats: false,
+                prosetLimit: state.prosetLimit, americanLimit: state.americanLimit,
+                p1name: "", p2name: "",
+                courtName: `COURT ${currentCourt}`,
+                alertKey: "", alertText: "", alertMode: "", faultTeam: null,
+                _setStartTime: null, _lastStatsIsSetEnd: false
+            };
             historyStack = [];
-            pushState(); updateControlUI();
+            gamePointCountP1 = 0; gamePointCountP2 = 0;
+            // Очищаємо поля назв в налаштуваннях
+            const p1el = document.getElementById('s-p1');
+            const p2el = document.getElementById('s-p2');
+            if (p1el) p1el.value = "";
+            if (p2el) p2el.value = "";
+            // ui не чіпаємо — тільки state
+            set(gameRef, { state, ui }).catch(e => console.error(e));
+            updateControlUI();
         }
     }
 
@@ -1126,7 +1154,8 @@
         document.getElementById('serve-0').classList.toggle('active', state.server===0);
         document.getElementById('serve-1').classList.toggle('active', state.server===1);
 
-        document.getElementById('tog-board').checked = state.showBoard !== false;
+        const togBoard = document.getElementById('tog-board');
+        if (togBoard) togBoard.checked = state.showBoard !== false;
         document.getElementById('tog-intro').checked = !!state.showIntro;
         document.getElementById('tog-logo').checked = !!state.showLogo;
 
