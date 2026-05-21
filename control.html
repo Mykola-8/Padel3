@@ -544,17 +544,49 @@
     <div class="settings-section">
         <div class="settings-section-title">Логотипи</div>
         <div class="settings-card">
-            <div class="settings-input-row">
-                <label>Логотип табла<br><small style="color:rgba(255,255,255,0.3)">Верхня панель</small></label>
-                <label class="file-btn">Вибрати<input type="file" accept="image/*" style="display:none" onchange="uploadLogo(event,'logoSrc')"></label>
+            <!-- Логотип табла -->
+            <div class="settings-input-row" style="flex-direction:column; align-items:flex-start; gap:10px; padding:14px 16px;">
+                <div style="display:flex; align-items:center; width:100%; gap:10px;">
+                    <div style="flex:1">
+                        <div class="toggle-label">Логотип табла</div>
+                        <div class="toggle-sublabel">Виїжджає зверху-зліва</div>
+                    </div>
+                    <label class="switch"><input type="checkbox" id="tog-logo-main" onchange="sendToggle('showLogo',this.checked)"><span class="slider"></span></label>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; width:100%;">
+                    <div id="prev-logo-main" style="width:64px;height:40px;background:rgba(255,255,255,0.06);border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;">
+                        <img id="prev-img-main" src="" style="max-width:100%;max-height:100%;object-fit:contain;display:none;">
+                        <span id="prev-empty-main" style="font-size:18px;opacity:0.2;">🖼</span>
+                    </div>
+                    <label class="file-btn" style="flex:1;text-align:center;">Завантажити<input type="file" accept="image/*" style="display:none" onchange="uploadLogoUI(event,'logoSrc','main')"></label>
+                    <button onclick="clearLogo('logoSrc','main')" style="background:rgba(231,76,60,0.15);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;">✕</button>
+                </div>
             </div>
-            <div class="settings-input-row">
-                <label>Логотип турніру<br><small style="color:rgba(255,255,255,0.3)">Статистика</small></label>
-                <label class="file-btn">Вибрати<input type="file" accept="image/*" style="display:none" onchange="uploadLogo(event,'statLogoT')"></label>
+            <div style="height:1px;background:rgba(255,255,255,0.06);"></div>
+            <!-- Логотип турніру -->
+            <div class="settings-input-row" style="flex-direction:column; align-items:flex-start; gap:10px; padding:14px 16px;">
+                <div style="flex:1"><div class="toggle-label">Логотип турніру</div><div class="toggle-sublabel">Статистика матчу — зліва</div></div>
+                <div style="display:flex; align-items:center; gap:10px; width:100%;">
+                    <div id="prev-logo-statT" style="width:64px;height:40px;background:rgba(255,255,255,0.06);border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;">
+                        <img id="prev-img-statT" src="" style="max-width:100%;max-height:100%;object-fit:contain;display:none;">
+                        <span id="prev-empty-statT" style="font-size:18px;opacity:0.2;">🖼</span>
+                    </div>
+                    <label class="file-btn" style="flex:1;text-align:center;">Завантажити<input type="file" accept="image/*" style="display:none" onchange="uploadLogoUI(event,'statLogoT','statT')"></label>
+                    <button onclick="clearLogo('statLogoT','statT')" style="background:rgba(231,76,60,0.15);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;">✕</button>
+                </div>
             </div>
-            <div class="settings-input-row">
-                <label>Логотип федерації<br><small style="color:rgba(255,255,255,0.3)">Статистика</small></label>
-                <label class="file-btn">Вибрати<input type="file" accept="image/*" style="display:none" onchange="uploadLogo(event,'statLogoF')"></label>
+            <div style="height:1px;background:rgba(255,255,255,0.06);"></div>
+            <!-- Логотип федерації -->
+            <div class="settings-input-row" style="flex-direction:column; align-items:flex-start; gap:10px; padding:14px 16px;">
+                <div style="flex:1"><div class="toggle-label">Логотип федерації</div><div class="toggle-sublabel">Статистика матчу — справа</div></div>
+                <div style="display:flex; align-items:center; gap:10px; width:100%;">
+                    <div id="prev-logo-statF" style="width:64px;height:40px;background:rgba(255,255,255,0.06);border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;">
+                        <img id="prev-img-statF" src="" style="max-width:100%;max-height:100%;object-fit:contain;display:none;">
+                        <span id="prev-empty-statF" style="font-size:18px;opacity:0.2;">🖼</span>
+                    </div>
+                    <label class="file-btn" style="flex:1;text-align:center;">Завантажити<input type="file" accept="image/*" style="display:none" onchange="uploadLogoUI(event,'statLogoF','statF')"></label>
+                    <button onclick="clearLogo('statLogoF','statF')" style="background:rgba(231,76,60,0.15);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;">✕</button>
+                </div>
             </div>
         </div>
     </div>
@@ -566,6 +598,17 @@
             <button class="btn-finish-s" onclick="sendAction('finish'); closeSettings()">🏆 КІНЕЦЬ МАТЧУ</button>
             <button class="btn-reset-s" onclick="confirmReset()">⚠️ СКИНУТИ МАТЧ</button>
         </div>
+    </div>
+
+    <!-- SPONSOR LOGOS -->
+    <div class="settings-section">
+        <div class="settings-section-title">Логотипи спонсорів (зверху-справа)</div>
+        <div class="settings-card" id="sponsor-logo-list">
+            <!-- динамічно -->
+        </div>
+        <button onclick="addSponsorSlot()" style="margin:10px 16px 0; padding:12px; background:rgba(255,255,255,0.06); border:1px dashed rgba(255,255,255,0.2); border-radius:12px; color:rgba(255,255,255,0.5); font-size:13px; font-weight:700; width:calc(100% - 32px); cursor:pointer; letter-spacing:1px;">
+            + ДОДАТИ ЛОГОТИП
+        </button>
     </div>
 
     <button class="save-settings-btn" onclick="saveAllSettings()">💾 ЗБЕРЕГТИ ВСЕ</button>
@@ -704,6 +747,7 @@
         historyStack.push(JSON.parse(JSON.stringify(state)));
         if (!state.isGameActive) {
             state.isGameActive = true;
+            // Стартуємо таймер сету при першому очку (якщо ще не запущений)
             if (!state._setStartTime) state._setStartTime = Date.now();
         }
         const o = 1 - p;
@@ -718,18 +762,38 @@
             else if ((state.scores[0]+state.scores[1])%2===1) state.server = 1-state.server;
         } else {
             if (state.scores[p]===3 && state.scores[o]===3) {
-                // isGoldenPoint ВИМКНЕНО → 40:40 одразу golden point (winGame)
-                // isGoldenPoint ВКЛЮЧЕНО → deuce: adv → deuce → після 2 deuces golden
+                // ── 40:40 ──
                 if (!state.isGoldenPoint) {
-                    // Галочка вимкнена: одразу golden point при 40:40
+                    // Галочка ВИМКНЕНА: кожен 40:40 = GOLDEN POINT → winGame
+                    state.alertKey = "GP_" + Date.now();
+                    state.alertText = "GOLDEN POINT"; state.alertMode = "golden";
                     winGame(p);
                 } else {
-                    // Галочка включена: класичний deuce → advantage → golden після 2 deuces
-                    if (state.deuceCycles >= 2) winGame(p);
-                    else state.scores[p] = 4;
+                    // Галочка ВКЛЮЧЕНА:
+                    // deuceCycles = кількість повернень (0,1,2...)
+                    // При deuceCycles < 2 → DEUCE анімація, дати advantage
+                    // При deuceCycles >= 2 → це вирішальний → GOLDEN POINT → winGame
+                    if (state.deuceCycles >= 2) {
+                        state.alertKey = "GP_" + Date.now();
+                        state.alertText = "GOLDEN POINT"; state.alertMode = "golden";
+                        winGame(p);
+                    } else {
+                        // DEUCE: показуємо анімацію кожен раз при 40:40
+                        state.alertKey = "DEUCE_" + Date.now();
+                        state.alertText = "DEUCE"; state.alertMode = "deuce";
+                        state.scores[p] = 4; // advantage
+                    }
                 }
-            } else if (state.scores[p]===4) winGame(p);
-            else if (state.scores[o]===4) { state.scores[o]=3; state.deuceCycles++; }
+            } else if (state.scores[p]===4) {
+                // advantage → win
+                winGame(p);
+            } else if (state.scores[o]===4) {
+                // повернення з advantage → знову 40:40
+                // рахуємо deuce тут — при кожному поверненні
+                state.scores[o] = 3;
+                state.deuceCycles++;
+                // наступний addPoint → scores[p]===3 && scores[o]===3 → DEUCE або GP
+            }
             else if (state.scores[p]===3) winGame(p);
             else state.scores[p]++;
         }
@@ -758,21 +822,27 @@
         } else { isSetFinished = true; }
 
         if (isSetFinished) {
-            // Save set time (minutes since this set started)
+            // Фіксуємо хвилини поточного сету
             const now = Date.now();
             const setStart = state._setStartTime || now;
-            const elapsed = Math.round((now - setStart) / 60000);
+            const elapsed = Math.max(1, Math.round((now - setStart) / 60000));
             if (!state.setTimes) state.setTimes = [0,0,0];
             state.setTimes[state.activeSetIndex||0] = elapsed;
-            state._setStartTime = now;   // reset timer for next set
 
             state.setsHistory[0].push(state.games[0]);
             state.setsHistory[1].push(state.games[1]);
             state.games = [0,0]; state.isTiebreak = false;
             state.activeSetIndex = Math.min((state.activeSetIndex||0)+1, 2);
+
+            // Скидаємо таймер для наступного сету
+            state._setStartTime = Date.now();
+
+            state._lastStatsIsSetEnd = true;
             state.showStats = true;
-            setTimeout(() => { state.showStats = false; pushState(); }, 5100);
+            setTimeout(() => { state.showStats = false; state._lastStatsIsSetEnd = false; pushState(); }, 5100);
         } else if (isOddGame) {
+            // Непарний гейм — показуємо поточний elapsed
+            state._lastStatsIsSetEnd = false;
             state.showStats = true;
             setTimeout(() => { state.showStats = false; pushState(); }, 5100);
         }
@@ -780,29 +850,22 @@
 
     function computeNotif() {
         const s = state.scores; const g = state.games;
-        let txt = ""; let alertText = ""; let alertMode = "";
-        // Галочка ВИМКНЕНА: 40:40 = одразу golden (але ми вже winGame, тут не потрібно показувати)
-        // Галочка ВКЛЮЧЕНА: golden тільки після 2 deuces
-        const isGP = !state.isAmerican && !state.isTiebreak && s[0]===3 && s[1]===3 &&
-                     (state.isGoldenPoint ? state.deuceCycles >= 2 : false);
-        // При вимкненій галочці 40:40 не відображаємо — одразу winGame
+        let txt = "";
+        // alertKey вже встановлено в addPoint для deuce/golden — не перезаписуємо тут
+        let alertText = ""; let alertMode = "";
 
         if (state.isGameActive && !state.isTiebreak && !state.isAmerican) {
-            if (isGP) {
-                txt = `GOLDEN POINT`;
-                alertText = "GOLDEN POINT"; alertMode = "golden";
-            } else {
-                for (let i=0; i<2; i++) {
-                    if (s[i]>=3 && s[i]>s[1-i]) {
-                        const lim = state.isProset ? (state.prosetLimit||8)-1 : 5;
-                        const isSetPt = g[i]>=lim;
-                        const isBreak = state.server!==i;
-                        if (isSetPt) { txt="SET POINT"; alertText="SET POINT"; alertMode="normal"; }
-                        else {
-                            if (i===0) { gamePointCountP1++; txt=(isBreak?`BREAK POINT #${gamePointCountP1}`:`GAME POINT #${gamePointCountP1}`); }
-                            else { gamePointCountP2++; txt=(isBreak?`BREAK POINT #${gamePointCountP2}`:`GAME POINT #${gamePointCountP2}`); }
-                            alertText = isBreak ? "BREAK POINT" : "GAME POINT"; alertMode = "normal";
-                        }
+            // advantage situation: показуємо game/break/set point на плашці
+            for (let i=0; i<2; i++) {
+                if (s[i]>=3 && s[i]>s[1-i]) {
+                    const lim = state.isProset ? (state.prosetLimit||8)-1 : 5;
+                    const isSetPt = g[i]>=lim;
+                    const isBreak = state.server!==i;
+                    if (isSetPt) { txt="SET POINT"; alertText="SET POINT"; alertMode="normal"; }
+                    else {
+                        if (i===0) { gamePointCountP1++; txt=(isBreak?`BREAK POINT #${gamePointCountP1}`:`GAME POINT #${gamePointCountP1}`); }
+                        else { gamePointCountP2++; txt=(isBreak?`BREAK POINT #${gamePointCountP2}`:`GAME POINT #${gamePointCountP2}`); }
+                        alertText = isBreak ? "BREAK POINT" : "GAME POINT"; alertMode = "normal";
                     }
                 }
             }
@@ -906,13 +969,50 @@
         r.readAsDataURL(file);
     }
 
+    function uploadLogoUI(event, key, slot) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const r = new FileReader();
+        r.onload = () => {
+            ui[key] = r.result;
+            renderLogoPreview(slot, r.result);
+            pushState();
+        };
+        r.readAsDataURL(file);
+    }
+
+    function clearLogo(key, slot) {
+        ui[key] = '';
+        renderLogoPreview(slot, '');
+        pushState();
+    }
+
+    function renderLogoPreview(slot, src) {
+        const img = document.getElementById('prev-img-' + slot);
+        const empty = document.getElementById('prev-empty-' + slot);
+        if (!img || !empty) return;
+        if (src) {
+            img.src = src; img.style.display = 'block'; empty.style.display = 'none';
+        } else {
+            img.src = ''; img.style.display = 'none'; empty.style.display = 'block';
+        }
+    }
+
+    function refreshLogoPreviews() {
+        if (ui.logoSrc)   renderLogoPreview('main',  ui.logoSrc);
+        if (ui.statLogoT) renderLogoPreview('statT', ui.statLogoT);
+        if (ui.statLogoF) renderLogoPreview('statF', ui.statLogoF);
+        if (document.getElementById('tog-logo-main'))
+            document.getElementById('tog-logo-main').checked = !!state.showLogo;
+    }
+
     function confirmReset() {
         if (confirm("Скинути весь рахунок матчу?")) {
             state.scores = [0,0]; state.games = [0,0]; state.setsHistory = [[],[]];
             state.server = 0; state.isGameActive = false; state.isTiebreak = false;
             state.deuceCycles = 0; state.setTimes = [0,0,0]; state.activeSetIndex = 0;
             state.notifText = ""; state.showFinish = false; state.alertKey = "";
-            state.showStats = false; state._setStartTime = null; gamePointCountP1 = 0; gamePointCountP2 = 0;
+            state.showStats = false; state._setStartTime = null; state.setTimes = [0,0,0]; state._lastStatsIsSetEnd = false; gamePointCountP1 = 0; gamePointCountP2 = 0;
             historyStack = [];
             pushState(); updateControlUI();
         }
@@ -1037,6 +1137,74 @@
     function closeSettings() { document.getElementById('settings-panel').classList.remove('open'); }
     function saveAllSettings() { liveUpdateName(); liveUpdateUI(); sendMode(); closeSettings(); }
 
+    // ─── SPONSOR LOGOS ────────────────────────────────────────────
+    if (!ui.sponsorLogos) ui.sponsorLogos = [];
+
+    function renderSponsorList() {
+        const list = document.getElementById('sponsor-logo-list');
+        if (!list) return;
+        list.innerHTML = '';
+        (ui.sponsorLogos || []).forEach((logo, i) => {
+            const row = document.createElement('div');
+            row.className = 'settings-input-row';
+            row.style.gap = '10px';
+            row.innerHTML = `
+                <div style="flex:1">
+                    <div class="toggle-label" style="font-size:11px;">Лого ${i+1}</div>
+                    ${logo.src ? `<img src="${logo.src}" style="height:28px;max-width:80px;object-fit:contain;border-radius:4px;margin-top:4px;opacity:0.8;">` : '<div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:2px;">не завантажено</div>'}
+                </div>
+                <label class="switch" title="Показати/приховати">
+                    <input type="checkbox" ${logo.visible!==false?'checked':''} onchange="toggleSponsor(${i},this.checked)">
+                    <span class="slider"></span>
+                </label>
+                <label class="file-btn" style="padding:5px 10px;font-size:11px;">
+                    ↑<input type="file" accept="image/*" style="display:none" onchange="uploadSponsor(event,${i})">
+                </label>
+                <button onclick="removeSponsor(${i})" style="background:rgba(231,76,60,0.2);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;border-radius:8px;padding:5px 10px;font-size:13px;cursor:pointer;">✕</button>
+            `;
+            list.appendChild(row);
+        });
+    }
+
+    function addSponsorSlot() {
+        if (!ui.sponsorLogos) ui.sponsorLogos = [];
+        ui.sponsorLogos.push({ src: '', visible: true });
+        renderSponsorList();
+    }
+
+    function removeSponsor(i) {
+        ui.sponsorLogos.splice(i, 1);
+        renderSponsorList();
+        pushState();
+    }
+
+    function toggleSponsor(i, val) {
+        if (ui.sponsorLogos[i]) {
+            ui.sponsorLogos[i].visible = val;
+            pushState();
+        }
+    }
+
+    function uploadSponsor(event, i) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const r = new FileReader();
+        r.onload = () => {
+            if (!ui.sponsorLogos[i]) ui.sponsorLogos[i] = { visible: true };
+            ui.sponsorLogos[i].src = r.result;
+            renderSponsorList();
+            pushState();
+        };
+        r.readAsDataURL(file);
+    }
+
+    // Init sponsor list when settings open
+    window.openSettings = function() {
+        renderSponsorList();
+        refreshLogoPreviews();
+        document.getElementById('settings-panel').classList.add('open');
+    };
+
     // ─── EXPOSE TO WINDOW ──────────────────────────────────────────
     window.sendAction = (type, p, btnEl) => {
         if (type==='point') {
@@ -1059,6 +1227,12 @@
     window.closeSettings = closeSettings;
     window.saveAllSettings = saveAllSettings;
     window.switchCourt = switchCourt;
+    window.addSponsorSlot = addSponsorSlot;
+    window.removeSponsor = removeSponsor;
+    window.toggleSponsor = toggleSponsor;
+    window.uploadSponsor = uploadSponsor;
+    window.uploadLogoUI = uploadLogoUI;
+    window.clearLogo = clearLogo;
     window.renderMiniScoreboard = renderMiniScoreboard;
 
     // Init
