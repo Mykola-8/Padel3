@@ -486,8 +486,24 @@
 
     const pts = [0, 15, 30, 40, "AD"];
     let lastAlertKey = "";
+    let lastFaultTeam = null;
     let forceShowStats = false;
     let statsTimeout = null;
+
+    // ── Черга анімацій ──────────────────────────────────────────
+    let animQueue = [];
+    let animBusy  = false;
+    function enqueueAnim(fn, duration) {
+        animQueue.push({ fn, duration });
+        if (!animBusy) drainQueue();
+    }
+    function drainQueue() {
+        if (animQueue.length === 0) { animBusy = false; return; }
+        animBusy = true;
+        const { fn, duration } = animQueue.shift();
+        fn();
+        setTimeout(drainQueue, duration);
+    }
 
     function updateStyle(p, v) { document.documentElement.style.setProperty(p, v); }
 
@@ -558,39 +574,34 @@
         document.getElementById('p2-score').innerText = getL(1);
         document.getElementById('drawer').classList.toggle('points-active', isGameActive);
 
-        // Fault wipe animation — "DOUBLE FAULT" справа наліво
+        // Fault wipe animation — через чергу
         const faultTeam = state.faultTeam;
-        if (faultTeam !== undefined && faultTeam !== null) {
+        if (faultTeam !== undefined && faultTeam !== null && faultTeam !== lastFaultTeam) {
+            lastFaultTeam = faultTeam;
             const rowEl = document.getElementById(`row-${faultTeam}`);
             if (rowEl) {
-                // Inject overlay if missing
-                let wrapEl = rowEl.querySelector('.fault-wipe-overlay');
-                if (!wrapEl) {
-                    wrapEl = document.createElement('div');
-                    wrapEl.className = 'fault-wipe-overlay';
-                    wrapEl.innerHTML = '<div class="fault-wipe-bg"></div><div class="fault-wipe-label">DOUBLE FAULT</div>';
-                    rowEl.appendChild(wrapEl);
-                }
-                const bgEl  = wrapEl.querySelector('.fault-wipe-bg');
-                const lblEl = wrapEl.querySelector('.fault-wipe-label');
-                // Reset
-                bgEl.classList.remove('fw-in','fw-out');
-                lblEl.classList.remove('fl-show');
-                void bgEl.offsetWidth;
-                // Wipe IN
-                window._faultAnimating = true;
-                bgEl.classList.add('fw-in');
-                setTimeout(() => lblEl.classList.add('fl-show'), 240);
-                // Wipe OUT after 1.2s
-                setTimeout(() => {
+                enqueueAnim(() => {
+                    let wrapEl = rowEl.querySelector('.fault-wipe-overlay');
+                    if (!wrapEl) {
+                        wrapEl = document.createElement('div');
+                        wrapEl.className = 'fault-wipe-overlay';
+                        wrapEl.innerHTML = '<div class="fault-wipe-bg"></div><div class="fault-wipe-label">DOUBLE FAULT</div>';
+                        rowEl.appendChild(wrapEl);
+                    }
+                    const bgEl  = wrapEl.querySelector('.fault-wipe-bg');
+                    const lblEl = wrapEl.querySelector('.fault-wipe-label');
+                    bgEl.classList.remove('fw-in','fw-out');
                     lblEl.classList.remove('fl-show');
-                    bgEl.classList.remove('fw-in');
-                    bgEl.classList.add('fw-out');
+                    void bgEl.offsetWidth;
+                    bgEl.classList.add('fw-in');
+                    setTimeout(() => lblEl.classList.add('fl-show'), 240);
                     setTimeout(() => {
-                        bgEl.classList.remove('fw-out');
-                        window._faultAnimating = false;
-                    }, 320);
-                }, 1200);
+                        lblEl.classList.remove('fl-show');
+                        bgEl.classList.remove('fw-in');
+                        bgEl.classList.add('fw-out');
+                        setTimeout(() => bgEl.classList.remove('fw-out'), 320);
+                    }, 1200);
+                }, 1600);
             }
         }
 
@@ -642,19 +653,19 @@
             document.getElementById(`serve-${p}`).classList.toggle('active', server === p);
         });
 
-        // Wipe + glow alert (з чергою: fault → alert)
+        // Wipe + glow alert — через чергу анімацій
         const alertKey = state.alertKey || "";
         if (alertKey && alertKey !== lastAlertKey) {
             lastAlertKey = alertKey;
-            // Якщо зараз іде fault анімація — чекаємо її завершення
-            const delay = window._faultAnimating ? 1350 : 0;
-            setTimeout(() => {
+            const capturedMode = state.alertMode;
+            const capturedText = state.alertText || "";
+            enqueueAnim(() => {
                 const ring  = document.getElementById('sb-glow-ring');
                 const el    = document.getElementById('scoreboard-fullscreen-alert');
                 const txtEl = document.getElementById('fullscreen-alert-text');
 
                 const glowMap = { golden:'#c8a200', tiebreak:'#c0392b', deuce:'#6c3483', normal:null };
-                const glowColor = glowMap[state.alertMode] || '#0055ff';
+                const glowColor = glowMap[capturedMode] || '#0055ff';
                 ring.style.setProperty('--glow-color', glowColor);
                 el.style.setProperty('--glow-color', glowColor);
 
@@ -665,11 +676,11 @@
                 txtEl.classList.remove('txt-show');
                 void bg.offsetWidth;
 
-                txtEl.innerText = state.alertText || "";
+                txtEl.innerText = capturedText;
                 let cls = "alert-text-content";
-                if (state.alertMode === 'golden')   cls += " alert-golden-theme";
-                if (state.alertMode === 'tiebreak') cls += " alert-tiebreak-theme";
-                if (state.alertMode === 'deuce')    cls += " alert-deuce-theme";
+                if (capturedMode === 'golden')   cls += " alert-golden-theme";
+                if (capturedMode === 'tiebreak') cls += " alert-tiebreak-theme";
+                if (capturedMode === 'deuce')    cls += " alert-deuce-theme";
                 txtEl.className = cls;
 
                 ring.classList.remove('glow-out');
@@ -679,7 +690,6 @@
 
                 setTimeout(() => txtEl.classList.add('txt-show'), 260);
 
-                // Текст тримається 2с → wipe out після 2.6с від старту
                 setTimeout(() => {
                     txtEl.classList.remove('txt-show');
                     bg.classList.remove('wipe-in');
@@ -691,7 +701,7 @@
                         ring.classList.remove('glow-out');
                     }, 350);
                 }, 2600);
-            }, delay);
+            }, 3000); // total duration в черзі
         }
 
         // Stats overlay
@@ -707,7 +717,7 @@
         }
 
         // Board visibility
-        document.getElementById('scoreboard-anchor').classList.toggle('hidden-board', !showBoard);
+        document.getElementById('scoreboard-anchor').classList.toggle('hidden-board', showBoard === false);
 
         // Intro & finish
         document.getElementById('match-intro-overlay').classList.toggle('active', showIntro);
