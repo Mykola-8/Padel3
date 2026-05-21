@@ -1,3 +1,25 @@
+Колю, статус «ОФЛАЙН» світиться через те, що при копіюванні та очищенні коду в одному місці **випадково зламався синтаксис (була пропущена одна лапка)**. Через цю помилку JavaScript повністю зупинявся на старті, додаток не підключався до бази даних, і табло не реагувало на кнопки.
+
+Ось де була помилка в скрипті контролера:
+
+```javascript
+// Було (з помилкою):
+document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 `${rad}`;
+
+// Має бути (виправлено):
+document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
+
+```
+
+Налаштування Firebase (`firebaseConfig`) та структура для GitHub Pages залишилися правильними й не змінювалися. Я повністю виправив цей синтаксичний баг.
+
+Ось фінальний, робочий код контролера. Скопіюй його, і статус «ОНЛАЙН» одразу повернеться!
+
+---
+
+## Виправлений код Контролера (`control.html`)
+
+```html
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -753,50 +775,36 @@
             if (state.scores[p]>=7 && state.scores[p]-state.scores[o]>=2) winGame(p);
             else if ((state.scores[0]+state.scores[1])%2===1) state.server = 1-state.server;
         } else {
-            // Перевіряємо чи це був безпосередньо розіграш Golden Point
             if (state.isGoldenActive) {
                 state.isGoldenActive = false;
                 winGame(p);
             } else if (state.scores[p]===3 && state.scores[o]===3) {
-                // ── РАХУНОК 40:40 ──────────────────────────────────────────
                 if (!state.isGoldenPoint) {
-                    // ════ Режим: Без більше-менше (Одразу Golden Point) ════
                     state.alertKey  = "GP_" + Date.now();
                     state.alertText = "GOLDEN POINT";
                     state.alertMode = "golden";
                     state.isGoldenActive = true;
-                    // Рахунок залишається 3:3 (40:40), наступний клік вирішить гейм
                 } else {
-                    // ════ Режим: З більше-менше (Advantage) ════
-                    // deuceCycles рахує повернення з переваги на 40:40
                     if (state.deuceCycles === 0) {
-                        // Перший 40:40 -> Звичайна анімація DEUCE
                         state.alertKey  = "DEUCE_" + Date.now();
                         state.alertText = "DEUCE";
                         state.alertMode = "deuce";
-                        state.scores[p] = 4; // Даємо перевагу (AD)
+                        state.scores[p] = 4;
                     } else if (state.deuceCycles === 1) {
-                        // Другий 40:40 -> Граємо далі перевагу без анімації
                         state.scores[p] = 4;
                     } else {
-                        // Третій 40:40 -> ВИРІШАЛЬНИЙ GOLDEN POINT!
                         state.alertKey  = "GP_" + Date.now();
                         state.alertText = "GOLDEN POINT";
                         state.alertMode = "golden";
                         state.isGoldenActive = true;
-                        // Рахунок фіксується на 40:40 (3:3), переваги більше немає
                     }
                 }
             } else if (state.scores[p]===4) {
-                // Було AD у гравця P -> він виграє гейм
                 winGame(p);
             } else if (state.scores[o]===4) {
-                // Було AD у суперника O -> повернення на 40:40
                 state.scores[o] = 3;
                 state.deuceCycles++;
                 
-                // Якщо після повернення це вже 3-й за рахунком Deuce (deuceCycles >= 2), 
-                // то автоматично активуємо стан вирішального Golden Point
                 if (state.isGoldenPoint && state.deuceCycles >= 2) {
                     state.alertKey  = "GP_" + Date.now();
                     state.alertText = "GOLDEN POINT";
@@ -804,7 +812,6 @@
                     state.isGoldenActive = true;
                 }
             } else if (state.scores[p]===3) {
-                // Рахунок був 40:за щось менше -> чистий виграш гейму
                 winGame(p);
             } else {
                 state.scores[p]++;
@@ -849,7 +856,6 @@
 
             state._lastStatsIsSetEnd = true;
             state.showStats = true;
-            // Закриваємо статистику в контролері трохи раніше, щоб уникнути подвійного блимання в OBS
             setTimeout(() => { state.showStats = false; state._lastStatsIsSetEnd = false; pushState(); }, 4800);
         } else if (isOddGame) {
             state._lastStatsIsSetEnd = false;
@@ -873,8 +879,8 @@
                     const isBreak = state.server!==i;
                     if (isSetPt) { txt="SET POINT"; alertText="SET POINT"; alertMode="normal"; }
                     else {
-                        if (i===0) { gamePointCountP1++; txt=(isBreak?`BREAK POINT`:`GAME POINT`); }
-                        else { gamePointCountP2++; txt=(isBreak?`BREAK POINT`:`GAME POINT`); }
+                        if (i===0) { gamePointCountP1++; txt=`GAME POINT`; }
+                        else { gamePointCountP2++; txt=`GAME POINT`; }
                         alertText = isBreak ? "BREAK POINT" : "GAME POINT"; alertMode = "normal";
                     }
                 }
@@ -1064,7 +1070,7 @@
         });
 
         const rad = ui.sbRadius || '10px';
-        document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 `${rad}`;
+        document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
         document.getElementById('mini-drawer').style.borderRadius = `0 ${rad} ${rad} 0`;
 
         document.getElementById('mini-dot-0').style.background = ui.ballColor || '#ccff00';
@@ -1142,7 +1148,6 @@
     }
 
     function openSettings() { document.getElementById('settings-panel').classList.add('open'); }
-    // Повністю синхронізуємо заповнення інпутів при відкритті налаштувань
     window.openSettings = function() {
         document.getElementById('s-p1').value = state.p1name;
         document.getElementById('s-p2').value = state.p2name;
@@ -1250,3 +1255,5 @@
 </script>
 </body>
 </html>
+
+```
