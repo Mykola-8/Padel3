@@ -93,45 +93,49 @@
         #sb-glow-ring.glow-active { animation: sb-glow-in 0.35s ease forwards; }
         #sb-glow-ring.glow-out    { animation: sb-glow-out 0.45s ease forwards; }
 
-        /* ── WIPE ALERT: букви їдуть справа наліво, закриваючи табло ── */
-        /* Контейнер-маска: overflow hidden, весь табло */
+        /* ── WIPE ALERT ── */
         #scoreboard-fullscreen-alert {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             overflow: hidden; background: transparent;
             z-index: 201; pointer-events: none;
-            display: flex; align-items: center; justify-content: flex-end;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        /* Фонова плашка — їде справа наліво, закриває табло */
         @keyframes wipe-in  { 0%{transform:translateX(100%)} 100%{transform:translateX(0%)} }
         @keyframes wipe-out { 0%{transform:translateX(0%)}   100%{transform:translateX(-100%)} }
 
         .alert-wipe-bg {
-            position: absolute; top: 0; right: 0; width: 100%; height: 100%;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--glow-color, var(--accent-blue));
-            opacity: 0.92;
-            transform: translateX(100%);
+            opacity: 0.93; transform: translateX(100%);
         }
-        .alert-wipe-bg.wipe-in  { animation: wipe-in  0.32s cubic-bezier(0.4,0,0.2,1) forwards; }
-        .alert-wipe-bg.wipe-out { animation: wipe-out 0.32s cubic-bezier(0.4,0,0.2,1) forwards; }
+        .alert-wipe-bg.wipe-in  { animation: wipe-in  0.30s cubic-bezier(0.4,0,0.2,1) forwards; }
+        .alert-wipe-bg.wipe-out { animation: wipe-out 0.30s cubic-bezier(0.4,0,0.2,1) forwards; }
 
-        /* Текст поверх плашки */
-        @keyframes txt-appear { 0%{opacity:0;transform:translateX(18px)} 100%{opacity:1;transform:translateX(0)} }
-        @keyframes txt-gone   { 0%{opacity:1} 100%{opacity:0} }
+        /* Текст — по центру, великий */
+        @keyframes txt-appear {
+            0%  { opacity:0; transform:scale(0.82) translateY(6px); letter-spacing:8px; }
+            100%{ opacity:1; transform:scale(1)    translateY(0);   letter-spacing:4px; }
+        }
+        @keyframes txt-gone { 0%{opacity:1} 100%{opacity:0} }
 
         .alert-text-content {
             position: relative; z-index: 1;
-            font-family: var(--team-font-family); font-size: calc(var(--sb-h) * 0.38);
-            font-weight: 900; text-transform: uppercase; letter-spacing: 3px;
-            color: #ffffff; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            opacity: 0; padding-right: 5%;
+            font-family: var(--team-font-family);
+            font-size: calc(var(--sb-h) * 0.52);   /* більший */
+            font-weight: 900; text-transform: uppercase; letter-spacing: 4px;
+            color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.55);
+            opacity: 0; text-align: center; width: 100%; padding: 0 5%;
+            box-sizing: border-box;
         }
+        /* Текст тримається 2с (appear 0.28s → hold → gone at 2.3s) */
         .alert-text-content.txt-show {
-            animation: txt-appear 0.22s 0.28s ease forwards,
-                       txt-gone   0.25s 1.15s ease forwards;
+            animation: txt-appear 0.28s 0.26s cubic-bezier(0.175,0.885,0.32,1.275) forwards,
+                       txt-gone   0.28s 2.3s ease forwards;
         }
-        .alert-golden-theme   { color: #1a1a1a !important; }
+        .alert-golden-theme   { color: #1a1200 !important; }
         .alert-tiebreak-theme { color: #ffffff !important; }
+        .alert-deuce-theme    { color: #ffffff !important; }
         .points-drawer {
             position: absolute; right: 0; top: 0; width: 18%; height: 100%;
             background: var(--drawer-bg); backdrop-filter: blur(12px); display: flex; flex-direction: column;
@@ -169,20 +173,20 @@
         #tv-stats-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: transparent;
-            display: flex; align-items: flex-end; justify-content: center;
-            padding-bottom: 8vh;
+            display: flex; align-items: center; justify-content: center;
             opacity: 0; pointer-events: none; z-index: 15000;
         }
         #tv-stats-overlay.active   { animation: stats-in  0.55s cubic-bezier(0.25,1,0.5,1) forwards; }
         #tv-stats-overlay.closing  { animation: stats-out 0.4s  ease forwards; }
         .stats-card {
-            background: rgba(18, 18, 22, 0.72);
-            backdrop-filter: blur(18px);
-            border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: 0 8px 48px rgba(0,0,0,0.55),
-                        0 0 0 1px rgba(255,255,255,0.04),
-                        inset 0 1px 0 rgba(255,255,255,0.06);
-            width: fit-content; min-width: 440px; border-radius: 20px; padding: 36px 50px;
+            background: rgba(12, 12, 16, 0.55);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid rgba(255,255,255,0.10);
+            box-shadow: 0 12px 60px rgba(0,0,0,0.45),
+                        0 0 0 1px rgba(255,255,255,0.03),
+                        inset 0 1px 0 rgba(255,255,255,0.07);
+            width: fit-content; min-width: 480px; border-radius: 22px; padding: 38px 54px;
             position: relative; display: flex; flex-direction: column; gap: 16px;
         }
         .stats-logo-left  { position: absolute; top: 15px; left: 20px;  height: 45px; max-width: 120px; object-fit: contain; }
@@ -331,6 +335,43 @@
         #bottom-notif.bn-show .bn-text { animation: bn-txt-in 0.22s 0.28s ease forwards; }
         #bottom-notif.bn-show .bn-dot  { animation: bn-txt-in 0.18s 0.26s ease forwards; }
 
+        /* ── SPONSOR LOGOS BAR ── */
+        #sponsor-logos-bar {
+            position: fixed; top: 28px; right: 32px;
+            display: flex; flex-direction: row; align-items: center;
+            gap: 14px; z-index: 9000;
+        }
+        @keyframes logo-pop-in {
+            0%  { opacity:0; transform:scale(0.55); }
+            70% { transform:scale(1.06); }
+            100%{ opacity:1; transform:scale(1); }
+        }
+        @keyframes logo-pop-out {
+            0%  { opacity:1; transform:scale(1); }
+            100%{ opacity:0; transform:scale(0.55); }
+        }
+        .sponsor-logo-wrap {
+            width: 80px; height: 52px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.07);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 2px 14px rgba(0,0,0,0.28),
+                        0 0 0 1px rgba(255,255,255,0.08);
+            padding: 7px 10px; box-sizing: border-box;
+            opacity: 0;
+        }
+        .sponsor-logo-wrap.slw-show {
+            animation: logo-pop-in  0.42s cubic-bezier(0.175,0.885,0.32,1.275) forwards;
+        }
+        .sponsor-logo-wrap.slw-hide {
+            animation: logo-pop-out 0.28s ease forwards;
+        }
+        .sponsor-logo-wrap img {
+            max-width: 100%; max-height: 100%; object-fit: contain;
+            filter: drop-shadow(0 1px 5px rgba(0,0,0,0.3));
+        }
+
         /* VS INTRO */
         #match-intro-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -406,6 +447,9 @@
         </table>
     </div>
 </div>
+
+<!-- ── SPONSOR LOGOS (зверху-справа, горизонтально) ── -->
+<div id="sponsor-logos-bar"></div>
 
 <div id="match-intro-overlay">
     <div>
@@ -534,6 +578,7 @@
                 lblEl.classList.remove('fl-show');
                 void bgEl.offsetWidth;
                 // Wipe IN
+                window._faultAnimating = true;
                 bgEl.classList.add('fw-in');
                 setTimeout(() => lblEl.classList.add('fl-show'), 240);
                 // Wipe OUT after 1.2s
@@ -541,7 +586,10 @@
                     lblEl.classList.remove('fl-show');
                     bgEl.classList.remove('fw-in');
                     bgEl.classList.add('fw-out');
-                    setTimeout(() => { bgEl.classList.remove('fw-out'); }, 320);
+                    setTimeout(() => {
+                        bgEl.classList.remove('fw-out');
+                        window._faultAnimating = false;
+                    }, 320);
                 }, 1200);
             }
         }
@@ -594,59 +642,56 @@
             document.getElementById(`serve-${p}`).classList.toggle('active', server === p);
         });
 
-        // Wipe + glow alert
+        // Wipe + glow alert (з чергою: fault → alert)
         const alertKey = state.alertKey || "";
         if (alertKey && alertKey !== lastAlertKey) {
             lastAlertKey = alertKey;
-            const ring  = document.getElementById('sb-glow-ring');
-            const el    = document.getElementById('scoreboard-fullscreen-alert');
-            const txtEl = document.getElementById('fullscreen-alert-text');
-
-            // Colour per mode
-            const glowMap = { golden:'#c8a200', tiebreak:'#c0392b', normal:null };
-            const glowColor = glowMap[state.alertMode] || getComputedStyle(document.documentElement).getPropertyValue('--accent-blue').trim() || '#0055ff';
-            ring.style.setProperty('--glow-color', glowColor);
-            el.style.setProperty('--glow-color', glowColor);
-
-            // Ensure wipe bg exists
-            let bg = el.querySelector('.alert-wipe-bg');
-            if (!bg) { bg = document.createElement('div'); bg.className='alert-wipe-bg'; el.insertBefore(bg, txtEl); }
-
-            // Reset animations
-            bg.classList.remove('wipe-in','wipe-out');
-            txtEl.classList.remove('txt-show');
-            void bg.offsetWidth; // reflow
-
-            // Text & theme
-            txtEl.innerText = state.alertText || "";
-            let cls = "alert-text-content";
-            if (state.alertMode === 'golden')   cls += " alert-golden-theme";
-            if (state.alertMode === 'tiebreak') cls += " alert-tiebreak-theme";
-            txtEl.className = cls;
-
-            // 1. Glow ring lights up
-            ring.classList.remove('glow-out');
-            ring.classList.add('glow-active');
-
-            // 2. Wipe bg slides in right→left
-            bg.style.background = glowColor;
-            bg.classList.add('wipe-in');
-
-            // 3. Text appears after bg arrives
-            setTimeout(() => txtEl.classList.add('txt-show'), 280);
-
-            // 4. After 1.4s — wipe bg exits left, glow fades
+            // Якщо зараз іде fault анімація — чекаємо її завершення
+            const delay = window._faultAnimating ? 1350 : 0;
             setTimeout(() => {
+                const ring  = document.getElementById('sb-glow-ring');
+                const el    = document.getElementById('scoreboard-fullscreen-alert');
+                const txtEl = document.getElementById('fullscreen-alert-text');
+
+                const glowMap = { golden:'#c8a200', tiebreak:'#c0392b', deuce:'#6c3483', normal:null };
+                const glowColor = glowMap[state.alertMode] || '#0055ff';
+                ring.style.setProperty('--glow-color', glowColor);
+                el.style.setProperty('--glow-color', glowColor);
+
+                let bg = el.querySelector('.alert-wipe-bg');
+                if (!bg) { bg = document.createElement('div'); bg.className='alert-wipe-bg'; el.insertBefore(bg, txtEl); }
+
+                bg.classList.remove('wipe-in','wipe-out');
                 txtEl.classList.remove('txt-show');
-                bg.classList.remove('wipe-in');
-                bg.classList.add('wipe-out');
-                ring.classList.remove('glow-active');
-                ring.classList.add('glow-out');
+                void bg.offsetWidth;
+
+                txtEl.innerText = state.alertText || "";
+                let cls = "alert-text-content";
+                if (state.alertMode === 'golden')   cls += " alert-golden-theme";
+                if (state.alertMode === 'tiebreak') cls += " alert-tiebreak-theme";
+                if (state.alertMode === 'deuce')    cls += " alert-deuce-theme";
+                txtEl.className = cls;
+
+                ring.classList.remove('glow-out');
+                ring.classList.add('glow-active');
+                bg.style.background = glowColor;
+                bg.classList.add('wipe-in');
+
+                setTimeout(() => txtEl.classList.add('txt-show'), 260);
+
+                // Текст тримається 2с → wipe out після 2.6с від старту
                 setTimeout(() => {
-                    bg.classList.remove('wipe-out');
-                    ring.classList.remove('glow-out');
-                }, 400);
-            }, 1400);
+                    txtEl.classList.remove('txt-show');
+                    bg.classList.remove('wipe-in');
+                    bg.classList.add('wipe-out');
+                    ring.classList.remove('glow-active');
+                    ring.classList.add('glow-out');
+                    setTimeout(() => {
+                        bg.classList.remove('wipe-out');
+                        ring.classList.remove('glow-out');
+                    }, 350);
+                }, 2600);
+            }, delay);
         }
 
         // Stats overlay
@@ -683,6 +728,9 @@
         // Stats logos
         if (ui.statLogoT) document.getElementById('stat-logo-t').src = ui.statLogoT;
         if (ui.statLogoF) document.getElementById('stat-logo-f').src = ui.statLogoF;
+
+        // Sponsor logos bar (зверху-справа)
+        renderSponsorLogos(ui.sponsorLogos || []);
     }
 
     function updateStatsPanel(state) {
@@ -691,13 +739,20 @@
         const setsHistory = state.setsHistory || [[],[]];
         const games = state.games || [0,0];
         const activeSetIndex = state.activeSetIndex || 0;
-        const setTimes = state.setTimes || [];   // хвилини per сет, скидаються кожен сет
+        const setTimes = state.setTimes || [];      // завершені сети — зафіксований час
+        const setStartTime = state._setStartTime;   // час старту поточного сету (ms)
+        const isSetFinished = state._lastStatsIsSetEnd || false;
 
         let totalSets = Math.min(Math.max(activeSetIndex + 1, setsHistory[0].length, 1), 3);
 
-        let headHtml = `<tr style="color:rgba(255,255,255,0.35); font-size:11px; text-transform:uppercase; height:22px; letter-spacing:1px;">
+        // Поточний elapsed для активного сету
+        const nowElapsed = setStartTime
+            ? Math.round((Date.now() - setStartTime) / 60000)
+            : 0;
+
+        let headHtml = `<tr style="color:rgba(255,255,255,0.32); font-size:11px; text-transform:uppercase; height:22px; letter-spacing:1px;">
             <th style="text-align:left; padding-left:6px;">Команда</th>`;
-        for(let s=1; s<=totalSets; s++) headHtml += `<th style="width:95px;">Set ${s}</th>`;
+        for(let s=1; s<=totalSets; s++) headHtml += `<th style="width:100px;">Set ${s}</th>`;
         headHtml += `</tr>`;
         document.getElementById('stats-table-head').innerHTML = headHtml;
 
@@ -707,11 +762,21 @@
             s2.push(setsHistory[1][i] !== undefined ? setsHistory[1][i] : (activeSetIndex===i ? games[1] : '-'));
         }
 
-        // Build rows — time shown under games for row1 only, bright colour
+        // Час для кожного сету:
+        // — завершені сети → фіксований час із setTimes[]
+        // — поточний активний сет → поточний elapsed (скидається з нового сету)
+        function getSetTime(i) {
+            if (setsHistory[0][i] !== undefined) {
+                // завершений сет — показуємо фіксований час
+                return setTimes[i] > 0 ? `${setTimes[i]}'` : '';
+            }
+            // активний сет — поточний elapsed
+            return nowElapsed > 0 ? `${nowElapsed}'` : '';
+        }
+
         let bodyHtml = `<tr class="stats-row"><td class="stats-team-name">${n1}</td>`;
         for(let i=0; i<totalSets; i++) {
-            const t = setTimes[i];
-            const tLabel = (t !== undefined && t !== null && t > 0) ? `${t}'` : '';
+            const tLabel = getSetTime(i);
             bodyHtml += `<td class="stats-set-column">
                 <div class="stats-games-num">${s1[i]}</div>
                 ${tLabel ? `<div class="stats-time-label">${tLabel}</div>` : ''}
@@ -749,6 +814,36 @@
         }
         html += `</tr>`;
         document.getElementById('finish-table-body').innerHTML = html;
+    }
+
+    // ─── SPONSOR LOGOS BAR ──────────────────────────────────────
+    let _lastSponsorKeys = "";
+    function renderSponsorLogos(logos) {
+        const bar = document.getElementById('sponsor-logos-bar');
+        const key = logos.map(l => l.src + l.visible).join('|');
+        if (key === _lastSponsorKeys) return;
+        _lastSponsorKeys = key;
+
+        const visibleLogos = logos.filter(l => l.src && l.visible !== false);
+        // Animate out old ones
+        [...bar.children].forEach(el => {
+            el.classList.remove('slw-show');
+            el.classList.add('slw-hide');
+        });
+        setTimeout(() => {
+            bar.innerHTML = '';
+            visibleLogos.forEach((l, i) => {
+                const wrap = document.createElement('div');
+                wrap.className = 'sponsor-logo-wrap';
+                const img = document.createElement('img');
+                img.src = l.src;
+                img.alt = '';
+                wrap.appendChild(img);
+                bar.appendChild(wrap);
+                // Staggered pop-in
+                setTimeout(() => wrap.classList.add('slw-show'), i * 80);
+            });
+        }, visibleLogos.length === 0 ? 0 : 300);
     }
 
     // ─── FINISH ANIMATION HELPERS ──────────────────────────────
