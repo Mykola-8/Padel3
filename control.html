@@ -1,25 +1,3 @@
-Колю, статус «ОФЛАЙН» світиться через те, що при копіюванні та очищенні коду в одному місці **випадково зламався синтаксис (була пропущена одна лапка)**. Через цю помилку JavaScript повністю зупинявся на старті, додаток не підключався до бази даних, і табло не реагувало на кнопки.
-
-Ось де була помилка в скрипті контролера:
-
-```javascript
-// Було (з помилкою):
-document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 `${rad}`;
-
-// Має бути (виправлено):
-document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
-
-```
-
-Налаштування Firebase (`firebaseConfig`) та структура для GitHub Pages залишилися правильними й не змінювалися. Я повністю виправив цей синтаксичний баг.
-
-Ось фінальний, робочий код контролера. Скопіюй його, і статус «ОНЛАЙН» одразу повернеться!
-
----
-
-## Виправлений код Контролера (`control.html`)
-
-```html
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -116,7 +94,7 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
         }
         .big-btn:active { transform: scale(0.94); opacity: 0.85; }
         @keyframes btn-tap {
-            0%   { transform: scale(1); }
+            0%  { transform: scale(1); }
             30% { transform: scale(0.91); box-shadow: 0 0 0 4px rgba(255,255,255,0.25); }
             100%{ transform: scale(1); box-shadow: none; }
         }
@@ -415,7 +393,7 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
 
 </div>
 
-<!-- SETTINGS PANEL -->
+<!-- ═══════════════════════════════ SETTINGS PANEL ═══════════════════════════════ -->
 <div id="settings-panel">
     <div id="settings-header">
         <h2>⚙️ Налаштування</h2>
@@ -613,7 +591,7 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
         </div>
     </div>
 
-    <!-- УПРАВЛІННЯ МАТЧЕМ -->
+    <!-- КІНЕЦЬ МАТЧУ / СКИДАННЯ — в налаштуваннях -->
     <div class="settings-section">
         <div class="settings-section-title">Управління матчем</div>
         <div class="settings-card" style="padding:14px; display:flex; flex-direction:column; gap:10px;">
@@ -637,10 +615,14 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
     <div style="height:20px"></div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ЗАМІНІТЬ ЦЕ НА ВАШІ ДАНІ FIREBASE                  -->
+<!-- ═══════════════════════════════════════════════════ -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, set, update, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getDatabase, ref, set, update, get, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
+    // ⬇️ ВСТАВТЕ ВАШІ ДАНІ FIREBASE ТУТ ⬇️
     const firebaseConfig = {
         apiKey: "AIzaSyDf6PYBjF096FRE-fUUo5boS8jsieVS9xA",
         authDomain: "padel3-overley.firebaseapp.com",
@@ -684,7 +666,7 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
             isGameActive: false, isTiebreak: false, isAmerican: false,
             isProset: false, deuceCycles: 0, setTimes: [0,0,0], activeSetIndex: 0,
             notifText: "", showFinish: false, showIntro: false, showLogo: false,
-            showBoard: true, showStats: false, isGoldenPoint: false, prosetLimit: 8,
+            showBoard: true, showStats: false, isGoldenPoint: true, prosetLimit: 8,
             americanLimit: 15, p1name: "Команда А", p2name: "Команда Б",
             courtName: 'COURT ' + n, alertKey: "", alertText: "", alertMode: "", isGoldenActive: false
         };
@@ -708,9 +690,9 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
         isGameActive: false, isTiebreak: false, isAmerican: false,
         isProset: false, deuceCycles: 0, setTimes: [0,0,0], activeSetIndex: 0,
         notifText: "", showFinish: false, showIntro: false, showLogo: false,
-        showBoard: true, showStats: false, isGoldenPoint: false, prosetLimit: 8,
+        showBoard: true, showStats: false, isGoldenPoint: true, prosetLimit: 8,
         americanLimit: 15, p1name: "Команда А", p2name: "Команда Б",
-        courtName: "COURT 1", alertKey: "", alertText: "", alertMode: "", faultTeam: null, isGoldenActive: false
+        courtName: "COURT 1", alertKey: "", alertText: "", alertMode: "", faultTeam: null
     };
     let ui = {
         accentBlue: '#0055ff', ballColor: '#ccff00', teamNameColor: '#ffffff',
@@ -722,6 +704,8 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
     };
     let historyStack = [];
     let gamePointCountP1 = 0, gamePointCountP2 = 0;
+    let lastAlertKey = "";
+    let setTimerInterval = null;
 
     // ─── VIBRATE + TAP ────────────────────────────────────────────
     function vibTap(btnEl, pattern) {
@@ -734,6 +718,7 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
         }
     }
 
+    // ─── FIREBASE PUSH ───────────────────────────────────────────
     function pushState() {
         set(gameRef, { state, ui }).catch(e => console.error(e));
     }
@@ -762,6 +747,7 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
         historyStack.push(JSON.parse(JSON.stringify(state)));
         if (!state.isGameActive) {
             state.isGameActive = true;
+            // Стартуємо таймер сету при першому очку (якщо ще не запущений)
             if (!state._setStartTime) state._setStartTime = Date.now();
         }
         const o = 1 - p;
@@ -775,42 +761,66 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
             if (state.scores[p]>=7 && state.scores[p]-state.scores[o]>=2) winGame(p);
             else if ((state.scores[0]+state.scores[1])%2===1) state.server = 1-state.server;
         } else {
+
             if (state.isGoldenActive) {
+                // ── GOLDEN POINT активний ──
+                // Рахунок 3:3 (вимкнено) або advantage (включено)
+                // Наступне очко ЗАВЖДИ вирішує гейм — повернень немає
                 state.isGoldenActive = false;
                 winGame(p);
+
             } else if (state.scores[p]===3 && state.scores[o]===3) {
+                // ── 40:40 ──────────────────────────────────────────────
+
                 if (!state.isGoldenPoint) {
+                    // ════════════════════════════════════════
+                    // Deuce ВИМКНЕНО
+                    // ════════════════════════════════════════
+                    // Одразу: велика анімація GOLDEN POINT
+                    // + золота плашка знизу (через notifText)
+                    // Рахунок 3:3 залишається
+                    // Наступне очко вирішує гейм
                     state.alertKey  = "GP_" + Date.now();
                     state.alertText = "GOLDEN POINT";
                     state.alertMode = "golden";
+                    state.notifText = "GOLDEN POINT";
                     state.isGoldenActive = true;
+
                 } else {
-                    if (state.deuceCycles === 0) {
+                    // ════════════════════════════════════════
+                    // Deuce ВКЛЮЧЕНО
+                    // deuceCycles = кількість разів повернення до 40:40
+                    // Перший  40:40 (deuceCycles=0) → DEUCE анімація → advantage
+                    // Другий  40:40 (deuceCycles=1) → DEUCE анімація → advantage
+                    // Третій  40:40 (deuceCycles=2) → GOLDEN POINT анімація → advantage (вирішальний, повернень немає)
+                    // ════════════════════════════════════════
+                    if (state.deuceCycles < 2) {
+                        // Перший або другий deuce → DEUCE анімація → advantage
                         state.alertKey  = "DEUCE_" + Date.now();
                         state.alertText = "DEUCE";
                         state.alertMode = "deuce";
-                        state.scores[p] = 4;
-                    } else if (state.deuceCycles === 1) {
-                        state.scores[p] = 4;
+                        state.scores[p] = 4; // advantage
+
                     } else {
+                        // Третій deuce → GOLDEN POINT → вирішальний advantage
                         state.alertKey  = "GP_" + Date.now();
                         state.alertText = "GOLDEN POINT";
                         state.alertMode = "golden";
-                        state.isGoldenActive = true;
+                        state.notifText = "GOLDEN POINT";
+                        state.scores[p] = 4; // advantage
+                        state.isGoldenActive = true; // повернень більше немає
                     }
                 }
+
             } else if (state.scores[p]===4) {
+                // advantage → win
                 winGame(p);
+
             } else if (state.scores[o]===4) {
+                // програш advantage → повернення до 40:40
                 state.scores[o] = 3;
                 state.deuceCycles++;
-                
-                if (state.isGoldenPoint && state.deuceCycles >= 2) {
-                    state.alertKey  = "GP_" + Date.now();
-                    state.alertText = "GOLDEN POINT";
-                    state.alertMode = "golden";
-                    state.isGoldenActive = true;
-                }
+
             } else if (state.scores[p]===3) {
                 winGame(p);
             } else {
@@ -842,6 +852,7 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
         } else { isSetFinished = true; }
 
         if (isSetFinished) {
+            // Фіксуємо хвилини поточного сету
             const now = Date.now();
             const setStart = state._setStartTime || now;
             const elapsed = Math.max(1, Math.round((now - setStart) / 60000));
@@ -852,26 +863,29 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
             state.setsHistory[1].push(state.games[1]);
             state.games = [0,0]; state.isTiebreak = false;
             state.activeSetIndex = Math.min((state.activeSetIndex||0)+1, 2);
+
+            // Скидаємо таймер для наступного сету
             state._setStartTime = Date.now();
 
             state._lastStatsIsSetEnd = true;
             state.showStats = true;
-            setTimeout(() => { state.showStats = false; state._lastStatsIsSetEnd = false; pushState(); }, 4800);
+            setTimeout(() => { state.showStats = false; state._lastStatsIsSetEnd = false; pushState(); }, 5100);
         } else if (isOddGame) {
+            // Непарний гейм — показуємо поточний elapsed
             state._lastStatsIsSetEnd = false;
             state.showStats = true;
-            setTimeout(() => { state.showStats = false; pushState(); }, 4800);
+            setTimeout(() => { state.showStats = false; pushState(); }, 5100);
         }
     }
 
     function computeNotif() {
         const s = state.scores; const g = state.games;
         let txt = "";
+        // alertKey вже встановлено в addPoint для deuce/golden — не перезаписуємо тут
         let alertText = ""; let alertMode = "";
 
-        if (state.isGoldenActive) {
-            txt = "GOLDEN POINT";
-        } else if (state.isGameActive && !state.isTiebreak && !state.isAmerican) {
+        if (state.isGameActive && !state.isTiebreak && !state.isAmerican) {
+            // advantage situation: показуємо game/break/set point на плашці
             for (let i=0; i<2; i++) {
                 if (s[i]>=3 && s[i]>s[1-i]) {
                     const lim = state.isProset ? (state.prosetLimit||8)-1 : 5;
@@ -879,8 +893,8 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
                     const isBreak = state.server!==i;
                     if (isSetPt) { txt="SET POINT"; alertText="SET POINT"; alertMode="normal"; }
                     else {
-                        if (i===0) { gamePointCountP1++; txt=`GAME POINT`; }
-                        else { gamePointCountP2++; txt=`GAME POINT`; }
+                        if (i===0) { gamePointCountP1++; txt=(isBreak?`BREAK POINT #${gamePointCountP1}`:`GAME POINT #${gamePointCountP1}`); }
+                        else { gamePointCountP2++; txt=(isBreak?`BREAK POINT #${gamePointCountP2}`:`GAME POINT #${gamePointCountP2}`); }
                         alertText = isBreak ? "BREAK POINT" : "GAME POINT"; alertMode = "normal";
                     }
                 }
@@ -901,12 +915,15 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
         historyStack.push(JSON.parse(JSON.stringify(state)));
         state.faultTeam = state.server;
         vibTap(btnEl, [60, 40, 60]);
+        // Зберігаємо alertKey що буде після addPoint
         addPoint(1-state.server);
         const pendingAlertKey  = state.alertKey;
         const pendingAlertText = state.alertText;
         const pendingAlertMode = state.alertMode;
+        // Спочатку пушимо тільки fault (без alertKey щоб не конфліктувало)
         state.alertKey = "";
         pushState();
+        // Після fault анімації (1.6с) — пушимо наступний alert
         setTimeout(() => {
             state.faultTeam = null;
             state.alertKey  = pendingAlertKey;
@@ -942,7 +959,7 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
         state.isGoldenPoint = document.getElementById('s-golden').checked;
         state.prosetLimit = parseInt(document.getElementById('s-proset-limit').value)||8;
         state.americanLimit = parseInt(document.getElementById('s-american-limit').value)||15;
-        state.scores = [0,0]; state.isGameActive = false; state.deuceCycles = 0; state.isGoldenActive = false;
+        state.scores = [0,0]; state.isGameActive = false;
         pushState();
     }
 
@@ -987,6 +1004,14 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
         document.getElementById(outId).textContent = document.getElementById(inId).value;
     }
 
+    function uploadLogo(event, key) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const r = new FileReader();
+        r.onload = () => { ui[key] = r.result; pushState(); };
+        r.readAsDataURL(file);
+    }
+
     function uploadLogoUI(event, key, slot) {
         const file = event.target.files[0];
         if (!file) return;
@@ -1026,6 +1051,7 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
 
     function confirmReset() {
         if (confirm(`Скинути матч на Court ${currentCourt}?`)) {
+            // Скидаємо тільки state (рахунок + назви) — ui (кольори/розміри) зберігається
             state = {
                 scores: [0,0], games: [0,0], setsHistory: [[],[]], server: 0,
                 isGameActive: false, isTiebreak: false, isAmerican: state.isAmerican,
@@ -1034,17 +1060,19 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
                 notifText: "", showFinish: false, showIntro: false,
                 showLogo: state.showLogo, showBoard: true, showStats: false,
                 prosetLimit: state.prosetLimit, americanLimit: state.americanLimit,
-                p1name: "Команда А", p2name: "Команда Б",
+                p1name: "", p2name: "",
                 courtName: `COURT ${currentCourt}`,
                 alertKey: "", alertText: "", alertMode: "", faultTeam: null,
                 _setStartTime: null, _lastStatsIsSetEnd: false
             };
             historyStack = [];
             gamePointCountP1 = 0; gamePointCountP2 = 0;
+            // Очищаємо поля назв в налаштуваннях
             const p1el = document.getElementById('s-p1');
             const p2el = document.getElementById('s-p2');
-            if (p1el) p1el.value = "Команда А";
-            if (p2el) p2el.value = "Команда Б";
+            if (p1el) p1el.value = "";
+            if (p2el) p2el.value = "";
+            // ui не чіпаємо — тільки state
             set(gameRef, { state, ui }).catch(e => console.error(e));
             updateControlUI();
         }
@@ -1055,11 +1083,14 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
         const sh = state.setsHistory || [[],[]];
         const p1 = (state.p1name || "Команда А").toUpperCase();
         const p2 = (state.p2name || "Команда Б").toUpperCase();
+        const pts = [0, 15, 30, 40, "AD"];
 
+        // Apply colours to mini scoreboard
         document.getElementById('mini-main').style.background = ui.panelBg || 'rgba(60,60,60,0.7)';
         document.getElementById('mini-main').style.borderLeftColor = ui.accentBlue || '#0055ff';
         document.getElementById('mini-drawer').style.background = ui.drawerBg || 'rgba(40,40,40,0.8)';
 
+        // Skew
         const skewVal = ui.sbSkew || '0deg';
         document.getElementById('mini-sb').style.transform = `skewX(${skewVal})`;
         document.getElementById('mini-main').querySelectorAll('.mini-name,.mini-dot,.mini-sets').forEach(el => {
@@ -1069,29 +1100,44 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
             el.style.transform = `skewX(calc(${skewVal} * -1))`;
         });
 
+        // Border radius
         const rad = ui.sbRadius || '10px';
         document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
         document.getElementById('mini-drawer').style.borderRadius = `0 ${rad} ${rad} 0`;
 
+        // Ball color
         document.getElementById('mini-dot-0').style.background = ui.ballColor || '#ccff00';
         document.getElementById('mini-dot-1').style.background = ui.ballColor || '#ccff00';
+        document.getElementById('mini-dot-0').style.boxShadow = `0 0 6px ${ui.ballColor||'#ccff00'}`;
+        document.getElementById('mini-dot-1').style.boxShadow = `0 0 6px ${ui.ballColor||'#ccff00'}`;
 
+        // Names
         document.getElementById('mini-p1').textContent = p1;
         document.getElementById('mini-p2').textContent = p2;
         document.getElementById('mini-p1').style.color = ui.teamNameColor || '#ffffff';
         document.getElementById('mini-p2').style.color = ui.teamNameColor || '#ffffff';
+        document.getElementById('mini-p1').style.fontFamily = ui.fontFamily || "'Oswald', sans-serif";
+        document.getElementById('mini-p2').style.fontFamily = ui.fontFamily || "'Oswald', sans-serif";
 
+        // Score
         const getL = (i) => {
             if (state.isAmerican || state.isTiebreak) return s[i];
             return s[i]===4 ? "AD" : (s[1-i]===4 ? "" : pts[s[i]]);
         };
         document.getElementById('mini-score-p1').textContent = getL(0);
         document.getElementById('mini-score-p2').textContent = getL(1);
+        document.getElementById('mini-score-p1').style.color = ui.scoreColor || '#fff';
+        document.getElementById('mini-score-p2').style.color = ui.scoreColor || '#fff';
 
+        // Drawer visibility
         document.getElementById('mini-drawer').classList.toggle('points-active', !state.isGameActive);
+
+        // Serve dots
         document.getElementById('mini-dot-0').classList.toggle('active', state.server===0);
         document.getElementById('mini-dot-1').classList.toggle('active', state.server===1);
 
+        // Sets
+        const activeIdx = state.activeSetIndex || 0;
         [0,1].forEach(p => {
             let h = "";
             sh[p].forEach(gv => h += `<div class="mini-set">${gv}</div>`);
@@ -1099,14 +1145,18 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
             document.getElementById(`mini-sets-p${p+1}`).innerHTML = h;
         });
 
+        // Badges
         const tbBadge = document.getElementById('mini-tb-badge');
         tbBadge.textContent = state.isTiebreak ? 'TIE-BREAK' : (state.isProset ? `PRO-SET ${state.prosetLimit||8}` : '');
         tbBadge.classList.toggle('active', state.isTiebreak || state.isProset);
+        tbBadge.style.background = ui.popupBg || '#444';
 
         const notifBadge = document.getElementById('mini-notif-badge');
         notifBadge.textContent = state.notifText || '';
         notifBadge.classList.toggle('active', !!(state.notifText));
+        notifBadge.style.background = ui.popupBg || '#444';
 
+        // Also update big button score previews
         document.getElementById('btn-score-p1').textContent = getL(0);
         document.getElementById('btn-score-p2').textContent = getL(1);
     }
@@ -1123,9 +1173,10 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
         document.getElementById('serve-p1-lbl').textContent = p1.toUpperCase().substring(0,7);
         document.getElementById('serve-p2-lbl').textContent = p2.toUpperCase().substring(0,7);
 
+        const pts2 = [0, 15, 30, 40, "AD"];
         const getL = (i) => {
             if (state.isAmerican || state.isTiebreak) return s[i];
-            return s[i]===4 ? "AD" : (s[1-i]===4 ? "" : pts[s[i]]);
+            return s[i]===4 ? "AD" : (s[1-i]===4 ? "" : pts2[s[i]]);
         };
         document.getElementById('disp-score-p1').textContent = getL(0);
         document.getElementById('disp-score-p2').textContent = getL(1);
@@ -1139,28 +1190,11 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
         if (togBoard) togBoard.checked = state.showBoard !== false;
         document.getElementById('tog-intro').checked = !!state.showIntro;
         document.getElementById('tog-logo').checked = !!state.showLogo;
-        
-        if(document.getElementById('s-american')) document.getElementById('s-american').checked = !!state.isAmerican;
-        if(document.getElementById('s-proset')) document.getElementById('s-proset').checked = !!state.isProset;
-        if(document.getElementById('s-golden')) document.getElementById('s-golden').checked = !!state.isGoldenPoint;
 
         renderMiniScoreboard();
     }
 
     function openSettings() { document.getElementById('settings-panel').classList.add('open'); }
-    window.openSettings = function() {
-        document.getElementById('s-p1').value = state.p1name;
-        document.getElementById('s-p2').value = state.p2name;
-        document.getElementById('s-court').value = state.courtName;
-        document.getElementById('s-american').checked = !!state.isAmerican;
-        document.getElementById('s-proset').checked = !!state.isProset;
-        document.getElementById('s-golden').checked = !!state.isGoldenPoint;
-        document.getElementById('s-proset-limit').value = state.prosetLimit || 8;
-        document.getElementById('s-american-limit').value = state.americanLimit || 15;
-        renderSponsorList();
-        refreshLogoPreviews();
-        document.getElementById('settings-panel').classList.add('open');
-    };
     function closeSettings() { document.getElementById('settings-panel').classList.remove('open'); }
     function saveAllSettings() { liveUpdateName(); liveUpdateUI(); sendMode(); closeSettings(); }
 
@@ -1225,9 +1259,19 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
         r.readAsDataURL(file);
     }
 
+    // Init sponsor list when settings open
+    window.openSettings = function() {
+        renderSponsorList();
+        refreshLogoPreviews();
+        document.getElementById('settings-panel').classList.add('open');
+    };
+
     // ─── EXPOSE TO WINDOW ──────────────────────────────────────────
     window.sendAction = (type, p, btnEl) => {
-        if (type==='point') { vibTap(btnEl, 35); addPoint(p); }
+        if (type==='point') {
+            vibTap(btnEl, 35);
+            addPoint(p);
+        }
         else if (type==='fault') doFault(btnEl);
         else if (type==='undo')  doUndo(btnEl);
         else if (type==='finish') { state.showFinish = !state.showFinish; pushState(); }
@@ -1238,7 +1282,9 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
     window.liveUpdateName = liveUpdateName;
     window.liveUpdateUI = liveUpdateUI;
     window.gVal = gVal;
+    window.uploadLogo = uploadLogo;
     window.confirmReset = confirmReset;
+    window.openSettings = openSettings;
     window.closeSettings = closeSettings;
     window.saveAllSettings = saveAllSettings;
     window.switchCourt = switchCourt;
@@ -1250,10 +1296,9 @@ document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
     window.clearLogo = clearLogo;
     window.renderMiniScoreboard = renderMiniScoreboard;
 
+    // Init
     buildCourtBar();
     updateControlUI();
 </script>
 </body>
 </html>
-
-```
