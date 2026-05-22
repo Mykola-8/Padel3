@@ -47,22 +47,24 @@
             opacity: 1;
         }
         #scoreboard-anchor.hidden-board { opacity: 0; pointer-events: none; transform: translateY(20px); }
-        
         #logo-container {
             position: absolute; left: 0; top: 0;
+            /* Ширина пропорційна висоті табла, фіксована */
             width: calc(var(--sb-h) * 1.4);
             height: calc(var(--sb-h) * 0.55);
             background: transparent;
             border-radius: 8px 8px 0 0; padding: 8px 12px;
             display: flex; align-items: center; justify-content: center;
+            /* Анімація: виїжджає вгору */
             transform: translateY(0); opacity: 0; z-index: 3;
-            transition: transform 0.45s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.35s ease;
+            transition: transform 0.45s cubic-bezier(0.19, 1, 0.22, 1),
+                        opacity 0.35s ease;
             box-shadow: 0 -4px 20px rgba(0,0,0,0.18);
             box-sizing: border-box;
         }
         #logo-container.active { transform: translateY(-100%); opacity: 1; }
-        #logo-container img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.35)); }
-        
+        #logo-container img { max-width: 100%; max-height: 100%; object-fit: contain;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.35)); }
         .popup-label {
             position: absolute; background: var(--popup-bg); color: var(--popup-text); padding: 5px 25px;
             font-size: 13px; font-weight: 900; text-transform: uppercase;
@@ -71,14 +73,16 @@
         #tiebreak-panel { top: -35px; right: 25px; border-radius: 6px 6px 0 0; }
         #proset-indicator { top: -35px; left: 40%; border-radius: 6px 6px 0 0; }
         #tiebreak-panel.active, #proset-indicator.active { opacity: 1; transform: translateY(-10px); }
-        
         #scoreboard-main {
             flex: 1; background: var(--panel-bg); border-left: 12px solid var(--accent-blue);
             display: flex; flex-direction: column; position: relative; z-index: 2;
             border-radius: var(--sb-radius) 0 0 var(--sb-radius); transform: skewX(var(--sb-skew)); overflow: hidden;
         }
         .inner-content { transform: skewX(calc(var(--sb-skew) * -1)); height: 100%; display: flex; flex-direction: column; position: relative; }
-        
+        /* ── GLOW RING (контур табла) ── */
+        @keyframes sb-glow-in  { 0%{opacity:0} 100%{opacity:1} }
+        @keyframes sb-glow-out { 0%{opacity:1} 100%{opacity:0} }
+
         #sb-glow-ring {
             position: absolute; inset: -4px; border-radius: calc(var(--sb-radius) + 4px);
             pointer-events: none; z-index: 200; opacity: 0;
@@ -86,11 +90,10 @@
                         0 0 24px 4px var(--glow-color, var(--accent-blue)),
                         0 0 60px 10px var(--glow-color, var(--accent-blue));
         }
-        @keyframes sb-glow-in  { 0%{opacity:0} 100%{opacity:1} }
-        @keyframes sb-glow-out { 0%{opacity:1} 100%{opacity:0} }
         #sb-glow-ring.glow-active { animation: sb-glow-in 0.35s ease forwards; }
         #sb-glow-ring.glow-out    { animation: sb-glow-out 0.45s ease forwards; }
 
+        /* ── WIPE ALERT ── */
         #scoreboard-fullscreen-alert {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             overflow: hidden; background: transparent;
@@ -109,6 +112,7 @@
         .alert-wipe-bg.wipe-in  { animation: wipe-in  0.30s cubic-bezier(0.4,0,0.2,1) forwards; }
         .alert-wipe-bg.wipe-out { animation: wipe-out 0.30s cubic-bezier(0.4,0,0.2,1) forwards; }
 
+        /* Текст — по центру, великий */
         @keyframes txt-appear {
             0%  { opacity:0; transform:scale(0.82) translateY(6px); letter-spacing:8px; }
             100%{ opacity:1; transform:scale(1)    translateY(0);   letter-spacing:4px; }
@@ -118,20 +122,20 @@
         .alert-text-content {
             position: relative; z-index: 1;
             font-family: var(--team-font-family);
-            font-size: calc(var(--sb-h) * 0.52);
+            font-size: calc(var(--sb-h) * 0.52);   /* більший */
             font-weight: 900; text-transform: uppercase; letter-spacing: 4px;
             color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.55);
             opacity: 0; text-align: center; width: 100%; padding: 0 5%;
             box-sizing: border-box;
         }
+        /* Текст тримається 2с (appear 0.28s → hold → gone at 2.3s) */
         .alert-text-content.txt-show {
             animation: txt-appear 0.28s 0.26s cubic-bezier(0.175,0.885,0.32,1.275) forwards,
                        txt-gone   0.28s 2.3s ease forwards;
         }
-        .alert-golden-theme   { color: #ffffff !important; text-shadow: 0 0 20px #fff, 0 4px 10px rgba(0,0,0,0.7) !important; }
+        .alert-golden-theme   { color: #1a1200 !important; }
         .alert-tiebreak-theme { color: #ffffff !important; }
         .alert-deuce-theme    { color: #ffffff !important; }
-        
         .points-drawer {
             position: absolute; right: 0; top: 0; width: 18%; height: 100%;
             background: var(--drawer-bg); backdrop-filter: blur(12px); display: flex; flex-direction: column;
@@ -146,7 +150,7 @@
             border-bottom: 2px solid var(--cell-border);
             box-sizing: border-box; overflow: hidden; text-align: center; width: 100%;
         }
-        .player-row { display: flex; align-items: center; flex: 1; padding: 0 0 0 5%; border-bottom: 2px solid var(--cell-border); overflow: hidden; position: relative; }
+        .player-row { display: flex; align-items: center; flex: 1; padding: 0 0 0 5%; border-bottom: 2px solid var(--cell-border); overflow: hidden; }
         .player-name { flex: 1; font-size: calc(var(--sb-h) * 0.28); color: var(--team-name-color); font-family: var(--team-font-family); letter-spacing: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; }
         .sets-history { display: flex; height: 100%; border-left: 2px solid var(--cell-border); align-items: center; }
         .set-box-wrapper { display: flex; flex-direction: column; align-items: center; padding: 0 14px; justify-content: center; border-right: 1px solid rgba(255,255,255,0.1); height: 100%; }
@@ -163,7 +167,6 @@
             box-shadow: 0 0 15px var(--ball-color); transition: opacity 0.3s, background 0.1s; flex-shrink: 0;
         }
         .serve-dot.active { opacity: 1; }
-        
         /* ── STATS OVERLAY ── */
         @keyframes stats-in  { 0%{opacity:0;transform:translateY(30px) scale(0.96)} 100%{opacity:1;transform:translateY(0) scale(1)} }
         @keyframes stats-out { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-20px) scale(0.97)} }
@@ -176,9 +179,13 @@
         #tv-stats-overlay.active   { animation: stats-in  0.55s cubic-bezier(0.25,1,0.5,1) forwards; }
         #tv-stats-overlay.closing  { animation: stats-out 0.4s  ease forwards; }
         .stats-card {
-            background: rgba(12, 12, 16, 0.55); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+            background: rgba(12, 12, 16, 0.55);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
             border: 1px solid rgba(255,255,255,0.10);
-            box-shadow: 0 12px 60px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.03), inset 0 1px 0 rgba(255,255,255,0.07);
+            box-shadow: 0 12px 60px rgba(0,0,0,0.45),
+                        0 0 0 1px rgba(255,255,255,0.03),
+                        inset 0 1px 0 rgba(255,255,255,0.07);
             width: fit-content; min-width: 480px; border-radius: 22px; padding: 38px 54px;
             position: relative; display: flex; flex-direction: column; gap: 16px;
         }
@@ -191,7 +198,6 @@
         .stats-set-column { width: 95px; text-align: center; }
         .stats-games-num  { font-size: 46px; font-weight: 900; font-family: var(--team-font-family); color: white; }
         .stats-time-label { font-size: 15px; font-weight: 900; color: #7eb8ff; font-family: 'Inter', sans-serif; margin-top: 1px; letter-spacing: 0.5px; }
-        
         /* ── FINISH ANIMATION ── */
         @keyframes digit-breathe {
             0%,100%{ transform:scale(1)   translateY(0);   opacity:1; }
@@ -207,7 +213,10 @@
         @keyframes finish-bg-in  { 0%{opacity:0} 100%{opacity:1} }
         @keyframes finish-card-in{ 0%{opacity:0;transform:translateY(60px) scale(0.9)} 100%{opacity:1;transform:translateY(0) scale(1)} }
 
-        .sb-digit { display: inline-block; transition: color 0.3s; }
+        .sb-digit {
+            display: inline-block;
+            transition: color 0.3s;
+        }
         .sb-digit.breathing { animation: digit-breathe 0.7s ease-in-out infinite; }
         .sb-digit.scatter   { animation: digit-scatter 0.65s ease-in forwards; }
 
@@ -221,7 +230,8 @@
         .finish-card {
             background: var(--finish-bg); width: 720px; border: 1px solid rgba(255,255,255,0.15);
             border-radius: 24px; padding: 40px; box-shadow: 0 35px 80px rgba(0,0,0,0.95);
-            display: flex; flex-direction: column; gap: 25px; text-align: center; opacity: 0;
+            display: flex; flex-direction: column; gap: 25px; text-align: center;
+            opacity: 0;
         }
         #match-finish-overlay.active .finish-card { animation: finish-card-in 0.55s 1.8s cubic-bezier(0.18,0.89,0.32,1.28) forwards; }
         .finish-title { font-size: 34px; font-weight: 900; letter-spacing: 4px; color: var(--accent-blue); text-transform: uppercase; margin: 0; }
@@ -232,43 +242,194 @@
         .finish-cell-set { width: 85px; text-align: center; }
         .finish-box-score { display: inline-block; min-width: 65px; height: 65px; line-height: 65px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; font-size: 38px; font-weight: 900; font-family: var(--team-font-family); color: #cccccc; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .finish-box-score.winner-box { background: linear-gradient(135deg, rgba(0,85,255,0.5), rgba(0,40,150,0.65)); border: 1px solid rgba(0,85,255,0.8); color: #ffffff; box-shadow: 0 0 20px rgba(0,85,255,0.5); }
-        
-        /* DOUBLE FAULT WIPE */
-        @keyframes fault-wipe-in  { 0% { transform: translateX(100%); } 100% { transform: translateX(0); } }
-        @keyframes fault-wipe-out { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
-        @keyframes fault-txt-show { 0% { opacity: 0; transform: translateX(10px); } 100% { opacity: 1; transform: translateX(0); } }
-        .fault-wipe-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 20; }
-        .fault-wipe-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #c0392b; transform: translateX(100%); }
-        .fault-wipe-label { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-family: var(--team-font-family); font-size: calc(var(--sb-h) * 0.26); font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #ffffff; white-space: nowrap; opacity: 0; pointer-events: none; }
+        /* ── DEUCE WIPE: накриває все табло справа наліво ── */
+        @keyframes deuce-wipe-in  {
+            0%   { transform: translateX(100%); }
+            100% { transform: translateX(0%); }
+        }
+        @keyframes deuce-wipe-out {
+            0%   { transform: translateX(0%); }
+            100% { transform: translateX(-100%); }
+        }
+        @keyframes deuce-txt-in {
+            0%   { opacity: 0; letter-spacing: 12px; transform: translateY(4px); }
+            100% { opacity: 1; letter-spacing: 5px;  transform: translateY(0); }
+        }
+        @keyframes deuce-txt-out {
+            0%   { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        /* Контейнер — накриває inner-content (обидва рядки) */
+        #deuce-wipe-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; pointer-events: none; z-index: 30;
+        }
+        #deuce-wipe-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #4a235a 0%, #6c3483 60%, #7d3c98 100%);
+            transform: translateX(100%);
+            box-shadow: inset 0 0 60px rgba(0,0,0,0.3);
+        }
+        #deuce-wipe-bg.dw-in  { animation: deuce-wipe-in  0.32s cubic-bezier(0.4,0,0.2,1) forwards; }
+        #deuce-wipe-bg.dw-out { animation: deuce-wipe-out 0.32s cubic-bezier(0.4,0,0.2,1) forwards; }
+        #deuce-wipe-label {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            gap: 18px;
+            font-family: var(--team-font-family);
+            font-size: calc(var(--sb-h) * 0.46);
+            font-weight: 900; text-transform: uppercase; letter-spacing: 5px;
+            color: #ffffff; white-space: nowrap; opacity: 0;
+            text-shadow: 0 3px 20px rgba(0,0,0,0.5);
+            pointer-events: none;
+        }
+        #deuce-wipe-label .deuce-score {
+            font-size: calc(var(--sb-h) * 0.28);
+            opacity: 0.7; letter-spacing: 2px;
+            font-weight: 700;
+        }
+        #deuce-wipe-label.dl-show {
+            animation: deuce-txt-in  0.25s 0.28s ease forwards,
+                       deuce-txt-out 0.22s 1.8s  ease forwards;
+        }
+
+        /* FAULT: wipe "DOUBLE FAULT" справа наліво поверх назви команди */
+        @keyframes fault-wipe-in  {
+            0%   { transform: translateX(100%); }
+            100% { transform: translateX(0); }
+        }
+        @keyframes fault-wipe-out {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+        @keyframes fault-txt-show {
+            0%   { opacity: 0; transform: translateX(10px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+        /* Обгортка рядка — position:relative для абсолютного overlay */
+        .player-row { position: relative; }
+        /* Червона плашка що їде справа наліво */
+        .fault-wipe-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; pointer-events: none; z-index: 20;
+        }
+        .fault-wipe-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #c0392b;
+            transform: translateX(100%);
+        }
+        .fault-wipe-label {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            font-family: var(--team-font-family); font-size: calc(var(--sb-h) * 0.26);
+            font-weight: 900; text-transform: uppercase; letter-spacing: 3px;
+            color: #ffffff; white-space: nowrap; opacity: 0;
+            pointer-events: none;
+        }
         .fault-wipe-bg.fw-in   { animation: fault-wipe-in  0.28s cubic-bezier(0.4,0,0.2,1) forwards; }
         .fault-wipe-bg.fw-out  { animation: fault-wipe-out 0.28s cubic-bezier(0.4,0,0.2,1) forwards; }
         .fault-wipe-label.fl-show { animation: fault-txt-show 0.22s 0.24s ease forwards; }
 
         /* ── BOTTOM NOTIF PLANK ── */
-        @keyframes bn-slide-in  { 0% { transform: translateY(0); opacity: 0; } 100% { transform: translateY(calc(100% + 6px)); opacity: 1; } }
-        @keyframes bn-slide-out { 0% { transform: translateY(calc(100% + 6px)); opacity: 1; } 100% { transform: translateY(0); opacity: 0; } }
-        @keyframes bn-txt-in { 0% { opacity: 0; letter-spacing: 5px; } 100% { opacity: 1; letter-spacing: 1.5px; } }
-        #bottom-notif { position: absolute; bottom: 0; left: 8%; width: 84%; height: 30px; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 50; transform: translateY(0); opacity: 0; }
-        .bn-bg { position: absolute; inset: 0; background: rgba(30,30,35,0.82); border-left: 4px solid var(--bn-color, var(--accent-blue)); border-radius: 6px; backdrop-filter: blur(10px); box-shadow: 0 4px 18px rgba(0,0,0,0.45); }
-        .bn-bg::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: var(--bn-color, var(--accent-blue)); opacity: 0.5; }
-        .bn-text { position: relative; z-index: 1; font-family: var(--team-font-family); font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #ffffff; opacity: 0; }
-        .bn-dot { position: relative; z-index: 1; width: 6px; height: 6px; border-radius: 50%; background: var(--bn-color, var(--accent-blue)); box-shadow: 0 0 6px var(--bn-color, var(--accent-blue)); margin-right: 8px; flex-shrink: 0; opacity: 0; }
-        #bottom-notif.bn-show { animation: bn-slide-in 0.36s cubic-bezier(0.4,0,0.2,1) forwards; }
-        #bottom-notif.bn-hide { animation: bn-slide-out 0.28s cubic-bezier(0.4,0,0.2,1) forwards; }
+        @keyframes bn-slide-in  {
+            0%   { transform: translateY(0);           opacity: 0; }
+            100% { transform: translateY(calc(100% + 6px)); opacity: 1; }
+        }
+        @keyframes bn-slide-out {
+            0%   { transform: translateY(calc(100% + 6px)); opacity: 1; }
+            100% { transform: translateY(0);               opacity: 0; }
+        }
+        @keyframes bn-txt-in {
+            0%   { opacity: 0; letter-spacing: 5px; }
+            100% { opacity: 1; letter-spacing: 1.5px; }
+        }
+        #bottom-notif {
+            position: absolute;
+            bottom: 0; left: 8%; width: 84%;   /* трохи вужча — не на весь рядок */
+            height: 30px;                        /* менша висота */
+            display: flex; align-items: center; justify-content: center;
+            pointer-events: none; z-index: 50;
+            transform: translateY(0); opacity: 0;
+        }
+        .bn-bg {
+            position: absolute; inset: 0;
+            background: rgba(30,30,35,0.82);
+            border-left: 4px solid var(--bn-color, var(--accent-blue));
+            border-radius: 6px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 18px rgba(0,0,0,0.45);
+        }
+        .bn-bg::after {
+            content: '';
+            position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+            background: var(--bn-color, var(--accent-blue)); opacity: 0.5;
+        }
+        .bn-text {
+            position: relative; z-index: 1;
+            font-family: var(--team-font-family); font-size: 12px; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            color: #ffffff; opacity: 0;
+        }
+        .bn-dot {
+            position: relative; z-index: 1;
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--bn-color, var(--accent-blue));
+            box-shadow: 0 0 6px var(--bn-color, var(--accent-blue));
+            margin-right: 8px; flex-shrink: 0; opacity: 0;
+        }
+        #bottom-notif.bn-show {
+            animation: bn-slide-in 0.36s cubic-bezier(0.4,0,0.2,1) forwards;
+        }
+        #bottom-notif.bn-hide {
+            animation: bn-slide-out 0.28s cubic-bezier(0.4,0,0.2,1) forwards;
+        }
         #bottom-notif.bn-show .bn-text { animation: bn-txt-in 0.22s 0.28s ease forwards; }
         #bottom-notif.bn-show .bn-dot  { animation: bn-txt-in 0.18s 0.26s ease forwards; }
 
         /* ── SPONSOR LOGOS BAR ── */
-        #sponsor-logos-bar { position: fixed; top: 28px; right: 32px; display: flex; flex-direction: row; align-items: center; gap: 14px; z-index: 9000; }
-        @keyframes logo-pop-in { 0% { opacity:0; transform:scale(0.55); } 70% { transform:scale(1.06); } 100%{ opacity:1; transform:scale(1); } }
-        @keyframes logo-pop-out { 0% { opacity:1; transform:scale(1); } 100%{ opacity:0; transform:scale(0.55); } }
-        .sponsor-logo-wrap { width: 80px; height: 52px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: rgba(255,255,255,0.07); backdrop-filter: blur(8px); box-shadow: 0 2px 14px rgba(0,0,0,0.28), 0 0 0 1px rgba(255,255,255,0.08); padding: 7px 10px; box-sizing: border-box; opacity: 0; }
-        .sponsor-logo-wrap.slw-show { animation: logo-pop-in 0.42s cubic-bezier(0.175,0.885,0.32,1.275) forwards; }
-        .sponsor-logo-wrap.slw-hide { animation: logo-pop-out 0.28s ease forwards; }
-        .sponsor-logo-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 1px 5px rgba(0,0,0,0.3)); }
+        #sponsor-logos-bar {
+            position: fixed; top: 28px; right: 32px;
+            display: flex; flex-direction: row; align-items: center;
+            gap: 14px; z-index: 9000;
+        }
+        @keyframes logo-pop-in {
+            0%  { opacity:0; transform:scale(0.55); }
+            70% { transform:scale(1.06); }
+            100%{ opacity:1; transform:scale(1); }
+        }
+        @keyframes logo-pop-out {
+            0%  { opacity:1; transform:scale(1); }
+            100%{ opacity:0; transform:scale(0.55); }
+        }
+        .sponsor-logo-wrap {
+            width: 80px; height: 52px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.07);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 2px 14px rgba(0,0,0,0.28),
+                        0 0 0 1px rgba(255,255,255,0.08);
+            padding: 7px 10px; box-sizing: border-box;
+            opacity: 0;
+        }
+        .sponsor-logo-wrap.slw-show {
+            animation: logo-pop-in  0.42s cubic-bezier(0.175,0.885,0.32,1.275) forwards;
+        }
+        .sponsor-logo-wrap.slw-hide {
+            animation: logo-pop-out 0.28s ease forwards;
+        }
+        .sponsor-logo-wrap img {
+            max-width: 100%; max-height: 100%; object-fit: contain;
+            filter: drop-shadow(0 1px 5px rgba(0,0,0,0.3));
+        }
 
         /* VS INTRO */
-        #match-intro-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; z-index: 19000; background: rgba(0,0,0,0.7); }
+        #match-intro-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.5s ease; z-index: 19000;
+            background: rgba(0,0,0,0.7);
+        }
         #match-intro-overlay.active { opacity: 1; }
         .intro-card { display: flex; align-items: center; gap: 30px; }
         .intro-team { font-family: var(--team-font-family); font-size: 48px; font-weight: 700; text-transform: uppercase; color: white; }
@@ -294,6 +455,14 @@
     <div id="scoreboard-main">
         <div id="sb-glow-ring"></div>
         <div class="inner-content">
+            <!-- DEUCE wipe — накриває обидва рядки -->
+            <div id="deuce-wipe-overlay">
+                <div id="deuce-wipe-bg"></div>
+                <div id="deuce-wipe-label">
+                    <span id="deuce-wipe-text">DEUCE</span>
+                    <span class="deuce-score" id="deuce-score-label">40 : 40</span>
+                </div>
+            </div>
             <div id="scoreboard-fullscreen-alert">
                 <div id="fullscreen-alert-text" class="alert-text-content">GAME POINT</div>
             </div>
@@ -338,6 +507,7 @@
     </div>
 </div>
 
+<!-- ── SPONSOR LOGOS (зверху-справа, горизонтально) ── -->
 <div id="sponsor-logos-bar"></div>
 
 <div id="match-intro-overlay">
@@ -351,10 +521,14 @@
     </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ЗАМІНІТЬ ЦЕ НА ВАШІ ДАНІ FIREBASE                  -->
+<!-- ═══════════════════════════════════════════════════ -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
+    // ⬇️ ВСТАВТЕ ВАШІ ДАНІ FIREBASE ТУТ ⬇️
     const firebaseConfig = {
         apiKey: "AIzaSyDf6PYBjF096FRE-fUUo5boS8jsieVS9xA",
         authDomain: "padel3-overley.firebaseapp.com",
@@ -375,7 +549,7 @@
     let forceShowStats = false;
     let statsTimeout = null;
 
-    // ── Черга анімацій (Продовжено крок до 3100мс для плавності) ─────────────────
+    // ── Черга анімацій ──────────────────────────────────────────
     let animQueue = [];
     let animBusy  = false;
     function enqueueAnim(fn, duration) {
@@ -388,6 +562,39 @@
         const { fn, duration } = animQueue.shift();
         fn();
         setTimeout(drainQueue, duration);
+    }
+
+    // ── DEUCE WIPE функція ──────────────────────────────────────
+    function playDeuceWipe(text, color) {
+        const bg  = document.getElementById('deuce-wipe-bg');
+        const lbl = document.getElementById('deuce-wipe-label');
+        const txt = document.getElementById('deuce-wipe-text');
+        const scr = document.getElementById('deuce-score-label');
+        if (!bg || !lbl) return;
+
+        // Колір фону залежно від типу
+        if (color) bg.style.background = color;
+        else bg.style.background = 'linear-gradient(135deg,#4a235a 0%,#6c3483 60%,#7d3c98 100%)';
+
+        txt.textContent = text || 'DEUCE';
+        scr.textContent = (text === 'DEUCE') ? '40 : 40' : '';
+
+        // Reset
+        bg.classList.remove('dw-in','dw-out');
+        lbl.classList.remove('dl-show');
+        void bg.offsetWidth;
+
+        // Wipe IN
+        bg.classList.add('dw-in');
+        setTimeout(() => lbl.classList.add('dl-show'), 280);
+
+        // Wipe OUT після 2.1с
+        setTimeout(() => {
+            lbl.classList.remove('dl-show');
+            bg.classList.remove('dw-in');
+            bg.classList.add('dw-out');
+            setTimeout(() => bg.classList.remove('dw-out'), 380);
+        }, 2100);
     }
 
     function updateStyle(p, v) { document.documentElement.style.setProperty(p, v); }
@@ -403,7 +610,9 @@
         const isGameActive = state.isGameActive || false;
         const isTiebreak = state.isTiebreak || false;
         const isAmerican = state.isAmerican || false;
+        const setTimes = state.setTimes || [0,0,0];
         const activeSetIndex = state.activeSetIndex || 0;
+        const notifText = state.notifText || "";
         const showFinish = state.showFinish || false;
         const showIntro = state.showIntro || false;
         const showLogo = state.showLogo || false;
@@ -434,6 +643,10 @@
             anchor.style.transform = `scale(${ui.sbScale})`;
             anchor.style.transformOrigin = 'top left';
         }
+        if (ui.logoW) updateStyle('--logo-w', ui.logoW);
+        if (ui.logoH) updateStyle('--logo-h', ui.logoH);
+
+        // Scoreboard position via CSS vars (cleaner, respects transitions)
         if (ui.sbTop  !== undefined) document.documentElement.style.setProperty('--sb-top',  ui.sbTop  + 'px');
         if (ui.sbLeft !== undefined) document.documentElement.style.setProperty('--sb-left', ui.sbLeft + 'px');
 
@@ -453,7 +666,7 @@
         document.getElementById('p2-score').innerText = getL(1);
         document.getElementById('drawer').classList.toggle('points-active', isGameActive);
 
-        // Fault wipe animation
+        // Fault wipe animation — через чергу
         const faultTeam = state.faultTeam;
         if (faultTeam !== undefined && faultTeam !== null && faultTeam !== lastFaultTeam) {
             lastFaultTeam = faultTeam;
@@ -484,28 +697,35 @@
             }
         }
 
+        // Logo
         if (ui.logoSrc) document.getElementById('logo-img').src = ui.logoSrc;
         document.getElementById('logo-container').classList.toggle('active', showLogo && !!ui.logoSrc);
 
+        // Panels
         document.getElementById('tiebreak-panel').classList.toggle('active', isTiebreak);
         document.getElementById('proset-indicator').classList.toggle('active', isProset);
         if (isProset) document.getElementById('proset-indicator').innerText = `PRO-SET ${prosetLimit}`;
 
-        // Bottom plank
+
+
+        // Bottom notif plank (game/break/set/break/golden point)
         const bnEl   = document.getElementById('bottom-notif');
         const bnText = document.getElementById('bn-text-el');
         const notif  = state.notifText || "";
         const prevNotif = bnEl.dataset.lastNotif || "";
 
         if (notif && notif !== prevNotif) {
-            let bnColor = ui.accentBlue || '#0055ff';
+            // Pick colour per type
+            let bnColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-blue').trim() || '#0055ff';
             if (notif.includes('BREAK'))  bnColor = '#e67e22';
             if (notif.includes('SET'))    bnColor = '#9b59b6';
-            if (notif.includes('GOLDEN')) bnColor = '#ffd700'; // Яскраво-жовтий для голден поінту
+            if (notif.includes('GOLDEN')) bnColor = '#c8a200';
             bnEl.style.setProperty('--bn-color', bnColor);
 
             bnEl.dataset.lastNotif = notif;
             bnText.textContent = notif;
+
+            // Reset animation
             bnEl.classList.remove('bn-show', 'bn-hide');
             void bnEl.offsetWidth;
             bnEl.classList.add('bn-show');
@@ -516,7 +736,7 @@
             setTimeout(() => bnEl.classList.remove('bn-hide'), 350);
         }
 
-        // Sets & Serve dots
+        // Serve dots & sets
         [0,1].forEach(p => {
             let h = "";
             setsHistory[p].forEach(g => h += `<div class="set-box-wrapper"><div class="set-box">${g}</div></div>`);
@@ -525,20 +745,26 @@
             document.getElementById(`serve-${p}`).classList.toggle('active', server === p);
         });
 
-        // ── Повноекранні анімації подій (DEUCE / GOLDEN POINT) ──
+        // Wipe + glow alert — через чергу анімацій
         const alertKey = state.alertKey || "";
         if (alertKey && alertKey !== lastAlertKey) {
             lastAlertKey = alertKey;
             const capturedMode = state.alertMode;
             const capturedText = state.alertText || "";
+
+            // DEUCE — окрема плашка-wipe на табло (не fullscreen)
+            if (capturedMode === 'deuce') {
+                enqueueAnim(() => playDeuceWipe('DEUCE', null), 2600);
+                return; // не запускаємо fullscreen wipe
+            }
+
             enqueueAnim(() => {
                 const ring  = document.getElementById('sb-glow-ring');
                 const el    = document.getElementById('scoreboard-fullscreen-alert');
                 const txtEl = document.getElementById('fullscreen-alert-text');
 
-                // Фіксуємо преміальні градієнтні кольори
-                const glowMap = { golden:'#d4af37', tiebreak:'#c0392b', deuce:'#6c3483', normal:null };
-                const glowColor = glowMap[capturedMode] || ui.accentBlue || '#0055ff';
+                const glowMap = { golden:'#c8a200', tiebreak:'#c0392b', deuce:'#6c3483', normal:null };
+                const glowColor = glowMap[capturedMode] || '#0055ff';
                 ring.style.setProperty('--glow-color', glowColor);
                 el.style.setProperty('--glow-color', glowColor);
 
@@ -574,40 +800,45 @@
                         ring.classList.remove('glow-out');
                     }, 350);
                 }, 2600);
-            }, 3100); // 3100ms на повний цикл анімації в черзі
+            }, 3000); // total duration в черзі
         }
 
-        // Stats overlay (Синхронізовано на 4.2 секунди)
+        // Stats overlay
         if (state.showStats && !forceShowStats) {
             forceShowStats = true;
             updateStatsPanel(state);
-            document.getElementById('tv-stats-overlay').classList.remove('closing');
             document.getElementById('tv-stats-overlay').classList.add('active');
             if (statsTimeout) clearTimeout(statsTimeout);
             statsTimeout = setTimeout(() => {
                 forceShowStats = false;
                 document.getElementById('tv-stats-overlay').classList.remove('active');
-                document.getElementById('tv-stats-overlay').classList.add('closing');
-            }, 4200);
+            }, 4000);
         }
 
+        // Board visibility
         document.getElementById('scoreboard-anchor').classList.toggle('hidden-board', showBoard === false);
+
+        // Intro & finish
         document.getElementById('match-intro-overlay').classList.toggle('active', showIntro);
-        
         const finishOverlay = document.getElementById('match-finish-overlay');
         if (showFinish && !finishOverlay.classList.contains('active')) {
+            // 1. Animate scoreboard digits
             animateScoreboardFinish(() => {
+                // 2. Show result card
                 updateFinishPanel(state);
                 finishOverlay.classList.add('active');
             });
         } else if (!showFinish) {
             finishOverlay.classList.remove('active');
+            // Restore scoreboard digits
             restoreScoreboardDigits();
         }
 
+        // Stats logos
         if (ui.statLogoT) document.getElementById('stat-logo-t').src = ui.statLogoT;
         if (ui.statLogoF) document.getElementById('stat-logo-f').src = ui.statLogoF;
 
+        // Sponsor logos bar (зверху-справа)
         renderSponsorLogos(ui.sponsorLogos || []);
     }
 
@@ -617,11 +848,16 @@
         const setsHistory = state.setsHistory || [[],[]];
         const games = state.games || [0,0];
         const activeSetIndex = state.activeSetIndex || 0;
-        const setTimes = state.setTimes || [];
-        const setStartTime = state._setStartTime;
+        const setTimes = state.setTimes || [];      // завершені сети — зафіксований час
+        const setStartTime = state._setStartTime;   // час старту поточного сету (ms)
+        const isSetFinished = state._lastStatsIsSetEnd || false;
 
         let totalSets = Math.min(Math.max(activeSetIndex + 1, setsHistory[0].length, 1), 3);
-        const nowElapsed = setStartTime ? Math.round((Date.now() - setStartTime) / 60000) : 0;
+
+        // Поточний elapsed для активного сету
+        const nowElapsed = setStartTime
+            ? Math.round((Date.now() - setStartTime) / 60000)
+            : 0;
 
         let headHtml = `<tr style="color:rgba(255,255,255,0.32); font-size:11px; text-transform:uppercase; height:22px; letter-spacing:1px;">
             <th style="text-align:left; padding-left:6px;">Команда</th>`;
@@ -635,8 +871,15 @@
             s2.push(setsHistory[1][i] !== undefined ? setsHistory[1][i] : (activeSetIndex===i ? games[1] : '-'));
         }
 
+        // Час для кожного сету:
+        // — завершені сети → фіксований час із setTimes[]
+        // — поточний активний сет → поточний elapsed (скидається з нового сету)
         function getSetTime(i) {
-            if (setsHistory[0][i] !== undefined) return setTimes[i] > 0 ? `${setTimes[i]}'` : '';
+            if (setsHistory[0][i] !== undefined) {
+                // завершений сет — показуємо фіксований час
+                return setTimes[i] > 0 ? `${setTimes[i]}'` : '';
+            }
+            // активний сет — поточний elapsed
             return nowElapsed > 0 ? `${nowElapsed}'` : '';
         }
 
@@ -661,6 +904,7 @@
         const n2 = state.p2name || "Команда Б";
         const sh = state.setsHistory || [[],[]];
         const st = state.setTimes || [];
+        // Determine winner per set
         let html = `<tr class="finish-row"><td class="finish-team">${n1}</td>`;
         for(let i=0;i<3;i++){
             const v = sh[0][i]!==undefined?sh[0][i]:'-';
@@ -681,6 +925,7 @@
         document.getElementById('finish-table-body').innerHTML = html;
     }
 
+    // ─── SPONSOR LOGOS BAR ──────────────────────────────────────
     let _lastSponsorKeys = "";
     function renderSponsorLogos(logos) {
         const bar = document.getElementById('sponsor-logos-bar');
@@ -689,8 +934,10 @@
         _lastSponsorKeys = key;
 
         const visibleLogos = logos.filter(l => l.src && l.visible !== false);
+        // Animate out old ones
         [...bar.children].forEach(el => {
-            el.classList.remove('slw-show'); el.classList.add('slw-hide');
+            el.classList.remove('slw-show');
+            el.classList.add('slw-hide');
         });
         setTimeout(() => {
             bar.innerHTML = '';
@@ -698,20 +945,25 @@
                 const wrap = document.createElement('div');
                 wrap.className = 'sponsor-logo-wrap';
                 const img = document.createElement('img');
-                img.src = l.src; img.alt = '';
+                img.src = l.src;
+                img.alt = '';
                 wrap.appendChild(img);
                 bar.appendChild(wrap);
+                // Staggered pop-in
                 setTimeout(() => wrap.classList.add('slw-show'), i * 80);
             });
         }, visibleLogos.length === 0 ? 0 : 300);
     }
 
+    // ─── FINISH ANIMATION HELPERS ──────────────────────────────
     function animateScoreboardFinish(callback) {
         const anchor = document.getElementById('scoreboard-anchor');
         const digits = anchor.querySelectorAll('.set-box, .point-box, .player-name span');
+        // Phase 1: breathing
         digits.forEach((el, i) => {
             el.innerHTML = `<span class="sb-digit breathing" style="animation-delay:${(i%4)*0.08}s">${el.textContent}</span>`;
         });
+        // Phase 2: scatter after 1.0s
         setTimeout(() => {
             digits.forEach((el, i) => {
                 const span = el.querySelector('.sb-digit');
@@ -724,6 +976,7 @@
                 span.style.animationDelay = (i*0.04)+'s';
                 span.classList.add('scatter');
             });
+            // Phase 3: hide board, show result
             setTimeout(() => {
                 anchor.classList.add('hidden-board');
                 if (callback) callback();
@@ -732,13 +985,17 @@
     }
 
     function restoreScoreboardDigits() {
-        document.getElementById('scoreboard-anchor').classList.remove('hidden-board');
+        const anchor = document.getElementById('scoreboard-anchor');
+        anchor.classList.remove('hidden-board');
+        // Digits will be re-rendered on next renderOverlay call
     }
 
+    // ─── Читаємо номер корту з URL (?court=1, ?court=2 ...)
     const urlParams = new URLSearchParams(window.location.search);
     const courtId = urlParams.get('court') || '1';
     document.title = `Padel Overlay — Court ${courtId}`;
 
+    // Listen to Firebase для потрібного корту
     const gameRef = ref(db, `padel/court${courtId}`);
     onValue(gameRef, (snapshot) => {
         renderOverlay(snapshot.val());
