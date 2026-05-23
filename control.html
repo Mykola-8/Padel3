@@ -620,7 +620,6 @@
         updateControlUI();
     }, { onlyOnce: true });
 
-    // ВИПРАВЛЕНО ТА АКТИВОВАНО ВСІ 3 РЕЖИМИ DEUCE
     function addPoint(p) {
         historyStack.push(JSON.parse(JSON.stringify(state)));
         if (!state.isGameActive) {
@@ -648,7 +647,6 @@
 
             if (state.scores[p] < 3) {
                 state.scores[p]++;
-                // Перевіряємо, чи рахунок став рівно (40-40)
                 if (state.scores[0] === 3 && state.scores[1] === 3) {
                     if (state.deuceMode === 'golden') {
                         state.isGoldenActive = true;
@@ -666,10 +664,8 @@
                 if (state.scores[o] < 3) {
                     winGame(p);
                 } else if (state.scores[o] === 3) {
-                    // Було 40-40, отримуємо перевагу AD (значення 4)
                     state.scores[p] = 4;
                 } else if (state.scores[o] === 4) {
-                    // У суперника було перевага AD, повертаємось на Рівно 40-40
                     state.scores[o] = 3;
                     if (state.deuceMode === '2deuce') {
                         state.deuceCycles++;
@@ -758,7 +754,12 @@
                         else {
                             if (i===0) { gamePointCountP1++; txt=(isBreak?`BREAK POINT #${gamePointCountP1}`:`GAME POINT #${gamePointCountP1}`); }
                             else { gamePointCountP2++; txt=(isBreak?`BREAK POINT #${gamePointCountP2}`:`GAME POINT #${gamePointCountP2}`); }
-                            alertText = isBreak ? "BREAK POINT" : "GAME POINT"; alertMode = "normal";
+                            
+                            // ВИПРАВЛЕНО: Для номерів 2, 3 і далі НЕ ставимо alertText, щоб уникнути спалаху на весь екран
+                            let currentCount = (i === 0) ? gamePointCountP1 : gamePointCountP2;
+                            if (currentCount <= 1) {
+                                alertText = isBreak ? "BREAK POINT" : "GAME POINT"; alertMode = "normal";
+                            }
                         }
                     }
                 }
@@ -781,19 +782,12 @@
         const kicker = state.server;
         state.faultTeam = kicker;
         vibTap(btnEl, [60, 40, 60]);
-        
         addPoint(1 - kicker);
-        
         state.alertKey = "FAULT_" + kicker + "_" + Date.now();
         state.faultTeam = kicker;
-        
         pushState();
         updateControlUI();
-        
-        setTimeout(() => {
-            state.faultTeam = null;
-            pushState();
-        }, 1600);
+        setTimeout(() => { state.faultTeam = null; pushState(); }, 1600);
     }
 
     function doUndo(btnEl) {
