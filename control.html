@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Inter:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght=600;700&family=Inter:wght=700;900&display=swap" rel="stylesheet">
     <title>Padel Control</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -105,101 +105,39 @@
         .btn-p2 { background: linear-gradient(135deg, #0055ff, #003dd1); }
         .btn-fault { background: linear-gradient(135deg, #dc2626, #b91c1c); height: 80px; font-size: 22px; }
         .btn-undo { background: linear-gradient(135deg, #555, #444); height: 80px; font-size: 22px; }
-        /* settings-only buttons */
+        
         .btn-finish-s { background: linear-gradient(135deg, #d97706, #b45309); border: none; border-radius: 14px; color: white; font-size: 15px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; padding: 16px; width: 100%; }
         .btn-reset-s { background: transparent; border: 1px solid rgba(231,76,60,0.4); color: #e74c3c; border-radius: 14px; font-size: 14px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; padding: 14px; width: 100%; }
 
         /* LIVE SCOREBOARD PREVIEW */
-        #preview-wrap {
-            background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden;
-        }
-        #preview-inner {
-            padding: 12px 14px 14px;
-            background: repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 8px);
-        }
-        /* The mini scoreboard itself */
-        #mini-sb {
-            position: relative; display: flex; align-items: stretch;
-            border-radius: 8px; overflow: visible;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-            width: 100%; height: 80px;
-        }
-        #mini-drawer {
-            position: absolute; right: 0; top: 0;
-            width: 18%; height: 100%;
-            display: flex; flex-direction: column;
-            border-left: 1px solid rgba(255,255,255,0.1);
-            border-radius: 0 8px 8px 0;
-            overflow: hidden; z-index: 1;
-            transition: transform 0.6s;
-        }
+        #preview-wrap { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+        #preview-inner { padding: 12px 14px 14px; background: repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 8px); }
+        #mini-sb { position: relative; display: flex; align-items: stretch; border-radius: 8px; overflow: visible; box-shadow: 0 8px 30px rgba(0,0,0,0.6); width: 100%; height: 80px; }
+        #mini-drawer { position: absolute; right: 0; top: 0; width: 18%; height: 100%; display: flex; flex-direction: column; border-left: 1px solid rgba(255,255,255,0.1); border-radius: 0 8px 8px 0; overflow: hidden; z-index: 1; transition: transform 0.6s; }
         #mini-drawer.points-active { transform: translateX(100%); }
-        .mini-pt {
-            flex: 1; display: flex; align-items: center; justify-content: center;
-            font-size: 20px; font-weight: 900; color: white;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
+        .mini-pt { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 900; color: white; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .mini-pt:last-child { border-bottom: none; }
-        #mini-main {
-            flex: 1; display: flex; flex-direction: column;
-            border-left: 8px solid #0055ff; border-radius: 8px 0 0 8px;
-            overflow: hidden;
-        }
-        .mini-row {
-            display: flex; align-items: center; flex: 1; padding: 0 8px;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            overflow: hidden;
-        }
+        #mini-main { flex: 1; display: flex; flex-direction: column; border-left: 8px solid #0055ff; border-radius: 8px 0 0 8px; overflow: hidden; }
+        .mini-row { display: flex; align-items: center; flex: 1; padding: 0 8px; border-bottom: 1px solid rgba(255,255,255,0.08); overflow: hidden; }
         .mini-row:last-child { border-bottom: none; }
-        .mini-name {
-            flex: 1; font-family: 'Oswald', sans-serif; font-weight: 700;
-            font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;
-            color: white; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-        }
-        .mini-dot {
-            width: 10px; height: 10px; border-radius: 50%; margin: 0 6px;
-            opacity: 0; flex-shrink: 0; transition: opacity 0.3s;
-        }
+        .mini-name { flex: 1; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: white; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .mini-dot { width: 10px; height: 10px; border-radius: 50%; margin: 0 6px; opacity: 0; flex-shrink: 0; transition: opacity 0.3s; }
         .mini-dot.active { opacity: 1; }
         .mini-sets { display: flex; align-items: center; height: 100%; border-left: 1px solid rgba(255,255,255,0.08); }
-        .mini-set {
-            min-width: 22px; height: 26px; display: flex; align-items: center; justify-content: center;
-            font-size: 13px; font-weight: 900; color: white; margin: 0 3px;
-            background: rgba(255,255,255,0.08); border-radius: 4px;
-        }
+        .mini-set { min-width: 22px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; color: white; margin: 0 3px; background: rgba(255,255,255,0.08); border-radius: 4px; }
         .mini-set.cur { background: rgba(255,255,255,0.2); }
-        /* tiebreak / notif badges */
-        #mini-tb-badge {
-            position: absolute; top: -18px; right: 20px;
-            background: #444; color: white; font-size: 9px; font-weight: 900;
-            padding: 2px 8px; border-radius: 4px 4px 0 0; letter-spacing: 1px;
-            opacity: 0; transition: opacity 0.3s;
-        }
+        #mini-tb-badge { position: absolute; top: -18px; right: 20px; background: #444; color: white; font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 4px 4px 0 0; letter-spacing: 1px; opacity: 0; transition: opacity 0.3s; }
         #mini-tb-badge.active { opacity: 1; }
-        #mini-notif-badge {
-            position: absolute; bottom: -18px; left: 16px;
-            background: #444; color: white; font-size: 9px; font-weight: 900;
-            padding: 2px 8px; border-radius: 0 0 4px 4px; letter-spacing: 1px;
-            opacity: 0; transition: opacity 0.3s;
-        }
+        #mini-notif-badge { position: absolute; bottom: -18px; left: 16px; background: #444; color: white; font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 0 0 4px 4px; letter-spacing: 1px; opacity: 0; transition: opacity 0.3s; }
         #mini-notif-badge.active { opacity: 1; }
 
         /* SERVE SWITCH */
-        .serve-switch {
-            display: flex; background: rgba(255,255,255,0.05); border-radius: 12px; padding: 4px; gap: 4px;
-        }
-        .serve-opt {
-            flex: 1; padding: 10px; border: none; border-radius: 8px; font-weight: 900;
-            font-size: 13px; font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px;
-            cursor: pointer; background: transparent; color: rgba(255,255,255,0.4); transition: 0.2s;
-        }
+        .serve-switch { display: flex; background: rgba(255,255,255,0.05); border-radius: 12px; padding: 4px; gap: 4px; }
+        .serve-opt { flex: 1; padding: 10px; border: none; border-radius: 8px; font-weight: 900; font-size: 13px; font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; background: transparent; color: rgba(255,255,255,0.4); transition: 0.2s; }
         .serve-opt.active { background: var(--blue); color: white; }
 
         /* TOGGLE SWITCHES */
-        .toggle-row {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 12px 16px; border-bottom: 1px solid var(--border);
-        }
+        .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border); }
         .toggle-row:last-child { border-bottom: none; }
         .toggle-label { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.7); }
         .toggle-sublabel { font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 2px; }
@@ -211,61 +149,24 @@
         input:checked + .slider:before { transform: translateX(20px); }
 
         /* SETTINGS PANEL */
-        #settings-panel {
-            position: fixed; inset: 0; background: var(--bg); z-index: 200;
-            display: flex; flex-direction: column; transform: translateX(100%);
-            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow-y: auto;
-        }
+        #settings-panel { position: fixed; inset: 0; background: var(--bg); z-index: 200; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1); overflow-y: auto; }
         #settings-panel.open { transform: translateX(0); }
-        #settings-header {
-            display: flex; align-items: center; gap: 12px;
-            padding: 14px 16px; background: var(--surface); border-bottom: 1px solid var(--border);
-            position: sticky; top: 0; z-index: 10;
-        }
+        #settings-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; }
         #settings-header h2 { margin: 0; font-size: 15px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
-        #close-settings {
-            background: none; border: none; color: rgba(255,255,255,0.6); font-size: 22px; cursor: pointer; padding: 4px; margin-left: auto;
-        }
+        #close-settings { background: none; border: none; color: rgba(255,255,255,0.6); font-size: 22px; cursor: pointer; padding: 4px; margin-left: auto; }
         .settings-section { padding: 0 16px 8px; }
         .settings-section-title { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.3); padding: 16px 0 8px; }
         .settings-card { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
-        .settings-input-row {
-            display: flex; align-items: center; padding: 12px 16px;
-            border-bottom: 1px solid var(--border); gap: 12px;
-        }
+        .settings-input-row { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border); gap: 12px; }
         .settings-input-row:last-child { border-bottom: none; }
         .settings-input-row label { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.6); flex: 1; }
         .settings-input-row input[type="text"],
         .settings-input-row input[type="number"],
-        .settings-input-row select {
-            background: rgba(255,255,255,0.07); border: 1px solid var(--border);
-            color: white; border-radius: 8px; padding: 6px 10px; font-size: 13px; font-weight: 700;
-            width: 130px; text-align: right;
-        }
+        .settings-input-row select { background: rgba(255,255,255,0.07); border: 1px solid var(--border); color: white; border-radius: 8px; padding: 6px 10px; font-size: 13px; font-weight: 700; width: 130px; text-align: right; }
         .settings-input-row input[type="range"] { width: 120px; accent-color: var(--blue); }
         .range-val { font-size: 12px; color: rgba(255,255,255,0.5); width: 30px; text-align: right; font-weight: 700; }
-        .color-swatch { width: 28px; height: 28px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; flex-shrink: 0; }
-        .file-btn {
-            background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: rgba(255,255,255,0.7);
-            border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer;
-        }
-        .save-settings-btn {
-            margin: 16px; padding: 16px; background: var(--blue); border: none; border-radius: 14px;
-            color: white; font-size: 16px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;
-            cursor: pointer; width: calc(100% - 32px);
-        }
-
-        /* MODE CHIP */
-        .mode-chip {
-            display: inline-flex; align-items: center; gap: 6px;
-            background: rgba(0,85,255,0.15); border: 1px solid rgba(0,85,255,0.3);
-            border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 900;
-            color: rgba(255,255,255,0.7); letter-spacing: 1px; margin-top: 4px;
-        }
-        .mode-chip.active { background: rgba(0,85,255,0.4); color: white; }
-
-        /* Divider */
+        .file-btn { background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: rgba(255,255,255,0.7); border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer; }
+        .save-settings-btn { margin: 16px; padding: 16px; background: var(--blue); border: none; border-radius: 14px; color: white; font-size: 16px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; width: calc(100% - 32px); }
         .section-gap { height: 6px; }
     </style>
 </head>
@@ -277,7 +178,7 @@
 <!-- TOP BAR -->
 <div id="topbar">
     <div style="display:flex; align-items:center; gap:10px;">
-        <button id="gear-btn" onclick="openSettings()">⚙️</button>
+        <button id="gear-btn" onclick="window.openSettings()">⚙️</button>
         <h1>Padel · <span id="topbar-court">COURT 1</span></h1>
     </div>
     <span id="conn-status" class="offline">ОФЛАЙН</span>
@@ -285,7 +186,6 @@
 
 <!-- MAIN -->
 <div id="main">
-
     <!-- SCORE DISPLAY -->
     <div class="score-section">
         <div class="score-section-title">Рахунок</div>
@@ -390,10 +290,9 @@
             <label class="switch"><input type="checkbox" id="tog-logo" onchange="sendToggle('showLogo', this.checked)"><span class="slider"></span></label>
         </div>
     </div>
-
 </div>
 
-<!-- ═══════════════════════════════ SETTINGS PANEL ═══════════════════════════════ -->
+<!-- SETTINGS PANEL -->
 <div id="settings-panel">
     <div id="settings-header">
         <h2>⚙️ Налаштування</h2>
@@ -447,12 +346,20 @@
                 <label>Ліміт (Американка)</label>
                 <input type="number" id="s-american-limit" value="15" min="1" max="30" style="width:60px" onchange="sendMode()">
             </div>
+            <div class="settings-input-row">
+                <label>Правило розіграшу (Deuce)</label>
+                <select id="s-deuce-mode" onchange="sendMode()" style="width: 180px;">
+                    <option value="golden">Golden Point (одразу)</option>
+                    <option value="2deuce">2 Deuce (на 3-й Golden)</option>
+                    <option value="classic">Класика (без Golden Point)</option>
+                </select>
+            </div>
             <div class="toggle-row">
                 <div>
-                    <div class="toggle-label">Deuce (Advantage)</div>
-                    <div class="toggle-sublabel">Вимк → 40:40 одразу Golden Point</div>
+                    <div class="toggle-label">Приховати табло рахунку</div>
+                    <div class="toggle-sublabel">Приховує бали праворуч (для підготовки таблиці)</div>
                 </div>
-                <label class="switch"><input type="checkbox" id="s-golden" onchange="sendMode()"><span class="slider"></span></label>
+                <label class="switch"><input type="checkbox" id="s-hide-score-only" onchange="sendToggle('hideScoreOnly', this.checked)"><span class="slider"></span></label>
             </div>
         </div>
     </div>
@@ -544,7 +451,6 @@
     <div class="settings-section">
         <div class="settings-section-title">Логотипи</div>
         <div class="settings-card">
-            <!-- Логотип табла -->
             <div class="settings-input-row" style="flex-direction:column; align-items:flex-start; gap:10px; padding:14px 16px;">
                 <div style="display:flex; align-items:center; width:100%; gap:10px;">
                     <div style="flex:1">
@@ -563,7 +469,6 @@
                 </div>
             </div>
             <div style="height:1px;background:rgba(255,255,255,0.06);"></div>
-            <!-- Логотип турніру -->
             <div class="settings-input-row" style="flex-direction:column; align-items:flex-start; gap:10px; padding:14px 16px;">
                 <div style="flex:1"><div class="toggle-label">Логотип турніру</div><div class="toggle-sublabel">Статистика матчу — зліва</div></div>
                 <div style="display:flex; align-items:center; gap:10px; width:100%;">
@@ -576,7 +481,6 @@
                 </div>
             </div>
             <div style="height:1px;background:rgba(255,255,255,0.06);"></div>
-            <!-- Логотип федерації -->
             <div class="settings-input-row" style="flex-direction:column; align-items:flex-start; gap:10px; padding:14px 16px;">
                 <div style="flex:1"><div class="toggle-label">Логотип федерації</div><div class="toggle-sublabel">Статистика матчу — справа</div></div>
                 <div style="display:flex; align-items:center; gap:10px; width:100%;">
@@ -591,7 +495,7 @@
         </div>
     </div>
 
-    <!-- КІНЕЦЬ МАТЧУ / СКИДАННЯ — в налаштуваннях -->
+    <!-- УПРАВЛІННЯ МАТЧЕМ -->
     <div class="settings-section">
         <div class="settings-section-title">Управління матчем</div>
         <div class="settings-card" style="padding:14px; display:flex; flex-direction:column; gap:10px;">
@@ -603,9 +507,7 @@
     <!-- SPONSOR LOGOS -->
     <div class="settings-section">
         <div class="settings-section-title">Логотипи спонсорів (зверху-справа)</div>
-        <div class="settings-card" id="sponsor-logo-list">
-            <!-- динамічно -->
-        </div>
+        <div class="settings-card" id="sponsor-logo-list"></div>
         <button onclick="addSponsorSlot()" style="margin:10px 16px 0; padding:12px; background:rgba(255,255,255,0.06); border:1px dashed rgba(255,255,255,0.2); border-radius:12px; color:rgba(255,255,255,0.5); font-size:13px; font-weight:700; width:calc(100% - 32px); cursor:pointer; letter-spacing:1px;">
             + ДОДАТИ ЛОГОТИП
         </button>
@@ -615,14 +517,10 @@
     <div style="height:20px"></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════ -->
-<!-- ЗАМІНІТЬ ЦЕ НА ВАШІ ДАНІ FIREBASE                  -->
-<!-- ═══════════════════════════════════════════════════ -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, set, update, get, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-    // ⬇️ ВСТАВТЕ ВАШІ ДАНІ FIREBASE ТУТ ⬇️
     const firebaseConfig = {
         apiKey: "AIzaSyDf6PYBjF096FRE-fUUo5boS8jsieVS9xA",
         authDomain: "padel3-overley.firebaseapp.com",
@@ -637,7 +535,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // ─── COURT SWITCHING ──────────────────────────────────────────
     const TOTAL_COURTS = 8;
     let currentCourt = 1;
     let gameRef = ref(db, 'padel/court1');
@@ -661,17 +558,7 @@
         document.querySelectorAll('.court-chip').forEach(c => c.classList.remove('active'));
         document.getElementById('court-chip-' + n).classList.add('active');
         document.getElementById('topbar-court').textContent = 'COURT ' + n;
-        state = {
-            scores: [0,0], games: [0,0], setsHistory: [[],[]], server: 0,
-            isGameActive: false, isTiebreak: false, isAmerican: false,
-            isProset: false, deuceCycles: 0, setTimes: [0,0,0], activeSetIndex: 0,
-            notifText: "", showFinish: false, showIntro: false, showLogo: false,
-            showBoard: true, showStats: false, isGoldenPoint: true, prosetLimit: 8,
-            americanLimit: 15, p1name: "Команда А", p2name: "Команда Б",
-            courtName: 'COURT ' + n, alertKey: "", alertText: "", alertMode: "", isGoldenActive: false
-        };
         historyStack = [];
-        gamePointCountP1 = 0; gamePointCountP2 = 0;
         onValue(gameRef, (snap) => {
             const d = snap.val();
             if (d) {
@@ -679,20 +566,18 @@
                 if (d.ui) ui = { ...ui, ...d.ui };
             }
             updateControlUI();
-            renderMiniScoreboard();
         }, { onlyOnce: true });
     }
 
-    // ─── LOCAL STATE ───────────────────────────────────────────
     const pts = [0, 15, 30, 40, "AD"];
     let state = {
         scores: [0,0], games: [0,0], setsHistory: [[],[]], server: 0,
         isGameActive: false, isTiebreak: false, isAmerican: false,
         isProset: false, deuceCycles: 0, setTimes: [0,0,0], activeSetIndex: 0,
         notifText: "", showFinish: false, showIntro: false, showLogo: false,
-        showBoard: true, showStats: false, isGoldenPoint: true, prosetLimit: 8,
+        showBoard: true, showStats: false, deuceMode: "golden", prosetLimit: 8,
         americanLimit: 15, p1name: "Команда А", p2name: "Команда Б",
-        courtName: "COURT 1", alertKey: "", alertText: "", alertMode: "", faultTeam: null
+        courtName: "COURT 1", alertKey: "", alertText: "", alertMode: "", faultTeam: null, isGoldenActive: false, hideScoreOnly: false
     };
     let ui = {
         accentBlue: '#0055ff', ballColor: '#ccff00', teamNameColor: '#ffffff',
@@ -700,14 +585,11 @@
         popupBg: '#444444', popupText: '#ffffff', finishBg: 'rgba(255,255,255,0.03)',
         fontFamily: "'Oswald', sans-serif", sbW: '750px', sbH: '150px',
         sbRadius: '10px', sbSkew: '0deg', logoW: '35%', logoH: '50%',
-        sbTop: 500, sbLeft: 100, logoSrc: '', statLogoT: '', statLogoF: ''
+        sbTop: 500, sbLeft: 100, logoSrc: '', statLogoT: '', statLogoF: '', sponsorLogos: []
     };
     let historyStack = [];
     let gamePointCountP1 = 0, gamePointCountP2 = 0;
-    let lastAlertKey = "";
-    let setTimerInterval = null;
 
-    // ─── VIBRATE + TAP ────────────────────────────────────────────
     function vibTap(btnEl, pattern) {
         if (navigator.vibrate) navigator.vibrate(pattern || 40);
         if (btnEl) {
@@ -718,12 +600,10 @@
         }
     }
 
-    // ─── FIREBASE PUSH ───────────────────────────────────────────
     function pushState() {
         set(gameRef, { state, ui }).catch(e => console.error(e));
     }
 
-    // ─── CONNECTION STATUS ────────────────────────────────────────
     const connRef = ref(db, '.info/connected');
     onValue(connRef, (snap) => {
         const el = document.getElementById('conn-status');
@@ -731,7 +611,6 @@
         else { el.textContent = 'ОФЛАЙН'; el.className = 'offline'; }
     });
 
-    // ─── SYNC FROM FIREBASE ON LOAD ──────────────────────────────
     onValue(gameRef, (snap) => {
         const d = snap.val();
         if (d) {
@@ -739,15 +618,12 @@
             if (d.ui) ui = { ...ui, ...d.ui };
         }
         updateControlUI();
-        renderMiniScoreboard();
     }, { onlyOnce: true });
 
-    // ─── GAME LOGIC ───────────────────────────────────────────────
     function addPoint(p) {
         historyStack.push(JSON.parse(JSON.stringify(state)));
         if (!state.isGameActive) {
             state.isGameActive = true;
-            // Стартуємо таймер сету при першому очку (якщо ще не запущений)
             if (!state._setStartTime) state._setStartTime = Date.now();
         }
         const o = 1 - p;
@@ -761,66 +637,45 @@
             if (state.scores[p]>=7 && state.scores[p]-state.scores[o]>=2) winGame(p);
             else if ((state.scores[0]+state.scores[1])%2===1) state.server = 1-state.server;
         } else {
+            const currentDeuceMode = state.deuceMode || "golden";
 
             if (state.isGoldenActive) {
-                // ── GOLDEN POINT активний ──
-                // Рахунок 3:3 (вимкнено) або advantage (включено)
-                // Наступне очко ЗАВЖДИ вирішує гейм — повернень немає
                 state.isGoldenActive = false;
                 winGame(p);
-
             } else if (state.scores[p]===3 && state.scores[o]===3) {
-                // ── 40:40 ──────────────────────────────────────────────
-
-                if (!state.isGoldenPoint) {
-                    // ════════════════════════════════════════
-                    // Deuce ВИМКНЕНО
-                    // ════════════════════════════════════════
-                    // Одразу: велика анімація GOLDEN POINT
-                    // + золота плашка знизу (через notifText)
-                    // Рахунок 3:3 залишається
-                    // Наступне очко вирішує гейм
+                if (currentDeuceMode === 'golden') {
                     state.alertKey  = "GP_" + Date.now();
                     state.alertText = "GOLDEN POINT";
                     state.alertMode = "golden";
-                    state.notifText = "GOLDEN POINT";
                     state.isGoldenActive = true;
-
-                } else {
-                    // ════════════════════════════════════════
-                    // Deuce ВКЛЮЧЕНО
-                    // deuceCycles = кількість разів повернення до 40:40
-                    // Перший  40:40 (deuceCycles=0) → DEUCE анімація → advantage
-                    // Другий  40:40 (deuceCycles=1) → DEUCE анімація → advantage
-                    // Третій  40:40 (deuceCycles=2) → GOLDEN POINT анімація → advantage (вирішальний, повернень немає)
-                    // ════════════════════════════════════════
+                } else if (currentDeuceMode === '2deuce') {
                     if (state.deuceCycles < 2) {
-                        // Перший або другий deuce → DEUCE анімація → advantage
                         state.alertKey  = "DEUCE_" + Date.now();
                         state.alertText = "DEUCE";
                         state.alertMode = "deuce";
-                        state.scores[p] = 4; // advantage
-
+                        state.scores[p] = 4; // Перевага
                     } else {
-                        // Третій deuce → GOLDEN POINT → вирішальний advantage
                         state.alertKey  = "GP_" + Date.now();
                         state.alertText = "GOLDEN POINT";
                         state.alertMode = "golden";
-                        state.notifText = "GOLDEN POINT";
-                        state.scores[p] = 4; // advantage
-                        state.isGoldenActive = true; // повернень більше немає
+                        state.scores[p] = 4;
+                        state.isGoldenActive = true;
                     }
+                } else {
+                    // Класичний режим переваг як у тенісі
+                    state.alertKey  = "DEUCE_" + Date.now();
+                    state.alertText = "DEUCE";
+                    state.alertMode = "deuce";
+                    state.scores[p] = 4; // AD
                 }
-
             } else if (state.scores[p]===4) {
-                // advantage → win
                 winGame(p);
-
             } else if (state.scores[o]===4) {
-                // програш advantage → повернення до 40:40
                 state.scores[o] = 3;
                 state.deuceCycles++;
-
+                state.alertKey  = "DEUCE_" + Date.now();
+                state.alertText = "DEUCE";
+                state.alertMode = "deuce";
             } else if (state.scores[p]===3) {
                 winGame(p);
             } else {
@@ -845,14 +700,13 @@
         let isSetFinished = false;
         if (state.isProset) {
             if (state.isTiebreak || (state.games[p]>=lim && state.games[p]-state.games[1-p]>=2)) isSetFinished = true;
-            else if (state.games[p]===lim-1 && state.games[1-p]===lim-1) state.isTiebreak = true;
+            else if (state.games[0]===lim-1 && state.games[1]===lim-1) state.isTiebreak = true;
         } else if (!state.isAmerican) {
             if (state.isTiebreak || (state.games[p]>=6 && state.games[p]-state.games[1-p]>=2)) isSetFinished = true;
             else if (state.games[0]===6 && state.games[1]===6) state.isTiebreak = true;
         } else { isSetFinished = true; }
 
         if (isSetFinished) {
-            // Фіксуємо хвилини поточного сету
             const now = Date.now();
             const setStart = state._setStartTime || now;
             const elapsed = Math.max(1, Math.round((now - setStart) / 60000));
@@ -863,15 +717,12 @@
             state.setsHistory[1].push(state.games[1]);
             state.games = [0,0]; state.isTiebreak = false;
             state.activeSetIndex = Math.min((state.activeSetIndex||0)+1, 2);
-
-            // Скидаємо таймер для наступного сету
             state._setStartTime = Date.now();
 
             state._lastStatsIsSetEnd = true;
             state.showStats = true;
             setTimeout(() => { state.showStats = false; state._lastStatsIsSetEnd = false; pushState(); }, 5100);
         } else if (isOddGame) {
-            // Непарний гейм — показуємо поточний elapsed
             state._lastStatsIsSetEnd = false;
             state.showStats = true;
             setTimeout(() => { state.showStats = false; pushState(); }, 5100);
@@ -881,21 +732,26 @@
     function computeNotif() {
         const s = state.scores; const g = state.games;
         let txt = "";
-        // alertKey вже встановлено в addPoint для deuce/golden — не перезаписуємо тут
         let alertText = ""; let alertMode = "";
 
-        if (state.isGameActive && !state.isTiebreak && !state.isAmerican) {
-            // advantage situation: показуємо game/break/set point на плашці
-            for (let i=0; i<2; i++) {
-                if (s[i]>=3 && s[i]>s[1-i]) {
-                    const lim = state.isProset ? (state.prosetLimit||8)-1 : 5;
-                    const isSetPt = g[i]>=lim;
-                    const isBreak = state.server!==i;
-                    if (isSetPt) { txt="SET POINT"; alertText="SET POINT"; alertMode="normal"; }
-                    else {
-                        if (i===0) { gamePointCountP1++; txt=(isBreak?`BREAK POINT #${gamePointCountP1}`:`GAME POINT #${gamePointCountP1}`); }
-                        else { gamePointCountP2++; txt=(isBreak?`BREAK POINT #${gamePointCountP2}`:`GAME POINT #${gamePointCountP2}`); }
-                        alertText = isBreak ? "BREAK POINT" : "GAME POINT"; alertMode = "normal";
+        if (state.isGoldenActive) {
+            txt = "GOLDEN POINT";
+        } else if (state.isGameActive && !state.isTiebreak && !state.isAmerican) {
+            // Якщо зараз 40:40 або рівно, великі анімації GP/BP вимикаємо
+            const isDeuceSituation = (s[0]===3 && s[1]===3) || (s[0]===4 && s[1]===3) || (s[0]===3 && s[1]===4);
+            
+            if (!isDeuceSituation) {
+                for (let i=0; i<2; i++) {
+                    if (s[i]>=3 && s[i]>s[1-i]) {
+                        const lim = state.isProset ? (state.prosetLimit||8)-1 : 5;
+                        const isSetPt = g[i]>=lim;
+                        const isBreak = state.server!==i;
+                        if (isSetPt) { txt="SET POINT"; alertText="SET POINT"; alertMode="normal"; }
+                        else {
+                            if (i===0) { gamePointCountP1++; txt=(isBreak?`BREAK POINT #${gamePointCountP1}`:`GAME POINT #${gamePointCountP1}`); }
+                            else { gamePointCountP2++; txt=(isBreak?`BREAK POINT #${gamePointCountP2}`:`GAME POINT #${gamePointCountP2}`); }
+                            alertText = isBreak ? "BREAK POINT" : "GAME POINT"; alertMode = "normal";
+                        }
                     }
                 }
             }
@@ -915,15 +771,12 @@
         historyStack.push(JSON.parse(JSON.stringify(state)));
         state.faultTeam = state.server;
         vibTap(btnEl, [60, 40, 60]);
-        // Зберігаємо alertKey що буде після addPoint
         addPoint(1-state.server);
         const pendingAlertKey  = state.alertKey;
         const pendingAlertText = state.alertText;
         const pendingAlertMode = state.alertMode;
-        // Спочатку пушимо тільки fault (без alertKey щоб не конфліктувало)
         state.alertKey = "";
         pushState();
-        // Після fault анімації (1.6с) — пушимо наступний alert
         setTimeout(() => {
             state.faultTeam = null;
             state.alertKey  = pendingAlertKey;
@@ -956,10 +809,10 @@
     function sendMode() {
         state.isAmerican = document.getElementById('s-american').checked;
         state.isProset = document.getElementById('s-proset').checked;
-        state.isGoldenPoint = document.getElementById('s-golden').checked;
+        state.deuceMode = document.getElementById('s-deuce-mode').value;
         state.prosetLimit = parseInt(document.getElementById('s-proset-limit').value)||8;
         state.americanLimit = parseInt(document.getElementById('s-american-limit').value)||15;
-        state.scores = [0,0]; state.isGameActive = false;
+        state.scores = [0,0]; state.isGameActive = false; state.deuceCycles = 0; state.isGoldenActive = false;
         pushState();
     }
 
@@ -997,19 +850,10 @@
         ui.sbLeft   = parseInt(document.getElementById('g-x').value);
         ui.sbScale  = (document.getElementById('g-scale').value / 100).toFixed(2);
         pushState();
-        renderMiniScoreboard();
     }
 
     function gVal(inId, outId) {
         document.getElementById(outId).textContent = document.getElementById(inId).value;
-    }
-
-    function uploadLogo(event, key) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const r = new FileReader();
-        r.onload = () => { ui[key] = r.result; pushState(); };
-        r.readAsDataURL(file);
     }
 
     function uploadLogoUI(event, key, slot) {
@@ -1034,131 +878,37 @@
         const img = document.getElementById('prev-img-' + slot);
         const empty = document.getElementById('prev-empty-' + slot);
         if (!img || !empty) return;
-        if (src) {
-            img.src = src; img.style.display = 'block'; empty.style.display = 'none';
-        } else {
-            img.src = ''; img.style.display = 'none'; empty.style.display = 'block';
-        }
+        if (src) { img.src = src; img.style.display = 'block'; empty.style.display = 'none'; }
+        else { img.src = ''; img.style.display = 'none'; empty.style.display = 'block'; }
     }
 
     function refreshLogoPreviews() {
         if (ui.logoSrc)   renderLogoPreview('main',  ui.logoSrc);
         if (ui.statLogoT) renderLogoPreview('statT', ui.statLogoT);
         if (ui.statLogoF) renderLogoPreview('statF', ui.statLogoF);
-        if (document.getElementById('tog-logo-main'))
-            document.getElementById('tog-logo-main').checked = !!state.showLogo;
+        if (document.getElementById('tog-logo-main')) document.getElementById('tog-logo-main').checked = !!state.showLogo;
     }
 
     function confirmReset() {
         if (confirm(`Скинути матч на Court ${currentCourt}?`)) {
-            // Скидаємо тільки state (рахунок + назви) — ui (кольори/розміри) зберігається
             state = {
                 scores: [0,0], games: [0,0], setsHistory: [[],[]], server: 0,
                 isGameActive: false, isTiebreak: false, isAmerican: state.isAmerican,
-                isProset: state.isProset, isGoldenPoint: state.isGoldenPoint,
+                isProset: state.isProset, deuceMode: state.deuceMode || "golden",
                 deuceCycles: 0, isGoldenActive: false, setTimes: [0,0,0], activeSetIndex: 0,
                 notifText: "", showFinish: false, showIntro: false,
                 showLogo: state.showLogo, showBoard: true, showStats: false,
                 prosetLimit: state.prosetLimit, americanLimit: state.americanLimit,
-                p1name: "", p2name: "",
-                courtName: `COURT ${currentCourt}`,
-                alertKey: "", alertText: "", alertMode: "", faultTeam: null,
-                _setStartTime: null, _lastStatsIsSetEnd: false
+                p1name: "Команда А", p2name: "Команда Б", courtName: `COURT ${currentCourt}`,
+                alertKey: "", alertText: "", alertMode: "", faultTeam: null, _setStartTime: null, _lastStatsIsSetEnd: false, hideScoreOnly: false
             };
             historyStack = [];
             gamePointCountP1 = 0; gamePointCountP2 = 0;
-            // Очищаємо поля назв в налаштуваннях
-            const p1el = document.getElementById('s-p1');
-            const p2el = document.getElementById('s-p2');
-            if (p1el) p1el.value = "";
-            if (p2el) p2el.value = "";
-            // ui не чіпаємо — тільки state
+            document.getElementById('s-p1').value = "Команда А";
+            document.getElementById('s-p2').value = "Команда Б";
             set(gameRef, { state, ui }).catch(e => console.error(e));
             updateControlUI();
         }
-    }
-
-    function renderMiniScoreboard() {
-        const s = state.scores; const g = state.games;
-        const sh = state.setsHistory || [[],[]];
-        const p1 = (state.p1name || "Команда А").toUpperCase();
-        const p2 = (state.p2name || "Команда Б").toUpperCase();
-        const pts = [0, 15, 30, 40, "AD"];
-
-        // Apply colours to mini scoreboard
-        document.getElementById('mini-main').style.background = ui.panelBg || 'rgba(60,60,60,0.7)';
-        document.getElementById('mini-main').style.borderLeftColor = ui.accentBlue || '#0055ff';
-        document.getElementById('mini-drawer').style.background = ui.drawerBg || 'rgba(40,40,40,0.8)';
-
-        // Skew
-        const skewVal = ui.sbSkew || '0deg';
-        document.getElementById('mini-sb').style.transform = `skewX(${skewVal})`;
-        document.getElementById('mini-main').querySelectorAll('.mini-name,.mini-dot,.mini-sets').forEach(el => {
-            el.style.transform = `skewX(calc(${skewVal} * -1))`;
-        });
-        document.getElementById('mini-drawer').querySelectorAll('.mini-pt').forEach(el => {
-            el.style.transform = `skewX(calc(${skewVal} * -1))`;
-        });
-
-        // Border radius
-        const rad = ui.sbRadius || '10px';
-        document.getElementById('mini-main').style.borderRadius = `${rad} 0 0 ${rad}`;
-        document.getElementById('mini-drawer').style.borderRadius = `0 ${rad} ${rad} 0`;
-
-        // Ball color
-        document.getElementById('mini-dot-0').style.background = ui.ballColor || '#ccff00';
-        document.getElementById('mini-dot-1').style.background = ui.ballColor || '#ccff00';
-        document.getElementById('mini-dot-0').style.boxShadow = `0 0 6px ${ui.ballColor||'#ccff00'}`;
-        document.getElementById('mini-dot-1').style.boxShadow = `0 0 6px ${ui.ballColor||'#ccff00'}`;
-
-        // Names
-        document.getElementById('mini-p1').textContent = p1;
-        document.getElementById('mini-p2').textContent = p2;
-        document.getElementById('mini-p1').style.color = ui.teamNameColor || '#ffffff';
-        document.getElementById('mini-p2').style.color = ui.teamNameColor || '#ffffff';
-        document.getElementById('mini-p1').style.fontFamily = ui.fontFamily || "'Oswald', sans-serif";
-        document.getElementById('mini-p2').style.fontFamily = ui.fontFamily || "'Oswald', sans-serif";
-
-        // Score
-        const getL = (i) => {
-            if (state.isAmerican || state.isTiebreak) return s[i];
-            return s[i]===4 ? "AD" : (s[1-i]===4 ? "" : pts[s[i]]);
-        };
-        document.getElementById('mini-score-p1').textContent = getL(0);
-        document.getElementById('mini-score-p2').textContent = getL(1);
-        document.getElementById('mini-score-p1').style.color = ui.scoreColor || '#fff';
-        document.getElementById('mini-score-p2').style.color = ui.scoreColor || '#fff';
-
-        // Drawer visibility
-        document.getElementById('mini-drawer').classList.toggle('points-active', !state.isGameActive);
-
-        // Serve dots
-        document.getElementById('mini-dot-0').classList.toggle('active', state.server===0);
-        document.getElementById('mini-dot-1').classList.toggle('active', state.server===1);
-
-        // Sets
-        const activeIdx = state.activeSetIndex || 0;
-        [0,1].forEach(p => {
-            let h = "";
-            sh[p].forEach(gv => h += `<div class="mini-set">${gv}</div>`);
-            h += `<div class="mini-set cur">${g[p]}</div>`;
-            document.getElementById(`mini-sets-p${p+1}`).innerHTML = h;
-        });
-
-        // Badges
-        const tbBadge = document.getElementById('mini-tb-badge');
-        tbBadge.textContent = state.isTiebreak ? 'TIE-BREAK' : (state.isProset ? `PRO-SET ${state.prosetLimit||8}` : '');
-        tbBadge.classList.toggle('active', state.isTiebreak || state.isProset);
-        tbBadge.style.background = ui.popupBg || '#444';
-
-        const notifBadge = document.getElementById('mini-notif-badge');
-        notifBadge.textContent = state.notifText || '';
-        notifBadge.classList.toggle('active', !!(state.notifText));
-        notifBadge.style.background = ui.popupBg || '#444';
-
-        // Also update big button score previews
-        document.getElementById('btn-score-p1').textContent = getL(0);
-        document.getElementById('btn-score-p2').textContent = getL(1);
     }
 
     function updateControlUI() {
@@ -1173,10 +923,9 @@
         document.getElementById('serve-p1-lbl').textContent = p1.toUpperCase().substring(0,7);
         document.getElementById('serve-p2-lbl').textContent = p2.toUpperCase().substring(0,7);
 
-        const pts2 = [0, 15, 30, 40, "AD"];
         const getL = (i) => {
             if (state.isAmerican || state.isTiebreak) return s[i];
-            return s[i]===4 ? "AD" : (s[1-i]===4 ? "" : pts2[s[i]]);
+            return s[i]===4 ? "AD" : (s[1-i]===4 ? "" : pts[s[i]]);
         };
         document.getElementById('disp-score-p1').textContent = getL(0);
         document.getElementById('disp-score-p2').textContent = getL(1);
@@ -1191,112 +940,93 @@
         document.getElementById('tog-intro').checked = !!state.showIntro;
         document.getElementById('tog-logo').checked = !!state.showLogo;
 
-        renderMiniScoreboard();
+        // Mini preview render
+        document.getElementById('mini-p1').textContent = p1.toUpperCase();
+        document.getElementById('mini-p2').textContent = p2.toUpperCase();
+        document.getElementById('mini-score-p1').textContent = getL(0);
+        document.getElementById('mini-score-p2').textContent = getL(1);
+        document.getElementById('mini-drawer').classList.toggle('points-active', state.isGameActive);
+        document.getElementById('mini-dot-0').classList.toggle('active', state.server===0);
+        document.getElementById('mini-dot-1').classList.toggle('active', state.server===1);
+        [0,1].forEach(p => {
+            let h = "";
+            (state.setsHistory[p] || []).forEach(gv => h += `<div class="mini-set">${gv}</div>`);
+            h += `<div class="mini-set cur">${g[p]}</div>`;
+            document.getElementById(`mini-sets-p${p+1}`).innerHTML = h;
+        });
+        document.getElementById('mini-tb-badge').classList.toggle('active', state.isTiebreak);
+        document.getElementById('mini-notif-badge').textContent = state.notifText || '';
+        document.getElementById('mini-notif-badge').classList.toggle('active', !!state.notifText);
+        document.getElementById('btn-score-p1').textContent = getL(0);
+        document.getElementById('btn-score-p2').textContent = getL(1);
     }
 
-    function openSettings() { document.getElementById('settings-panel').classList.add('open'); }
-    function closeSettings() { document.getElementById('settings-panel').classList.remove('open'); }
-    function saveAllSettings() { liveUpdateName(); liveUpdateUI(); sendMode(); closeSettings(); }
+    window.openSettings = function() {
+        document.getElementById('s-p1').value = state.p1name || "Команда А";
+        document.getElementById('s-p2').value = state.p2name || "Команда Б";
+        document.getElementById('s-court').value = state.courtName || "COURT 1";
+        document.getElementById('s-american').checked = !!state.isAmerican;
+        document.getElementById('s-proset').checked = !!state.isProset;
+        document.getElementById('s-deuce-mode').value = state.deuceMode || "golden";
+        document.getElementById('s-proset-limit').value = state.prosetLimit || 8;
+        document.getElementById('s-american-limit').value = state.americanLimit || 15;
+        document.getElementById('s-hide-score-only').checked = !!state.hideScoreOnly;
+        
+        // Populate sliders from active state
+        if(ui.sbW) document.getElementById('g-w').value = parseInt(ui.sbW);
+        if(ui.sbH) document.getElementById('g-h').value = parseInt(ui.sbH);
+        if(ui.sbSkew) document.getElementById('g-skew').value = parseInt(ui.sbSkew);
+        if(ui.sbRadius) document.getElementById('g-radius').value = parseInt(ui.sbRadius);
+        if(ui.sbTop) document.getElementById('g-y').value = ui.sbTop;
+        if(ui.sbLeft) document.getElementById('g-x').value = ui.sbLeft;
+        if(ui.sbScale) document.getElementById('g-scale').value = Math.round(ui.sbScale * 100);
 
-    // ─── SPONSOR LOGOS ────────────────────────────────────────────
-    if (!ui.sponsorLogos) ui.sponsorLogos = [];
-
-    function renderSponsorList() {
+        // Render sponsor inputs inside settings
         const list = document.getElementById('sponsor-logo-list');
-        if (!list) return;
         list.innerHTML = '';
         (ui.sponsorLogos || []).forEach((logo, i) => {
             const row = document.createElement('div');
             row.className = 'settings-input-row';
-            row.style.gap = '10px';
             row.innerHTML = `
                 <div style="flex:1">
                     <div class="toggle-label" style="font-size:11px;">Лого ${i+1}</div>
-                    ${logo.src ? `<img src="${logo.src}" style="height:28px;max-width:80px;object-fit:contain;border-radius:4px;margin-top:4px;opacity:0.8;">` : '<div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:2px;">не завантажено</div>'}
+                    ${logo.src ? `<img src="${logo.src}" style="height:28px;max-width:80px;object-fit:contain;border-radius:4px;margin-top:4px;opacity:0.8;">` : '<div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:2px;">немає</div>'}
                 </div>
-                <label class="switch" title="Показати/приховати">
-                    <input type="checkbox" ${logo.visible!==false?'checked':''} onchange="toggleSponsor(${i},this.checked)">
-                    <span class="slider"></span>
-                </label>
-                <label class="file-btn" style="padding:5px 10px;font-size:11px;">
-                    ↑<input type="file" accept="image/*" style="display:none" onchange="uploadSponsor(event,${i})">
-                </label>
+                <label class="switch"><input type="checkbox" ${logo.visible!==false?'checked':''} onchange="toggleSponsor(${i},this.checked)"><span class="slider"></span></label>
+                <label class="file-btn">↑<input type="file" accept="image/*" style="display:none" onchange="uploadSponsor(event,${i})"></label>
                 <button onclick="removeSponsor(${i})" style="background:rgba(231,76,60,0.2);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;border-radius:8px;padding:5px 10px;font-size:13px;cursor:pointer;">✕</button>
             `;
             list.appendChild(row);
         });
-    }
 
-    function addSponsorSlot() {
-        if (!ui.sponsorLogos) ui.sponsorLogos = [];
-        ui.sponsorLogos.push({ src: '', visible: true });
-        renderSponsorList();
-    }
-
-    function removeSponsor(i) {
-        ui.sponsorLogos.splice(i, 1);
-        renderSponsorList();
-        pushState();
-    }
-
-    function toggleSponsor(i, val) {
-        if (ui.sponsorLogos[i]) {
-            ui.sponsorLogos[i].visible = val;
-            pushState();
-        }
-    }
-
-    function uploadSponsor(event, i) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const r = new FileReader();
-        r.onload = () => {
-            if (!ui.sponsorLogos[i]) ui.sponsorLogos[i] = { visible: true };
-            ui.sponsorLogos[i].src = r.result;
-            renderSponsorList();
-            pushState();
-        };
-        r.readAsDataURL(file);
-    }
-
-    // Init sponsor list when settings open
-    window.openSettings = function() {
-        renderSponsorList();
         refreshLogoPreviews();
         document.getElementById('settings-panel').classList.add('open');
     };
 
-    // ─── EXPOSE TO WINDOW ──────────────────────────────────────────
+    function toggleSponsor(i, val) { if (ui.sponsorLogos[i]) { ui.sponsorLogos[i].visible = val; pushState(); } }
+    function removeSponsor(i) { ui.sponsorLogos.splice(i, 1); window.openSettings(); pushState(); }
+    function uploadSponsor(event, i) {
+        const file = event.target.files[0]; if (!file) return;
+        const r = new FileReader(); r.onload = () => {
+            if (!ui.sponsorLogos[i]) ui.sponsorLogos[i] = { visible: true };
+            ui.sponsorLogos[i].src = r.result; window.openSettings(); pushState();
+        }; r.readAsDataURL(file);
+    }
+    function addSponsorSlot() { if (!ui.sponsorLogos) ui.sponsorLogos = []; ui.sponsorLogos.push({ src: '', visible: true }); window.openSettings(); }
+
     window.sendAction = (type, p, btnEl) => {
-        if (type==='point') {
-            vibTap(btnEl, 35);
-            addPoint(p);
-        }
+        if (type==='point') { vibTap(btnEl, 35); addPoint(p); }
         else if (type==='fault') doFault(btnEl);
         else if (type==='undo')  doUndo(btnEl);
         else if (type==='finish') { state.showFinish = !state.showFinish; pushState(); }
     };
-    window.setServer = setServer;
-    window.sendToggle = sendToggle;
-    window.sendMode = sendMode;
-    window.liveUpdateName = liveUpdateName;
-    window.liveUpdateUI = liveUpdateUI;
-    window.gVal = gVal;
-    window.uploadLogo = uploadLogo;
-    window.confirmReset = confirmReset;
-    window.openSettings = openSettings;
-    window.closeSettings = closeSettings;
-    window.saveAllSettings = saveAllSettings;
-    window.switchCourt = switchCourt;
-    window.addSponsorSlot = addSponsorSlot;
-    window.removeSponsor = removeSponsor;
-    window.toggleSponsor = toggleSponsor;
-    window.uploadSponsor = uploadSponsor;
-    window.uploadLogoUI = uploadLogoUI;
-    window.clearLogo = clearLogo;
-    window.renderMiniScoreboard = renderMiniScoreboard;
+    window.setServer = setServer; window.sendToggle = sendToggle; window.sendMode = sendMode;
+    window.liveUpdateName = liveUpdateName; window.liveUpdateUI = liveUpdateUI; window.gVal = gVal;
+    window.confirmReset = confirmReset; window.closeSettings = () => document.getElementById('settings-panel').classList.remove('open');
+    window.saveAllSettings = () => { liveUpdateName(); liveUpdateUI(); sendMode(); window.closeSettings(); };
+    window.addSponsorSlot = addSponsorSlot; window.removeSponsor = removeSponsor; window.toggleSponsor = toggleSponsor; window.uploadSponsor = uploadSponsor;
+    window.uploadLogoUI = uploadLogoUI; window.clearLogo = clearLogo;
 
-    // Init
     buildCourtBar();
     updateControlUI();
 </script>
