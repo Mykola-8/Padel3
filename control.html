@@ -120,7 +120,6 @@
         #mini-main { flex: 1; display: flex; flex-direction: column; border-left: 8px solid #0055ff; border-radius: 8px 0 0 8px; overflow: hidden; }
         .mini-row { display: flex; align-items: center; flex: 1; padding: 0 8px; border-bottom: 1px solid rgba(255,255,255,0.08); overflow: hidden; }
         .mini-row:last-child { border-bottom: none; }
-        .mini-row:last-child { border-bottom: none; }
         .mini-name { flex: 1; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: white; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .mini-dot { width: 10px; height: 10px; border-radius: 50%; margin: 0 6px; opacity: 0; flex-shrink: 0; transition: opacity 0.3s; }
         .mini-dot.active { opacity: 1; }
@@ -182,7 +181,7 @@
         <button id="gear-btn" onclick="window.openSettings()">⚙️</button>
         <h1>Padel · <span id="topbar-court">COURT 1</span></h1>
     </div>
-    <span id="conn-status" class="offline">ОФЛАЙН</span>
+    <span id="conn-status" class="online">ОНЛАЙН</span>
 </div>
 
 <!-- MAIN -->
@@ -365,7 +364,7 @@
         </div>
     </div>
 
-    <!-- МЕДІА ЗАСТАВКИ (NEW) -->
+    <!-- МЕДІА ЗАСТАВКИ -->
     <div class="settings-section">
         <div class="settings-section-title">Медіа для VS заставки</div>
         <div class="settings-card">
