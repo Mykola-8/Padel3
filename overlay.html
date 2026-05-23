@@ -209,7 +209,7 @@
         .stats-games-num  { font-size: 46px; font-weight: 900; font-family: var(--team-font-family); color: white; }
         .stats-time-label { font-size: 15px; font-weight: 900; color: #7eb8ff; font-family: 'Inter', sans-serif; margin-top: 1px; letter-spacing: 0.5px; }
         
-        /* ── ТАБЛО РЕЗУЛЬТАТУ 50/50 ── */
+        /* ── ТАБЛО РЕЗУЛЬТАТУ (КІНЕЦЬ МАТЧУ) ── */
         #match-finish-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0,0,0,0.25); backdrop-filter: blur(12px) saturate(120%);
@@ -220,17 +220,17 @@
         #match-finish-overlay.active { animation: finish-bg-in 0.5s ease forwards; pointer-events: auto; }
         
         .finish-card {
-            background: var(--finish-bg); width: 620px; border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 20px; padding: 25px 35px; box-shadow: 0 25px 55px rgba(0,0,0,0.7);
+            background: var(--finish-bg); width: fit-content; min-width: 620px; border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 20px; padding: 25px 45px; box-shadow: 0 25px 55px rgba(0,0,0,0.7);
             display: flex; flex-direction: column; gap: 18px; text-align: center; opacity: 0;
         }
         #match-finish-overlay.active .finish-card { animation: finish-card-in 0.55s 0.2s cubic-bezier(0.18,0.89,0.32,1.18) forwards; }
         .finish-title { font-size: 26px; font-weight: 900; letter-spacing: 3px; color: var(--accent-blue); text-transform: uppercase; margin: 0; }
-        .finish-table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+        .finish-table { min-width: 530px; border-collapse: collapse; margin-top: 5px; }
         .finish-row { border-bottom: 1px solid rgba(255,255,255,0.06); height: 75px; }
-        .finish-team { text-align: left; font-size: 26px; font-weight: bold; font-family: var(--team-font-family); padding-left: 10px; color: #f5f5f5; }
+        .finish-team { text-align: left; font-size: 26px; font-weight: bold; font-family: var(--team-font-family); padding-left: 10px; color: #f5f5f5; padding-right: 40px; white-space: nowrap; }
         .finish-winner { color: var(--gold) !important; text-shadow: 0 0 12px rgba(255,215,0,0.35); }
-        .finish-cell-set { width: 75px; text-align: center; }
+        .finish-cell-set { width: 85px; text-align: center; }
         .finish-box-score { display: inline-block; min-width: 52px; height: 52px; line-height: 52px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; font-size: 28px; font-weight: 900; font-family: var(--team-font-family); color: #cccccc; }
         .finish-box-score.winner-box { background: linear-gradient(135deg, rgba(0,85,255,0.45), rgba(0,40,150,0.6)); border: 1px solid rgba(0,85,255,0.7); color: #ffffff; box-shadow: 0 0 15px rgba(0,85,255,0.4); }
         
@@ -281,12 +281,57 @@
         .sponsor-logo-wrap.slw-hide { animation: logo-pop-out 0.28s ease forwards; }
         .sponsor-logo-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 1px 5px rgba(0,0,0,0.3)); }
 
-        #match-intro-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; z-index: 19000; background: rgba(0,0,0,0.7); }
-        #match-intro-overlay.active { opacity: 1; }
-        .intro-card { display: flex; align-items: center; gap: 30px; }
-        .intro-team { font-family: var(--team-font-family); font-size: 48px; font-weight: 700; text-transform: uppercase; color: white; }
-        .intro-vs { font-family: 'Inter', sans-serif; font-size: 28px; font-weight: 900; color: var(--accent-blue); opacity: 0.7; }
-        .intro-court { font-size: 13px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 3px; text-align: center; margin-top: 10px; }
+        /* ── PREMIUM MATCH INTRO OVERLAY (MODIFIED) ── */
+        #match-intro-overlay { 
+            position: fixed; inset: 0; width: 1920px; height: 1080px; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            opacity: 0; pointer-events: none; transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1); 
+            z-index: 19000; background: radial-gradient(circle at center, rgba(16, 18, 27, 0.94) 0%, rgba(7, 8, 12, 0.98) 100%); 
+        }
+        #match-intro-overlay.active { opacity: 1; pointer-events: auto; }
+        
+        .intro-container { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; position: relative; }
+        
+        .intro-card { display: flex; align-items: center; justify-content: center; gap: 60px; min-width: 1300px; position: relative; }
+        
+        .intro-team-block { display: flex; flex-direction: column; align-items: center; width: 520px; text-align: center; }
+        
+        /* Photo Container Style */
+        .intro-photo-wrap { 
+            width: 320px; height: 320px; border-radius: 24px; 
+            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+            border: 1px solid rgba(255,255,255,0.1); overflow: hidden; 
+            box-shadow: 0 30px 70px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1); 
+            margin-bottom: 25px; display: none; opacity: 0;
+        }
+        .intro-photo-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Logo Slot Above Team Name */
+        .intro-team-logo { height: 60px; max-width: 160px; object-fit: contain; margin-bottom: 15px; display: none; opacity: 0; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4)); }
+        
+        .intro-team { font-family: var(--team-font-family); font-size: 56px; font-weight: 700; text-transform: uppercase; color: white; text-shadow: 0 4px 20px rgba(0,0,0,0.6); opacity: 0; letter-spacing: 1px; }
+        
+        /* Divider VS Box */
+        .intro-vs-box { display: flex; align-items: center; justify-content: center; position: relative; width: 120px; height: 120px; }
+        .intro-vs { font-family: 'Inter', sans-serif; font-size: 42px; font-weight: 900; color: var(--accent-blue); text-shadow: 0 0 30px var(--accent-blue); opacity: 0; transform: scale(0.5); }
+        
+        .intro-court { font-size: 16px; font-weight: 900; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 5px; text-align: center; margin-bottom: 50px; opacity: 0; transform: translateY(-20px); transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+        /* Cinematic Intros Trigger Animations */
+        @keyframes intro-left-in  { 0% { opacity:0; transform: translateX(-120px); } 100% { opacity:1; transform: translateX(0); } }
+        @keyframes intro-right-in { 0% { opacity:0; transform: translateX(120px); } 100% { opacity:1; transform: translateX(0); } }
+        @keyframes intro-vs-pop   { 0% { opacity:0; transform: scale(0.4) rotate(-15deg); } 50% { transform: scale(1.1) rotate(5deg); } 100% { opacity:1; transform: scale(1) rotate(0deg); } }
+        
+        #match-intro-overlay.active .intro-team-block.t-left .intro-photo-wrap,
+        #match-intro-overlay.active .intro-team-block.t-left .intro-team-logo,
+        #match-intro-overlay.active .intro-team-block.t-left .intro-team { animation: intro-left-in 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; }
+        
+        #match-intro-overlay.active .intro-team-block.t-right .intro-photo-wrap,
+        #match-intro-overlay.active .intro-team-block.t-right .intro-team-logo,
+        #match-intro-overlay.active .intro-team-block.t-right .intro-team { animation: intro-right-in 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; }
+        
+        #match-intro-overlay.active .intro-vs { animation: intro-vs-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards; }
+        #match-intro-overlay.active .intro-court { opacity: 1; transform: translateY(0); transition-delay: 0.4s; }
 
         @keyframes deuce-wipe-in { 0% { transform: translateX(100%); } 100% { transform: translateX(0%); } }
         @keyframes deuce-wipe-out { 0% { transform: translateX(0%); } 100% { transform: translateX(-100%); } }
@@ -304,14 +349,11 @@
         @keyframes bn-slide-out { 0% { opacity: 1; transform: translateY(5px); } 100% { opacity: 0; transform: translateY(-15px); } }
         @keyframes bn-txt-in { 0% { opacity: 0; } 100% { opacity: 1; } }
 
-        /* ВИПРАВЛЕНО: Додано легеньке мерехтіння для гравця який переміг у Golden Point */
         @keyframes gp-shimmer {
             0%, 100% { opacity: 1; background-color: transparent; }
             50% { opacity: 0.4; background-color: rgba(255, 215, 0, 0.15); }
         }
-        .gp-winner-shimmer {
-            animation: gp-shimmer 0.6s ease-in-out 5;
-        }
+        .gp-winner-shimmer { animation: gp-shimmer 0.6s ease-in-out 5; }
     </style>
 </head>
 <body>
@@ -373,10 +415,7 @@
         <h2 class="finish-title">Результати матчу</h2>
         <table class="finish-table">
             <thead>
-                <tr style="color:#777; font-size:11px; text-transform:uppercase; height:35px; letter-spacing:1px;">
-                    <th style="text-align:left; padding-left:20px;">Команда</th>
-                    <th class="finish-cell-set">S1</th><th class="finish-cell-set">S2</th><th class="finish-cell-set">S3</th>
-                </tr>
+                <tr id="finish-table-head" style="color:#777; font-size:11px; text-transform:uppercase; height:35px; letter-spacing:1px;"></tr>
             </thead>
             <tbody id="finish-table-body"></tbody>
         </table>
@@ -385,14 +424,30 @@
 
 <div id="sponsor-logos-bar"></div>
 
+<!-- PREMIUM MATCH INTRO OVERLAY (MODIFIED WITH PHOTOS & LOGOS) -->
 <div id="match-intro-overlay">
-    <div>
-        <div class="intro-card">
-            <div class="intro-team" id="intro-p1-display">Команда А</div>
-            <div class="intro-vs">VS</div>
-            <div class="intro-team" id="intro-p2-display">Команда Б</div>
-        </div>
+    <div class="intro-container">
         <div class="intro-court" id="intro-court-display">COURT 1</div>
+        <div class="intro-card">
+            <!-- Team 1 Block -->
+            <div class="intro-team-block t-left">
+                <img id="intro-t1-logo" class="intro-team-logo" src="" alt="">
+                <div id="intro-t1-photo-wrap" class="intro-photo-wrap"><img id="intro-t1-photo" src="" alt=""></div>
+                <div class="intro-team" id="intro-p1-display">Команда А</div>
+            </div>
+            
+            <!-- VS Middle Box -->
+            <div class="intro-vs-box">
+                <div class="intro-vs">VS</div>
+            </div>
+            
+            <!-- Team 2 Block -->
+            <div class="intro-team-block t-right">
+                <img id="intro-t2-logo" class="intro-team-logo" src="" alt="">
+                <div id="intro-t2-photo-wrap" class="intro-photo-wrap"><img id="intro-t2-photo" src="" alt=""></div>
+                <div class="intro-team" id="intro-p2-display">Команда Б</div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -547,6 +602,25 @@
         document.getElementById('intro-p2-display').innerText = p2name;
         document.getElementById('intro-court-display').innerText = courtName;
 
+        // INTRO ASSETS RENDERING (NEW)
+        const t1PhotoImg = document.getElementById('intro-t1-photo');
+        const t1PhotoWrap = document.getElementById('intro-t1-photo-wrap');
+        if (ui.team1Photo) { t1PhotoImg.src = ui.team1Photo; t1PhotoWrap.style.display = 'block'; }
+        else { t1PhotoImg.src = ''; t1PhotoWrap.style.display = 'none'; }
+
+        const t2PhotoImg = document.getElementById('intro-t2-photo');
+        const t2PhotoWrap = document.getElementById('intro-t2-photo-wrap');
+        if (ui.team2Photo) { t2PhotoImg.src = ui.team2Photo; t2PhotoWrap.style.display = 'block'; }
+        else { t2PhotoImg.src = ''; t2PhotoWrap.style.display = 'none'; }
+
+        const t1LogoImg = document.getElementById('intro-t1-logo');
+        if (ui.team1Logo) { t1LogoImg.src = ui.team1Logo; t1LogoImg.style.display = 'block'; }
+        else { t1LogoImg.src = ''; t1LogoImg.style.display = 'none'; }
+
+        const t2LogoImg = document.getElementById('intro-t2-logo');
+        if (ui.team2Logo) { t2LogoImg.src = ui.team2Logo; t2LogoImg.style.display = 'block'; }
+        else { t2LogoImg.src = ''; t2LogoImg.style.display = 'none'; }
+
         const getL = (i) => {
             if (isAmerican || isTiebreak) return scores[i];
             return scores[i] === 4 ? "AD" : (scores[1-i] === 4 ? "" : pts[scores[i]]);
@@ -610,7 +684,6 @@
                 if (capturedMode === 'deuce') {
                     enqueueAnim(() => playDeuceWipe('DEUCE', null), 1600);
                 } else {
-                    // ВИПРАВЛЕНО: 'golden' (Golden Point) тепер йде сюди і повністю перекриває все табло рахунку
                     enqueueAnim(() => {
                         const ring  = document.getElementById('sb-glow-ring');
                         const el    = document.getElementById('scoreboard-fullscreen-alert');
@@ -662,7 +735,6 @@
             }
         }
 
-        // ВИПРАВЛЕНО: Мерехтіння переможця Golden Point відразу після розіграшу очка
         const goldenWinnerKey = state.goldenWinnerKey || "";
         if (goldenWinnerKey && goldenWinnerKey !== lastGoldenWinnerKey) {
             lastGoldenWinnerKey = goldenWinnerKey;
@@ -687,7 +759,7 @@
             }, 4000);
         }
 
-        document.getElementById('scoreboard-anchor').classList.toggle('hidden-board', showBoard === false || showFinish);
+        document.getElementById('scoreboard-anchor').classList.toggle('hidden-board', showBoard === false || showFinish || showIntro);
 
         const finishOverlay = document.getElementById('match-finish-overlay');
         if (showFinish && !finishOverlay.classList.contains('active')) {
@@ -696,6 +768,9 @@
         } else if (!showFinish) {
             finishOverlay.classList.remove('active');
         }
+
+        // TOGGLE INTRO OVERLAY
+        document.getElementById('match-intro-overlay').classList.toggle('active', !!showIntro);
 
         if (ui.statLogoT) document.getElementById('stat-logo-t').src = ui.statLogoT;
         if (ui.statLogoF) document.getElementById('stat-logo-f').src = ui.statLogoF;
@@ -707,7 +782,8 @@
         const setsHistory = state.setsHistory || [[],[]]; const games = state.games || [0,0];
         const activeSetIndex = state.activeSetIndex || 0; const setTimes = state.setTimes || [];
         const setStartTime = state._setStartTime;
-        let totalSets = Math.min(Math.max(activeSetIndex + 1, (setsHistory[0] || []).length, 1), 3);
+        
+        let totalSets = Math.max(activeSetIndex + 1, (setsHistory[0] || []).length, 1);
         const nowElapsed = setStartTime ? Math.round((Date.now() - setStartTime) / 60000) : 0;
 
         let headHtml = `<tr style="color:rgba(255,255,255,0.32); font-size:11px; text-transform:uppercase; height:22px; letter-spacing:1px;">
@@ -745,8 +821,14 @@
         const n1 = state.p1name || "Команда А"; const n2 = state.p2name || "Команда Б";
         const sh = state.setsHistory || [[],[]]; const st = state.setTimes || [];
         
+        let totalSets = Math.max((sh[0] || []).length, (sh[1] || []).length, 1);
+
+        let headHtml = `<th style="text-align:left; padding-left:20px;">Команда</th>`;
+        for(let s=1; s<=totalSets; s++) headHtml += `<th class="finish-cell-set">S${s}</th>`;
+        document.getElementById('finish-table-head').innerHTML = headHtml;
+        
         let html = `<tr class="finish-row"><td class="finish-team">${n1}</td>`;
-        for(let i=0;i<3;i++){
+        for(let i=0; i<totalSets; i++){
             const v = (sh[0] && sh[0][i]!==undefined)?sh[0][i]:'-';
             const won = (sh[0] && sh[1] && sh[0][i]!==undefined && sh[1][i]!==undefined && sh[0][i]>sh[1][i]);
             html += `<td class="finish-cell-set"><span class="finish-box-score${won?' winner-box':''}">${v}</span>`;
@@ -754,7 +836,7 @@
             html += `</td>`;
         }
         html += `</tr><tr class="finish-row" style="border:none;"><td class="finish-team">${n2}</td>`;
-        for(let i=0;i<3;i++){
+        for(let i=0; i<totalSets; i++){
             const v = (sh[1] && sh[1][i]!==undefined)?sh[1][i]:'-';
             const won = (sh[0] && sh[1] && sh[0][i]!==undefined && sh[1][i]!==undefined && sh[1][i]>sh[0][i]);
             html += `<td class="finish-cell-set"><span class="finish-box-score${won?' winner-box':''}">${v}</span>`;
