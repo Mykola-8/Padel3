@@ -61,6 +61,8 @@
         #main { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
 
         /* SCORE DISPLAY */
+        .score-section { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+        .score-section-title { padding: 10px 16px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.3); border-bottom: 1px solid var(--border); }
         .score-display {
             background: var(--surface); border-radius: 16px; border: 1px solid var(--border);
             padding: 14px 16px; display: flex; align-items: center; gap: 12px;
@@ -79,8 +81,6 @@
         .score-badge.pts { background: rgba(0,85,255,0.25); color: #fff; }
         .score-badge.games { background: rgba(255,255,255,0.12); }
         .score-divider { border: none; border-top: 1px solid var(--border); margin: 0; }
-        .score-section { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
-        .score-section-title { padding: 10px 16px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.3); border-bottom: 1px solid var(--border); }
 
         /* BIG BUTTONS */
         .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -312,7 +312,7 @@
                 <input type="text" id="s-p2" value="Команда Б" oninput="liveUpdateName()">
             </div>
             <div class="settings-input-row">
-                <label>Корт</label>
+                <label>Маркер корту</label>
                 <input type="text" id="s-court" value="COURT 1" oninput="liveUpdateName()">
             </div>
             <div class="settings-input-row">
@@ -420,7 +420,7 @@
                 <span class="range-val" id="g-h-val">120</span>
             </div>
             <div class="settings-input-row">
-                <label>Масштаб % <span style="color:rgba(255,255,255,0.3);font-size:10px">⚡ швидко</span></label>
+                <label>Масштаб %</label>
                 <input type="range" id="g-scale" min="20" max="100" step="1" value="100" oninput="liveUpdateUI(); gVal('g-scale','g-scale-val')">
                 <span class="range-val" id="g-scale-val">100</span>
             </div>
@@ -620,6 +620,7 @@
         updateControlUI();
     }, { onlyOnce: true });
 
+    // ВИПРАВЛЕНО ТА АКТИВОВАНО ВСІ 3 РЕЖИМИ DEUCE
     function addPoint(p) {
         historyStack.push(JSON.parse(JSON.stringify(state)));
         if (!state.isGameActive) {
@@ -627,7 +628,6 @@
             if (!state._setStartTime) state._setStartTime = Date.now();
         }
         const o = 1 - p;
-        const currentDeuceMode = state.deuceMode || "golden";
 
         if (state.isAmerican) {
             state.scores[p]++;
@@ -646,54 +646,51 @@
                 return;
             }
 
-            // ПЕРЕДУМОВА ДЛЯ АНІМАЦІЇ НА ВИПЕРЕДЖЕННЯ
-            let willBecomeDeuce = false;
-            let willBecomeGolden = false;
-
-            if (state.scores[p] === 2 && state.scores[o] === 3) {
-                // Рахунок стає 40:40 (3:3)
-                willBecomeDeuce = true;
-            } else if (state.scores[p] === 3 && state.scores[o] === 4) {
-                // Повернення з переваги на рівно
-                willBecomeDeuce = true;
-            }
-
-            if (willBecomeDeuce) {
-                if (currentDeuceMode === 'golden') {
-                    willBecomeDeuce = false;
-                    willBecomeGolden = true;
-                } else if (currentDeuceMode === '2deuce' && state.deuceCycles >= 2) {
-                    willBecomeDeuce = false;
-                    willBecomeGolden = true;
+            if (state.scores[p] < 3) {
+                state.scores[p]++;
+                // Перевіряємо, чи рахунок став рівно (40-40)
+                if (state.scores[0] === 3 && state.scores[1] === 3) {
+                    if (state.deuceMode === 'golden') {
+                        state.isGoldenActive = true;
+                        state.alertKey = "GP_" + Date.now();
+                        state.alertText = "GOLDEN POINT";
+                        state.alertMode = "golden";
+                    } else {
+                        state.deuceCycles = 1;
+                        state.alertKey = "DEUCE_" + Date.now();
+                        state.alertText = "DEUCE";
+                        state.alertMode = "deuce";
+                    }
                 }
-            }
-
-            // ТРИГЕРИ ПЛАШОК НА ВИПЕРЕДЖЕННЯ
-            if (willBecomeGolden) {
-                state.alertKey = "GP_" + Date.now();
-                state.alertText = "GOLDEN POINT";
-                state.alertMode = "golden";
-                state.isGoldenActive = true;
-                state.scores[p] = 3;
-                state.scores[o] = 3;
-            } else if (willBecomeDeuce) {
-                state.alertKey = "DEUCE_" + Date.now();
-                state.alertText = "DEUCE";
-                state.alertMode = "deuce";
-                state.scores[p] = 3;
-                state.scores[o] = 3;
-                state.deuceCycles++;
-            } else {
-                // Звичайна логіка очок
-                if (state.scores[p] === 4) {
+            } else if (state.scores[p] === 3) {
+                if (state.scores[o] < 3) {
                     winGame(p);
+                } else if (state.scores[o] === 3) {
+                    // Було 40-40, отримуємо перевагу AD (значення 4)
+                    state.scores[p] = 4;
                 } else if (state.scores[o] === 4) {
+                    // У суперника було перевага AD, повертаємось на Рівно 40-40
                     state.scores[o] = 3;
-                } else if (state.scores[p] === 3) {
-                    winGame(p);
-                } else {
-                    state.scores[p]++;
+                    if (state.deuceMode === '2deuce') {
+                        state.deuceCycles++;
+                        if (state.deuceCycles >= 3) {
+                            state.isGoldenActive = true;
+                            state.alertKey = "GP_" + Date.now();
+                            state.alertText = "GOLDEN POINT";
+                            state.alertMode = "golden";
+                        } else {
+                            state.alertKey = "DEUCE_" + Date.now();
+                            state.alertText = "DEUCE";
+                            state.alertMode = "deuce";
+                        }
+                    } else {
+                        state.alertKey = "DEUCE_" + Date.now();
+                        state.alertText = "DEUCE";
+                        state.alertMode = "deuce";
+                    }
                 }
+            } else if (state.scores[p] === 4) {
+                winGame(p);
             }
         }
         computeNotif();
@@ -773,18 +770,25 @@
         }
         state.notifText = txt;
         if (alertText) {
-            state.alertKey = alertText + "_" + Date.now();
-            state.alertText = alertText; state.alertMode = alertMode;
+            if (!state.alertKey || (!state.alertKey.startsWith("DEUCE_") && !state.alertKey.startsWith("GP_"))) {
+                state.alertKey = alertText + "_" + Date.now();
+                state.alertText = alertText; state.alertMode = alertMode;
+            }
         }
     }
 
     function doFault(btnEl) {
-        historyStack.push(JSON.parse(JSON.stringify(state)));
-        state.faultTeam = state.server;
+        const kicker = state.server;
+        state.faultTeam = kicker;
         vibTap(btnEl, [60, 40, 60]);
         
-        state.alertKey = "FAULT_" + state.server + "_" + Date.now();
+        addPoint(1 - kicker);
+        
+        state.alertKey = "FAULT_" + kicker + "_" + Date.now();
+        state.faultTeam = kicker;
+        
         pushState();
+        updateControlUI();
         
         setTimeout(() => {
             state.faultTeam = null;
@@ -922,7 +926,7 @@
         document.getElementById('mini-dot-0').classList.toggle('active', state.server===0);
         document.getElementById('mini-dot-1').classList.toggle('active', state.server===1);
         [0,1].forEach(p => {
-            let h = ""; (state.setsHistory[p] || []).forEach(gv => h += `<div class="mini-set">${gv}</div>`);
+            let h = ""; Object.values(state.setsHistory[p] || []).forEach(gv => h += `<div class="mini-set">${gv}</div>`);
             h += `<div class="mini-set cur">${g[p]}</div>`; document.getElementById(`mini-sets-p${p+1}`).innerHTML = h;
         });
         document.getElementById('mini-tb-badge').classList.toggle('active', state.isTiebreak);
