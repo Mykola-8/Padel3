@@ -252,7 +252,21 @@
         .fault-row-lbl.fr-txt-show { animation: fault-row-txt 0.18s 0.18s ease forwards; }
 
         /* ── BOTTOM NOTIF PLANK ── */
-        #bottom-notif { position: absolute; bottom: 0; left: 8%; width: 84%; height: 30px; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 50; transform: translateY(0); opacity: 0; }
+        /* ВИПРАВЛЕНО: Зміщено під основне табло (top: 100%) та початкове приховування */
+        #bottom-notif { 
+            position: absolute; 
+            top: 100%; 
+            left: 8%; 
+            width: 84%; 
+            height: 30px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            pointer-events: none; 
+            z-index: 50; 
+            transform: translateY(-15px); 
+            opacity: 0; 
+        }
         .bn-bg { position: absolute; inset: 0; background: rgba(30,30,35,0.82); border-left: 4px solid var(--bn-color, var(--accent-blue)); border-radius: 6px; backdrop-filter: blur(10px); box-shadow: 0 4px 18px rgba(0,0,0,0.45); }
         .bn-bg::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: var(--bn-color, var(--accent-blue)); opacity: 0.5; }
         .bn-text { position: relative; z-index: 1; font-family: var(--team-font-family); font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #ffffff; opacity: 0; }
@@ -275,7 +289,6 @@
         .intro-vs { font-family: 'Inter', sans-serif; font-size: 28px; font-weight: 900; color: var(--accent-blue); opacity: 0.7; }
         .intro-court { font-size: 13px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 3px; text-align: center; margin-top: 10px; }
 
-        /* ВИПРАВЛЕНО: ДОДАНО З КОРЕНЕМ ВСІ ВІДСУТНІ АНІМАЦІЇ KEYFRAMES */
         @keyframes deuce-wipe-in { 0% { transform: translateX(100%); } 100% { transform: translateX(0%); } }
         @keyframes deuce-wipe-out { 0% { transform: translateX(0%); } 100% { transform: translateX(-100%); } }
         @keyframes deuce-txt-in { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
@@ -287,8 +300,10 @@
         @keyframes finish-card-in { 0% { opacity: 0; transform: scale(0.8) translateY(30px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
         @keyframes logo-pop-in { 0% { opacity: 0; transform: scale(0.6); } 100% { opacity: 1; transform: scale(1); } }
         @keyframes logo-pop-out { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.6); } }
-        @keyframes bn-slide-in { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
-        @keyframes bn-slide-out { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(15px); } }
+        
+        /* ВИПРАВЛЕНО: Анімація появи вниз під основним таблом */
+        @keyframes bn-slide-in { 0% { opacity: 0; transform: translateY(-15px); } 100% { opacity: 1; transform: translateY(5px); } }
+        @keyframes bn-slide-out { 0% { opacity: 1; transform: translateY(5px); } 100% { opacity: 0; transform: translateY(-15px); } }
         @keyframes bn-txt-in { 0% { opacity: 0; } 100% { opacity: 1; } }
     </style>
 </head>
