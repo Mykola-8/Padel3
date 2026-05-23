@@ -139,7 +139,7 @@
             animation: txt-appear 0.28s 0.26s cubic-bezier(0.175,0.885,0.32,1.275) forwards,
                        txt-gone   0.28s 2.3s ease forwards;
         }
-        .alert-golden-theme   { color: #1a1200 !important; }
+        .alert-golden-theme   { color: #ffffff !important; text-shadow: 0 2px 15px rgba(0,0,0,0.6) !important; }
         .alert-tiebreak-theme { color: #ffffff !important; }
         .alert-deuce-theme    { color: #ffffff !important; }
         
@@ -159,7 +159,7 @@
             border-bottom: 2px solid var(--cell-border);
             box-sizing: border-box; overflow: hidden; text-align: center; width: 100%;
         }
-        .player-row { display: flex; align-items: center; flex: 1; padding: 0 0 0 5%; border-bottom: 2px solid var(--cell-border); overflow: hidden; position: relative; }
+        .player-row { display: flex; align-items: center; flex: 1; padding: 0 0 0 5%; border-bottom: 2px solid var(--cell-border); overflow: hidden; position: relative; transition: background-color 0.3s; }
         .player-name { flex: 1; font-size: calc(var(--sb-h) * 0.28); color: var(--team-name-color); font-family: var(--team-font-family); letter-spacing: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; }
         .sets-history { display: flex; height: 100%; border-left: 2px solid var(--cell-border); align-items: center; }
         .set-box-wrapper { display: flex; flex-direction: column; align-items: center; padding: 0 14px; justify-content: center; border-right: 1px solid rgba(255,255,255,0.1); height: 100%; }
@@ -252,7 +252,6 @@
         .fault-row-lbl.fr-txt-show { animation: fault-row-txt 0.18s 0.18s ease forwards; }
 
         /* ── BOTTOM NOTIF PLANK ── */
-        /* ВИПРАВЛЕНО: Зміщено під основне табло (top: 100%) та початкове приховування */
         #bottom-notif { 
             position: absolute; 
             top: 100%; 
@@ -301,10 +300,18 @@
         @keyframes logo-pop-in { 0% { opacity: 0; transform: scale(0.6); } 100% { opacity: 1; transform: scale(1); } }
         @keyframes logo-pop-out { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.6); } }
         
-        /* ВИПРАВЛЕНО: Анімація появи вниз під основним таблом */
         @keyframes bn-slide-in { 0% { opacity: 0; transform: translateY(-15px); } 100% { opacity: 1; transform: translateY(5px); } }
         @keyframes bn-slide-out { 0% { opacity: 1; transform: translateY(5px); } 100% { opacity: 0; transform: translateY(-15px); } }
         @keyframes bn-txt-in { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+        /* ВИПРАВЛЕНО: Додано легеньке мерехтіння для гравця який переміг у Golden Point */
+        @keyframes gp-shimmer {
+            0%, 100% { opacity: 1; background-color: transparent; }
+            50% { opacity: 0.4; background-color: rgba(255, 215, 0, 0.15); }
+        }
+        .gp-winner-shimmer {
+            animation: gp-shimmer 0.6s ease-in-out 5;
+        }
     </style>
 </head>
 <body>
@@ -409,6 +416,7 @@
 
     const pts = [0, 15, 30, 40, "AD"];
     let lastAlertKey = "";
+    let lastGoldenWinnerKey = "";
     let forceShowStats = false;
     let statsTimeout = null;
 
@@ -601,15 +609,14 @@
 
                 if (capturedMode === 'deuce') {
                     enqueueAnim(() => playDeuceWipe('DEUCE', null), 1600);
-                } else if (capturedMode === 'golden') {
-                    enqueueAnim(() => playDeuceWipe('GOLDEN POINT', 'linear-gradient(135deg, #9a7d0a 0%, #b7950b 60%, #d4ac0d 100%)'), 1600);
                 } else {
+                    // ВИПРАВЛЕНО: 'golden' (Golden Point) тепер йде сюди і повністю перекриває все табло рахунку
                     enqueueAnim(() => {
                         const ring  = document.getElementById('sb-glow-ring');
                         const el    = document.getElementById('scoreboard-fullscreen-alert');
                         const txtEl = document.getElementById('fullscreen-alert-text');
 
-                        const glowMap = { golden:'#c8a200', tiebreak:'#c0392b', normal:null };
+                        const glowMap = { golden:'#d4ac0d', tiebreak:'#c0392b', normal:null };
                         const glowColor = glowMap[capturedMode] || '#0055ff';
                         ring.style.setProperty('--glow-color', glowColor);
                         el.style.setProperty('--glow-color', glowColor);
@@ -629,7 +636,12 @@
 
                         ring.classList.remove('glow-out');
                         ring.classList.add('glow-active');
-                        bg.style.background = glowColor;
+                        
+                        if (capturedMode === 'golden') {
+                            bg.style.background = 'linear-gradient(135deg, #9a7d0a 0%, #b7950b 60%, #d4ac0d 100%)';
+                        } else {
+                            bg.style.background = glowColor;
+                        }
                         bg.classList.add('wipe-in');
 
                         setTimeout(() => txtEl.classList.add('txt-show'), 260);
@@ -647,6 +659,20 @@
                         }, 2600);
                     }, 3000);
                 }
+            }
+        }
+
+        // ВИПРАВЛЕНО: Мерехтіння переможця Golden Point відразу після розіграшу очка
+        const goldenWinnerKey = state.goldenWinnerKey || "";
+        if (goldenWinnerKey && goldenWinnerKey !== lastGoldenWinnerKey) {
+            lastGoldenWinnerKey = goldenWinnerKey;
+            const winnerId = parseInt(goldenWinnerKey.split("_")[1]);
+            const winnerRow = document.getElementById(`row-${winnerId}`);
+            if (winnerRow) {
+                winnerRow.classList.remove('gp-winner-shimmer');
+                void winnerRow.offsetWidth;
+                winnerRow.classList.add('gp-winner-shimmer');
+                setTimeout(() => winnerRow.classList.remove('gp-winner-shimmer'), 3100);
             }
         }
 
