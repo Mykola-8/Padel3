@@ -289,8 +289,8 @@
             font-weight: 700;
         }
         #deuce-wipe-label.dl-show {
-            animation: deuce-txt-in  0.25s 0.28s ease forwards,
-                       deuce-txt-out 0.22s 1.8s  ease forwards;
+            animation: deuce-txt-in  0.22s 0.26s ease forwards,
+                       deuce-txt-out 0.20s 0.9s  ease forwards;
         }
 
         /* FAULT: wipe "DOUBLE FAULT" справа наліво поверх назви команди */
@@ -588,13 +588,13 @@
         bg.classList.add('dw-in');
         setTimeout(() => lbl.classList.add('dl-show'), 280);
 
-        // Wipe OUT після 2.1с
+        // Wipe OUT після 1.0с (загальна анімація ~1.3с)
         setTimeout(() => {
             lbl.classList.remove('dl-show');
             bg.classList.remove('dw-in');
             bg.classList.add('dw-out');
-            setTimeout(() => bg.classList.remove('dw-out'), 380);
-        }, 2100);
+            setTimeout(() => bg.classList.remove('dw-out'), 320);
+        }, 1000);
     }
 
     function updateStyle(p, v) { document.documentElement.style.setProperty(p, v); }
@@ -752,55 +752,54 @@
             const capturedMode = state.alertMode;
             const capturedText = state.alertText || "";
 
-            // DEUCE — окрема плашка-wipe на табло (не fullscreen)
+            // DEUCE → коротка плашка-wipe 1.3с
+            // GOLDEN/BREAK/SET/TIEBREAK → fullscreen wipe 3с
             if (capturedMode === 'deuce') {
-                enqueueAnim(() => playDeuceWipe('DEUCE', null), 2600);
-                return; // не запускаємо fullscreen wipe
-            }
+                enqueueAnim(() => playDeuceWipe('DEUCE', null), 1400);
+            } else {
+                enqueueAnim(() => {
+                    const ring  = document.getElementById('sb-glow-ring');
+                    const el    = document.getElementById('scoreboard-fullscreen-alert');
+                    const txtEl = document.getElementById('fullscreen-alert-text');
 
-            enqueueAnim(() => {
-                const ring  = document.getElementById('sb-glow-ring');
-                const el    = document.getElementById('scoreboard-fullscreen-alert');
-                const txtEl = document.getElementById('fullscreen-alert-text');
+                    const glowMap = { golden:'#c8a200', tiebreak:'#c0392b', normal:null };
+                    const glowColor = glowMap[capturedMode] || '#0055ff';
+                    ring.style.setProperty('--glow-color', glowColor);
+                    el.style.setProperty('--glow-color', glowColor);
 
-                const glowMap = { golden:'#c8a200', tiebreak:'#c0392b', deuce:'#6c3483', normal:null };
-                const glowColor = glowMap[capturedMode] || '#0055ff';
-                ring.style.setProperty('--glow-color', glowColor);
-                el.style.setProperty('--glow-color', glowColor);
+                    let bg = el.querySelector('.alert-wipe-bg');
+                    if (!bg) { bg = document.createElement('div'); bg.className='alert-wipe-bg'; el.insertBefore(bg, txtEl); }
 
-                let bg = el.querySelector('.alert-wipe-bg');
-                if (!bg) { bg = document.createElement('div'); bg.className='alert-wipe-bg'; el.insertBefore(bg, txtEl); }
-
-                bg.classList.remove('wipe-in','wipe-out');
-                txtEl.classList.remove('txt-show');
-                void bg.offsetWidth;
-
-                txtEl.innerText = capturedText;
-                let cls = "alert-text-content";
-                if (capturedMode === 'golden')   cls += " alert-golden-theme";
-                if (capturedMode === 'tiebreak') cls += " alert-tiebreak-theme";
-                if (capturedMode === 'deuce')    cls += " alert-deuce-theme";
-                txtEl.className = cls;
-
-                ring.classList.remove('glow-out');
-                ring.classList.add('glow-active');
-                bg.style.background = glowColor;
-                bg.classList.add('wipe-in');
-
-                setTimeout(() => txtEl.classList.add('txt-show'), 260);
-
-                setTimeout(() => {
+                    bg.classList.remove('wipe-in','wipe-out');
                     txtEl.classList.remove('txt-show');
-                    bg.classList.remove('wipe-in');
-                    bg.classList.add('wipe-out');
-                    ring.classList.remove('glow-active');
-                    ring.classList.add('glow-out');
+                    void bg.offsetWidth;
+
+                    txtEl.innerText = capturedText;
+                    let cls = "alert-text-content";
+                    if (capturedMode === 'golden')   cls += " alert-golden-theme";
+                    if (capturedMode === 'tiebreak') cls += " alert-tiebreak-theme";
+                    txtEl.className = cls;
+
+                    ring.classList.remove('glow-out');
+                    ring.classList.add('glow-active');
+                    bg.style.background = glowColor;
+                    bg.classList.add('wipe-in');
+
+                    setTimeout(() => txtEl.classList.add('txt-show'), 260);
+
                     setTimeout(() => {
-                        bg.classList.remove('wipe-out');
-                        ring.classList.remove('glow-out');
-                    }, 350);
-                }, 2600);
-            }, 3000); // total duration в черзі
+                        txtEl.classList.remove('txt-show');
+                        bg.classList.remove('wipe-in');
+                        bg.classList.add('wipe-out');
+                        ring.classList.remove('glow-active');
+                        ring.classList.add('glow-out');
+                        setTimeout(() => {
+                            bg.classList.remove('wipe-out');
+                            ring.classList.remove('glow-out');
+                        }, 350);
+                    }, 2600);
+                }, 3000);
+            }
         }
 
         // Stats overlay
