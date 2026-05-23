@@ -281,12 +281,12 @@
         .sponsor-logo-wrap.slw-hide { animation: logo-pop-out 0.28s ease forwards; }
         .sponsor-logo-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 1px 5px rgba(0,0,0,0.3)); }
 
-        /* ── PREMIUM MATCH INTRO OVERLAY (MODIFIED) ── */
+        /* ── PREMIUM MATCH INTRO OVERLAY (MODIFIED: FULLSCREEN + TRANSPARENT BACKGROUND) ── */
         #match-intro-overlay { 
             position: fixed; inset: 0; width: 1920px; height: 1080px; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             opacity: 0; pointer-events: none; transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1); 
-            z-index: 19000; background: radial-gradient(circle at center, rgba(16, 18, 27, 0.94) 0%, rgba(7, 8, 12, 0.98) 100%); 
+            z-index: 19000; background: transparent; /* ВИПРАВЛЕНО: Фон повністю прозорий */
         }
         #match-intro-overlay.active { opacity: 1; pointer-events: auto; }
         
@@ -309,13 +309,13 @@
         /* Logo Slot Above Team Name */
         .intro-team-logo { height: 60px; max-width: 160px; object-fit: contain; margin-bottom: 15px; display: none; opacity: 0; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4)); }
         
-        .intro-team { font-family: var(--team-font-family); font-size: 56px; font-weight: 700; text-transform: uppercase; color: white; text-shadow: 0 4px 20px rgba(0,0,0,0.6); opacity: 0; letter-spacing: 1px; }
+        .intro-team { font-family: var(--team-font-family); font-size: 56px; font-weight: 700; text-transform: uppercase; color: white; text-shadow: 0 4px 20px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.5); opacity: 0; letter-spacing: 1px; }
         
         /* Divider VS Box */
         .intro-vs-box { display: flex; align-items: center; justify-content: center; position: relative; width: 120px; height: 120px; }
-        .intro-vs { font-family: 'Inter', sans-serif; font-size: 42px; font-weight: 900; color: var(--accent-blue); text-shadow: 0 0 30px var(--accent-blue); opacity: 0; transform: scale(0.5); }
+        .intro-vs { font-family: 'Inter', sans-serif; font-size: 42px; font-weight: 900; color: var(--accent-blue); text-shadow: 0 0 30px var(--accent-blue), 0 2px 10px rgba(0,0,0,0.5); opacity: 0; transform: scale(0.5); }
         
-        .intro-court { font-size: 16px; font-weight: 900; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 5px; text-align: center; margin-bottom: 50px; opacity: 0; transform: translateY(-20px); transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .intro-court { font-size: 16px; font-weight: 900; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 5px; text-align: center; margin-bottom: 50px; opacity: 0; transform: translateY(-20px); transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); text-shadow: 0 2px 10px rgba(0,0,0,0.6); }
 
         /* Cinematic Intros Trigger Animations */
         @keyframes intro-left-in  { 0% { opacity:0; transform: translateX(-120px); } 100% { opacity:1; transform: translateX(0); } }
@@ -424,7 +424,7 @@
 
 <div id="sponsor-logos-bar"></div>
 
-<!-- PREMIUM MATCH INTRO OVERLAY (MODIFIED WITH PHOTOS & LOGOS) -->
+<!-- PREMIUM MATCH INTRO OVERLAY (MODIFIED WITH PHOTOS, LOGOS & TRANSPARENT BG) -->
 <div id="match-intro-overlay">
     <div class="intro-container">
         <div class="intro-court" id="intro-court-display">COURT 1</div>
@@ -602,7 +602,7 @@
         document.getElementById('intro-p2-display').innerText = p2name;
         document.getElementById('intro-court-display').innerText = courtName;
 
-        // INTRO ASSETS RENDERING (NEW)
+        // INTRO ASSETS RENDERING
         const t1PhotoImg = document.getElementById('intro-t1-photo');
         const t1PhotoWrap = document.getElementById('intro-t1-photo-wrap');
         if (ui.team1Photo) { t1PhotoImg.src = ui.team1Photo; t1PhotoWrap.style.display = 'block'; }
