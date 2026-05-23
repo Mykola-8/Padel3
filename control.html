@@ -577,7 +577,7 @@
         notifText: "", showFinish: false, showIntro: false, showLogo: false,
         showBoard: true, showStats: false, deuceMode: "golden", prosetLimit: 8,
         americanLimit: 15, p1name: "Команда А", p2name: "Команда Б",
-        courtName: "COURT 1", alertKey: "", alertText: "", alertMode: "", faultTeam: null, isGoldenActive: false, hideScoreOnly: false
+        courtName: "COURT 1", alertKey: "", alertText: "", alertMode: "", faultTeam: null, isGoldenActive: false, hideScoreOnly: false, goldenWinnerKey: ""
     };
     let ui = {
         accentBlue: '#0055ff', ballColor: '#ccff00', teamNameColor: '#ffffff',
@@ -637,8 +637,10 @@
             if (state.scores[p]>=7 && state.scores[p]-state.scores[o]>=2) winGame(p);
             else if ((state.scores[0]+state.scores[1])%2===1) state.server = 1-state.server;
         } else {
+            // ВИПРАВЛЕНО: Фіксуємо ключ переможця Golden Point для легкого мерехтіння рядочка
             if (state.isGoldenActive) {
                 state.isGoldenActive = false;
+                state.goldenWinnerKey = "GW_" + p + "_" + Date.now();
                 winGame(p);
                 pushState();
                 updateControlUI();
@@ -755,7 +757,6 @@
                             if (i===0) { gamePointCountP1++; txt=(isBreak?`BREAK POINT #${gamePointCountP1}`:`GAME POINT #${gamePointCountP1}`); }
                             else { gamePointCountP2++; txt=(isBreak?`BREAK POINT #${gamePointCountP2}`:`GAME POINT #${gamePointCountP2}`); }
                             
-                            // ВИПРАВЛЕНО: Для номерів 2, 3 і далі НЕ ставимо alertText, щоб уникнути спалаху на весь екран
                             let currentCount = (i === 0) ? gamePointCountP1 : gamePointCountP2;
                             if (currentCount <= 1) {
                                 alertText = isBreak ? "BREAK POINT" : "GAME POINT"; alertMode = "normal";
@@ -771,7 +772,7 @@
         }
         state.notifText = txt;
         if (alertText) {
-            if (!state.alertKey || (!state.alertKey.startsWith("DEUCE_") && !state.alertKey.startsWith("GP_"))) {
+            if (!state.alertKey || (!state.alertKey.startsWith("DEUCE Hon") && !state.alertKey.startsWith("GP_"))) {
                 state.alertKey = alertText + "_" + Date.now();
                 state.alertText = alertText; state.alertMode = alertMode;
             }
@@ -875,7 +876,7 @@
                 showLogo: state.showLogo, showBoard: true, showStats: false,
                 prosetLimit: state.prosetLimit, americanLimit: state.americanLimit,
                 p1name: "Команда А", p2name: "Команда Б", courtName: `COURT ${currentCourt}`,
-                alertKey: "", alertText: "", alertMode: "", faultTeam: null, _setStartTime: null, _lastStatsIsSetEnd: false, hideScoreOnly: false
+                alertKey: "", alertText: "", alertMode: "", faultTeam: null, _setStartTime: null, _lastStatsIsSetEnd: false, hideScoreOnly: false, goldenWinnerKey: ""
             };
             historyStack = []; gamePointCountP1 = 0; gamePointCountP2 = 0;
             document.getElementById('s-p1').value = "Команда А";
