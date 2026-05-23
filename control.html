@@ -627,6 +627,7 @@
             if (!state._setStartTime) state._setStartTime = Date.now();
         }
         const o = 1 - p;
+        const currentDeuceMode = state.deuceMode || "golden";
 
         if (state.isAmerican) {
             state.scores[p]++;
@@ -637,49 +638,62 @@
             if (state.scores[p]>=7 && state.scores[p]-state.scores[o]>=2) winGame(p);
             else if ((state.scores[0]+state.scores[1])%2===1) state.server = 1-state.server;
         } else {
-            const currentDeuceMode = state.deuceMode || "golden";
-
             if (state.isGoldenActive) {
                 state.isGoldenActive = false;
                 winGame(p);
-            } else if (state.scores[p]===3 && state.scores[o]===3) {
+                pushState();
+                updateControlUI();
+                return;
+            }
+
+            // ПЕРЕДУМОВА ДЛЯ АНІМАЦІЇ НА ВИПЕРЕДЖЕННЯ
+            let willBecomeDeuce = false;
+            let willBecomeGolden = false;
+
+            if (state.scores[p] === 2 && state.scores[o] === 3) {
+                // Рахунок стає 40:40 (3:3)
+                willBecomeDeuce = true;
+            } else if (state.scores[p] === 3 && state.scores[o] === 4) {
+                // Повернення з переваги на рівно
+                willBecomeDeuce = true;
+            }
+
+            if (willBecomeDeuce) {
                 if (currentDeuceMode === 'golden') {
-                    state.alertKey  = "GP_" + Date.now();
-                    state.alertText = "GOLDEN POINT";
-                    state.alertMode = "golden";
-                    state.isGoldenActive = true;
-                } else if (currentDeuceMode === '2deuce') {
-                    if (state.deuceCycles < 2) {
-                        state.alertKey  = "DEUCE_" + Date.now();
-                        state.alertText = "DEUCE";
-                        state.alertMode = "deuce";
-                        state.scores[p] = 4; // Перевага
-                    } else {
-                        state.alertKey  = "GP_" + Date.now();
-                        state.alertText = "GOLDEN POINT";
-                        state.alertMode = "golden";
-                        state.scores[p] = 4;
-                        state.isGoldenActive = true;
-                    }
-                } else {
-                    // Класичний режим переваг як у тенісі
-                    state.alertKey  = "DEUCE_" + Date.now();
-                    state.alertText = "DEUCE";
-                    state.alertMode = "deuce";
-                    state.scores[p] = 4; // AD
+                    willBecomeDeuce = false;
+                    willBecomeGolden = true;
+                } else if (currentDeuceMode === '2deuce' && state.deuceCycles >= 2) {
+                    willBecomeDeuce = false;
+                    willBecomeGolden = true;
                 }
-            } else if (state.scores[p]===4) {
-                winGame(p);
-            } else if (state.scores[o]===4) {
+            }
+
+            // ТРИГЕРИ ПЛАШОК НА ВИПЕРЕДЖЕННЯ
+            if (willBecomeGolden) {
+                state.alertKey = "GP_" + Date.now();
+                state.alertText = "GOLDEN POINT";
+                state.alertMode = "golden";
+                state.isGoldenActive = true;
+                state.scores[p] = 3;
                 state.scores[o] = 3;
-                state.deuceCycles++;
-                state.alertKey  = "DEUCE_" + Date.now();
+            } else if (willBecomeDeuce) {
+                state.alertKey = "DEUCE_" + Date.now();
                 state.alertText = "DEUCE";
                 state.alertMode = "deuce";
-            } else if (state.scores[p]===3) {
-                winGame(p);
+                state.scores[p] = 3;
+                state.scores[o] = 3;
+                state.deuceCycles++;
             } else {
-                state.scores[p]++;
+                // Звичайна логіка очок
+                if (state.scores[p] === 4) {
+                    winGame(p);
+                } else if (state.scores[o] === 4) {
+                    state.scores[o] = 3;
+                } else if (state.scores[p] === 3) {
+                    winGame(p);
+                } else {
+                    state.scores[p]++;
+                }
             }
         }
         computeNotif();
@@ -731,15 +745,12 @@
 
     function computeNotif() {
         const s = state.scores; const g = state.games;
-        let txt = "";
-        let alertText = ""; let alertMode = "";
+        let txt = ""; let alertText = ""; let alertMode = "";
 
         if (state.isGoldenActive) {
             txt = "GOLDEN POINT";
         } else if (state.isGameActive && !state.isTiebreak && !state.isAmerican) {
-            // Якщо зараз 40:40 або рівно, великі анімації GP/BP вимикаємо
-            const isDeuceSituation = (s[0]===3 && s[1]===3) || (s[0]===4 && s[1]===3) || (s[0]===3 && s[1]===4);
-            
+            const isDeuceSituation = (s[0]===3 && s[1]===3);
             if (!isDeuceSituation) {
                 for (let i=0; i<2; i++) {
                     if (s[i]>=3 && s[i]>s[1-i]) {
@@ -771,17 +782,12 @@
         historyStack.push(JSON.parse(JSON.stringify(state)));
         state.faultTeam = state.server;
         vibTap(btnEl, [60, 40, 60]);
-        addPoint(1-state.server);
-        const pendingAlertKey  = state.alertKey;
-        const pendingAlertText = state.alertText;
-        const pendingAlertMode = state.alertMode;
-        state.alertKey = "";
+        
+        state.alertKey = "FAULT_" + state.server + "_" + Date.now();
         pushState();
+        
         setTimeout(() => {
             state.faultTeam = null;
-            state.alertKey  = pendingAlertKey;
-            state.alertText = pendingAlertText;
-            state.alertMode = pendingAlertMode;
             pushState();
         }, 1600);
     }
@@ -795,17 +801,8 @@
         }
     }
 
-    function setServer(p) {
-        state.server = p;
-        pushState();
-        updateControlUI();
-    }
-
-    function sendToggle(key, val) {
-        state[key] = val;
-        pushState();
-    }
-
+    function setServer(p) { state.server = p; pushState(); updateControlUI(); }
+    function sendToggle(key, val) { state[key] = val; pushState(); }
     function sendMode() {
         state.isAmerican = document.getElementById('s-american').checked;
         state.isProset = document.getElementById('s-proset').checked;
@@ -815,13 +812,11 @@
         state.scores = [0,0]; state.isGameActive = false; state.deuceCycles = 0; state.isGoldenActive = false;
         pushState();
     }
-
     function liveUpdateName() {
         state.p1name = document.getElementById('s-p1').value || "Команда А";
         state.p2name = document.getElementById('s-p2').value || "Команда Б";
         state.courtName = document.getElementById('s-court').value || "COURT 1";
-        pushState();
-        updateControlUI();
+        pushState(); updateControlUI();
     }
 
     function liveUpdateUI() {
@@ -852,36 +847,18 @@
         pushState();
     }
 
-    function gVal(inId, outId) {
-        document.getElementById(outId).textContent = document.getElementById(inId).value;
-    }
-
+    function gVal(inId, outId) { document.getElementById(outId).textContent = document.getElementById(inId).value; }
     function uploadLogoUI(event, key, slot) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const r = new FileReader();
-        r.onload = () => {
-            ui[key] = r.result;
-            renderLogoPreview(slot, r.result);
-            pushState();
-        };
-        r.readAsDataURL(file);
+        const file = event.target.files[0]; if (!file) return;
+        const r = new FileReader(); r.onload = () => { ui[key] = r.result; renderLogoPreview(slot, r.result); pushState(); }; r.readAsDataURL(file);
     }
-
-    function clearLogo(key, slot) {
-        ui[key] = '';
-        renderLogoPreview(slot, '');
-        pushState();
-    }
-
+    function clearLogo(key, slot) { ui[key] = ''; renderLogoPreview(slot, ''); pushState(); }
     function renderLogoPreview(slot, src) {
-        const img = document.getElementById('prev-img-' + slot);
-        const empty = document.getElementById('prev-empty-' + slot);
+        const img = document.getElementById('prev-img-' + slot); const empty = document.getElementById('prev-empty-' + slot);
         if (!img || !empty) return;
         if (src) { img.src = src; img.style.display = 'block'; empty.style.display = 'none'; }
         else { img.src = ''; img.style.display = 'none'; empty.style.display = 'block'; }
     }
-
     function refreshLogoPreviews() {
         if (ui.logoSrc)   renderLogoPreview('main',  ui.logoSrc);
         if (ui.statLogoT) renderLogoPreview('statT', ui.statLogoT);
@@ -902,8 +879,7 @@
                 p1name: "Команда А", p2name: "Команда Б", courtName: `COURT ${currentCourt}`,
                 alertKey: "", alertText: "", alertMode: "", faultTeam: null, _setStartTime: null, _lastStatsIsSetEnd: false, hideScoreOnly: false
             };
-            historyStack = [];
-            gamePointCountP1 = 0; gamePointCountP2 = 0;
+            historyStack = []; gamePointCountP1 = 0; gamePointCountP2 = 0;
             document.getElementById('s-p1').value = "Команда А";
             document.getElementById('s-p2').value = "Команда Б";
             set(gameRef, { state, ui }).catch(e => console.error(e));
@@ -913,8 +889,7 @@
 
     function updateControlUI() {
         const s = state.scores; const g = state.games;
-        const p1 = state.p1name || "Команда А";
-        const p2 = state.p2name || "Команда Б";
+        const p1 = state.p1name || "Команда А"; const p2 = state.p2name || "Команда Б";
 
         document.getElementById('disp-p1').textContent = p1;
         document.getElementById('disp-p2').textContent = p2;
@@ -935,12 +910,10 @@
         document.getElementById('serve-0').classList.toggle('active', state.server===0);
         document.getElementById('serve-1').classList.toggle('active', state.server===1);
 
-        const togBoard = document.getElementById('tog-board');
-        if (togBoard) togBoard.checked = state.showBoard !== false;
+        if (document.getElementById('tog-board')) document.getElementById('tog-board').checked = state.showBoard !== false;
         document.getElementById('tog-intro').checked = !!state.showIntro;
         document.getElementById('tog-logo').checked = !!state.showLogo;
 
-        // Mini preview render
         document.getElementById('mini-p1').textContent = p1.toUpperCase();
         document.getElementById('mini-p2').textContent = p2.toUpperCase();
         document.getElementById('mini-score-p1').textContent = getL(0);
@@ -949,10 +922,8 @@
         document.getElementById('mini-dot-0').classList.toggle('active', state.server===0);
         document.getElementById('mini-dot-1').classList.toggle('active', state.server===1);
         [0,1].forEach(p => {
-            let h = "";
-            (state.setsHistory[p] || []).forEach(gv => h += `<div class="mini-set">${gv}</div>`);
-            h += `<div class="mini-set cur">${g[p]}</div>`;
-            document.getElementById(`mini-sets-p${p+1}`).innerHTML = h;
+            let h = ""; (state.setsHistory[p] || []).forEach(gv => h += `<div class="mini-set">${gv}</div>`);
+            h += `<div class="mini-set cur">${g[p]}</div>`; document.getElementById(`mini-sets-p${p+1}`).innerHTML = h;
         });
         document.getElementById('mini-tb-badge').classList.toggle('active', state.isTiebreak);
         document.getElementById('mini-notif-badge').textContent = state.notifText || '';
@@ -972,7 +943,6 @@
         document.getElementById('s-american-limit').value = state.americanLimit || 15;
         document.getElementById('s-hide-score-only').checked = !!state.hideScoreOnly;
         
-        // Populate sliders from active state
         if(ui.sbW) document.getElementById('g-w').value = parseInt(ui.sbW);
         if(ui.sbH) document.getElementById('g-h').value = parseInt(ui.sbH);
         if(ui.sbSkew) document.getElementById('g-skew').value = parseInt(ui.sbSkew);
@@ -981,24 +951,16 @@
         if(ui.sbLeft) document.getElementById('g-x').value = ui.sbLeft;
         if(ui.sbScale) document.getElementById('g-scale').value = Math.round(ui.sbScale * 100);
 
-        // Render sponsor inputs inside settings
-        const list = document.getElementById('sponsor-logo-list');
-        list.innerHTML = '';
+        const list = document.getElementById('sponsor-logo-list'); list.innerHTML = '';
         (ui.sponsorLogos || []).forEach((logo, i) => {
-            const row = document.createElement('div');
-            row.className = 'settings-input-row';
+            const row = document.createElement('div'); row.className = 'settings-input-row';
             row.innerHTML = `
-                <div style="flex:1">
-                    <div class="toggle-label" style="font-size:11px;">Лого ${i+1}</div>
-                    ${logo.src ? `<img src="${logo.src}" style="height:28px;max-width:80px;object-fit:contain;border-radius:4px;margin-top:4px;opacity:0.8;">` : '<div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:2px;">немає</div>'}
-                </div>
+                <div style="flex:1"><div class="toggle-label" style="font-size:11px;">Лого ${i+1}</div>${logo.src ? `<img src="${logo.src}" style="height:28px;max-width:80px;object-fit:contain;border-radius:4px;margin-top:4px;opacity:0.8;">` : '<div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:2px;">немає</div>'}</div>
                 <label class="switch"><input type="checkbox" ${logo.visible!==false?'checked':''} onchange="toggleSponsor(${i},this.checked)"><span class="slider"></span></label>
                 <label class="file-btn">↑<input type="file" accept="image/*" style="display:none" onchange="uploadSponsor(event,${i})"></label>
                 <button onclick="removeSponsor(${i})" style="background:rgba(231,76,60,0.2);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;border-radius:8px;padding:5px 10px;font-size:13px;cursor:pointer;">✕</button>
-            `;
-            list.appendChild(row);
+            `; list.appendChild(row);
         });
-
         refreshLogoPreviews();
         document.getElementById('settings-panel').classList.add('open');
     };
@@ -1007,10 +969,7 @@
     function removeSponsor(i) { ui.sponsorLogos.splice(i, 1); window.openSettings(); pushState(); }
     function uploadSponsor(event, i) {
         const file = event.target.files[0]; if (!file) return;
-        const r = new FileReader(); r.onload = () => {
-            if (!ui.sponsorLogos[i]) ui.sponsorLogos[i] = { visible: true };
-            ui.sponsorLogos[i].src = r.result; window.openSettings(); pushState();
-        }; r.readAsDataURL(file);
+        const r = new FileReader(); r.onload = () => { if (!ui.sponsorLogos[i]) ui.sponsorLogos[i] = { visible: true }; ui.sponsorLogos[i].src = r.result; window.openSettings(); pushState(); }; r.readAsDataURL(file);
     }
     function addSponsorSlot() { if (!ui.sponsorLogos) ui.sponsorLogos = []; ui.sponsorLogos.push({ src: '', visible: true }); window.openSettings(); }
 
@@ -1027,8 +986,7 @@
     window.addSponsorSlot = addSponsorSlot; window.removeSponsor = removeSponsor; window.toggleSponsor = toggleSponsor; window.uploadSponsor = uploadSponsor;
     window.uploadLogoUI = uploadLogoUI; window.clearLogo = clearLogo;
 
-    buildCourtBar();
-    updateControlUI();
+    buildCourtBar(); updateControlUI();
 </script>
 </body>
 </html>
