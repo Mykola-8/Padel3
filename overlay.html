@@ -185,11 +185,11 @@
         .deuce-row-bg.dr-out { animation: deuce-row-out 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         .deuce-row-lbl.dr-txt-show { animation: deuce-row-txt 0.22s 0.22s ease forwards; }
 
-        /* ── STATS OVERLAY ── */
+        /* ── STATS OVERLAY (ОНОВЛЕНО: ДИНАМІЧНИЙ ЦЕНТР ДЛЯ БУДЬ-ЯКОГО ГОРИЗОНТАЛЬНОГО ЕКРАНА) ── */
         @keyframes stats-in  { 0%{opacity:0;transform:translateY(30px) scale(0.96)} 100%{opacity:1;transform:translateY(0) scale(1)} }
         @keyframes stats-out { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-20px) scale(0.97)} }
         #tv-stats-overlay {
-            position: fixed; top: 0; left: 0; width: 1920px; height: 1080px;
+            position: fixed; inset: 0; width: 100vw; height: 100vh; /* Виправлено на 100vw/vh для адаптивного центру */
             background: transparent; display: flex; align-items: center; justify-content: center;
             opacity: 0; pointer-events: none; z-index: 15000;
         }
@@ -211,9 +211,9 @@
         .stats-games-num  { font-size: 46px; font-weight: 900; font-family: var(--team-font-family); color: white; }
         .stats-time-label { font-size: 15px; font-weight: 900; color: #7eb8ff; font-family: 'Inter', sans-serif; margin-top: 1px; letter-spacing: 0.5px; }
         
-        /* ── ТАБЛО РЕЗУЛЬТАТУ / КІНЕЦЬ МАТЧУ (ОНОВЛЕНО: ЯСКРАВІШИЙ ТЕКСТ ТА КОНТРАСТ) ── */
+        /* ── ТАБЛО РЕЗУЛЬТАТУ / КІНЕЦЬ МАТЧУ (ОНОВЛЕНО: ДИНАМІЧНИЙ ЦЕНТР ДЛЯ БУДЬ-ЯКОГО ГОРИЗОНТАЛЬНОГО ЕКРАНА) ── */
         #match-finish-overlay {
-            position: fixed; top: 0; left: 0; width: 1920px; height: 1080px;
+            position: fixed; inset: 0; width: 100vw; height: 100vh; /* Виправлено на 100vw/vh для ландшафтного центру */
             background: transparent;
             display: flex; align-items: center; justify-content: center;
             opacity: 0; pointer-events: none; z-index: 20000;
@@ -229,7 +229,7 @@
             display: flex; flex-direction: column; gap: 18px; text-align: center; opacity: 0;
         }
         #match-finish-overlay.active .finish-card { animation: finish-card-in 0.55s 0.2s cubic-bezier(0.18,0.89,0.32,1.18) forwards; }
-        .finish-title { font-size: 28px; font-weight: 900; letter-spacing: 3px; color: #ffffff; text-transform: uppercase; margin: 0; text-shadow: 0 0 15px var(--accent-blue), 0 2px 4px rgba(0,0,0,0.6); }
+        .finish-title { font-size: 28px; font-weight: 900; letter-spacing: 3px; color: #ffffff; text-transform: uppercase; margin: 0; text-shadow: 0 0 15px rgba(0,85,255,0.6), 0 2px 4px rgba(0,0,0,0.6); }
         .finish-table { min-width: 530px; border-collapse: collapse; margin-top: 5px; }
         .finish-row { border-bottom: 1px solid rgba(255,255,255,0.1); height: 75px; }
         .finish-team { text-align: left; font-size: 28px; font-weight: 800; font-family: var(--team-font-family); padding-left: 10px; color: #ffffff; padding-right: 40px; white-space: nowrap; text-shadow: 0 2px 8px rgba(0,0,0,0.9); }
@@ -284,9 +284,9 @@
         .sponsor-logo-wrap.slw-hide { animation: logo-pop-out 0.28s ease forwards; }
         .sponsor-logo-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 1px 5px rgba(0,0,0,0.3)); }
 
-        /* ── PREMIUM MATCH INTRO OVERLAY (ОНОВЛЕНО: ПРОЗОРЕ ТАБЛО, ЦЕНТР, ТІНІ, ЧІТКИЙ ТЕКСТ) ── */
+        /* ── PREMIUM MATCH INTRO OVERLAY (ОНОВЛЕНО: ДИНАМІЧНИЙ ЦЕНТР ДЛЯ БУДЬ-ЯКОГО ГОРИЗОНТАЛЬНОГО ЕКРАНА) ── */
         #match-intro-overlay { 
-            position: fixed; inset: 0; width: 1920px; height: 1080px; 
+            position: fixed; inset: 0; width: 100vw; height: 100vh; /* Виправлено на 100vw/vh для ландшафтного центру */
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             opacity: 0; pointer-events: none; transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1); 
             z-index: 19000; background: transparent;
@@ -296,19 +296,19 @@
         
         .intro-card { 
             display: flex; align-items: center; justify-content: center; 
-            gap: 40px; /* Трохи зменшено відступ */
+            gap: 40px; 
             position: relative;
-            background: rgba(15, 15, 20, 0.70); /* Прозоре фірмове табло */
+            background: rgba(15, 15, 20, 0.70); 
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 28px;
             padding: 40px 60px;
-            box-shadow: 0 30px 85px rgba(0, 0, 0, 0.9); /* Потужна тінь навколо табла */
+            box-shadow: 0 30px 85px rgba(0, 0, 0, 0.9); 
         }
         
-        .intro-team-block { display: flex; flex-direction: column; align-items: center; width: 380px; /* Трохи зменшено */ text-align: center; }
+        .intro-team-block { display: flex; flex-direction: column; align-items: center; width: 380px; text-align: center; }
         
         .intro-photo-wrap { 
-            width: 240px; height: 240px; /* Зменшено для компактності */
+            width: 240px; height: 240px; 
             border-radius: 20px; 
             background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
             border: 1px solid rgba(255,255,255,0.12); overflow: hidden; 
@@ -318,8 +318,7 @@
         .intro-photo-wrap img { width: 100%; height: 100%; object-fit: cover; }
         .intro-team-logo { height: 50px; max-width: 140px; object-fit: contain; margin-bottom: 12px; display: none; opacity: 0; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5)); }
         
-        /* Чіткіший жирніший текст */
-        .intro-team { font-family: var(--team-font-family); font-size: 42px; /* Зменшено */ font-weight: 800; text-transform: uppercase; color: #ffffff; text-shadow: 0 4px 15px rgba(0,0,0,0.95); opacity: 0; letter-spacing: 1.5px; }
+        .intro-team { font-family: var(--team-font-family); font-size: 42px; font-weight: 800; text-transform: uppercase; color: #ffffff; text-shadow: 0 4px 15px rgba(0,0,0,0.95); opacity: 0; letter-spacing: 1.5px; }
         .intro-vs-box { display: flex; align-items: center; justify-content: center; position: relative; width: 100px; height: 100px; }
         .intro-vs { font-family: 'Inter', sans-serif; font-size: 36px; font-weight: 900; color: var(--accent-blue); text-shadow: 0 0 25px var(--accent-blue), 0 2px 8px rgba(0,0,0,0.6); opacity: 0; transform: scale(0.5); }
         .intro-court { font-size: 15px; font-weight: 900; color: #ffffff; text-transform: uppercase; letter-spacing: 5px; text-align: center; margin-bottom: 25px; opacity: 0; transform: translateY(-20px); transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); text-shadow: 0 3px 10px rgba(0,0,0,0.9); }
