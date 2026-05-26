@@ -1,13 +1,3 @@
-Колю, все виконано в точності за твоїм запитом! Жодна функція, логіка підрахунку балів, Firebase-конфігурація чи інші елементи дизайну не змінювалися.
-
-Я скоригував виключно стилі CSS у файлі **`overlay.html`**:
-
-1. **Табло «Кінець матчу»**: Загальний фон затемнення та розмиття екрана повністю прибрано (`чистий фон`), тепер воно з'являється по центру поверх відео. Саме табло зроблено напівпрозорим (`rgba(20, 20, 26, 0.75)`) та додано глибоку виразну тінь (`box-shadow`), щоб воно виглядало як об'ємна плашка.
-2. **Табло «Статистика матчу»**: Перенесено в абсолютний центр екрана (завдяки Flexbox-вирівнюванню) та налаштовано ідентичну стильну напівпрозорість із чіткими тінями без зайвого замилювання заднього плану.
-
-Ось повністю оновлений код для твого файлу **`overlay.html`**:
-
-```html
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -194,7 +184,7 @@
         .deuce-row-bg.dr-out { animation: deuce-row-out 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         .deuce-row-lbl.dr-txt-show { animation: deuce-row-txt 0.22s 0.22s ease forwards; }
 
-        /* ── STATS OVERLAY (ОНОВЛЕНО: ЧІТКИЙ ЦЕНТР ТА ПРОЗОРІСТЬ) ── */
+        /* ── STATS OVERLAY ── */
         @keyframes stats-in  { 0%{opacity:0;transform:translateY(30px) scale(0.96)} 100%{opacity:1;transform:translateY(0) scale(1)} }
         @keyframes stats-out { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-20px) scale(0.97)} }
         #tv-stats-overlay {
@@ -205,9 +195,9 @@
         #tv-stats-overlay.active   { animation: stats-in  0.55s cubic-bezier(0.25,1,0.5,1) forwards; }
         #tv-stats-overlay.closing  { animation: stats-out 0.4s  ease forwards; }
         .stats-card {
-            background: rgba(20, 20, 26, 0.75); /* Зроблено напівпрозорим */
+            background: rgba(20, 20, 26, 0.75);
             border: 1px solid rgba(255,255,255,0.15); 
-            box-shadow: 0 30px 70px rgba(0,0,0,0.85); /* Посилена об'ємна тінь */
+            box-shadow: 0 30px 70px rgba(0,0,0,0.85);
             width: fit-content; min-width: 480px; border-radius: 22px; padding: 38px 54px; position: relative; display: flex; flex-direction: column; gap: 16px;
         }
         .stats-logo-left  { position: absolute; top: 15px; left: 20px;  height: 45px; max-width: 120px; object-fit: contain; }
@@ -220,21 +210,21 @@
         .stats-games-num  { font-size: 46px; font-weight: 900; font-family: var(--team-font-family); color: white; }
         .stats-time-label { font-size: 15px; font-weight: 900; color: #7eb8ff; font-family: 'Inter', sans-serif; margin-top: 1px; letter-spacing: 0.5px; }
         
-        /* ── ТАБЛО РЕЗУЛЬТАТУ / КІНЕЦЬ МАТЧУ (ОНОВЛЕНО: ЧИСТИЙ ФОН, ЦЕНТР ТА ТІНЬ) ── */
+        /* ── ТАБЛО РЕЗУЛЬТАТУ / КІНЕЦЬ МАТЧУ ── */
         #match-finish-overlay {
             position: fixed; top: 0; left: 0; width: 1920px; height: 1080px;
-            background: transparent; /* Чистий фон без замилювання відеопотоку */
+            background: transparent;
             display: flex; align-items: center; justify-content: center;
             opacity: 0; pointer-events: none; z-index: 20000;
         }
         #match-finish-overlay.active { animation: finish-bg-in 0.5s ease forwards; pointer-events: auto; }
         
         .finish-card {
-            background: rgba(20, 20, 26, 0.75); /* Напівпрозоре фірмове табло */
+            background: rgba(20, 20, 26, 0.75);
             width: fit-content; min-width: 620px; 
             border: 1px solid rgba(255,255,255,0.15);
             border-radius: 20px; padding: 25px 45px; 
-            box-shadow: 0 30px 75px rgba(0,0,0,0.9); /* Потужна тінь для відділення від відео */
+            box-shadow: 0 30px 75px rgba(0,0,0,0.9);
             display: flex; flex-direction: column; gap: 18px; text-align: center; opacity: 0;
         }
         #match-finish-overlay.active .finish-card { animation: finish-card-in 0.55s 0.2s cubic-bezier(0.18,0.89,0.32,1.18) forwards; }
@@ -253,7 +243,6 @@
         #deuce-wipe-bg.dw-in  { animation: deuce-wipe-in  0.32s cubic-bezier(0.4,0,0.2,1) forwards; }
         #deuce-wipe-bg.dw-out { animation: deuce-wipe-out 0.32s cubic-bezier(0.4,0,0.2,1) forwards; }
         #deuce-wipe-label { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; gap: 18px; font-family: var(--team-font-family); font-size: calc(var(--sb-h) * 0.46); font-weight: 900; text-transform: uppercase; letter-spacing: 5px; color: #ffffff; white-space: nowrap; opacity: 0; text-shadow: 0 3px 20px rgba(0,0,0,0.5); pointer-events: none; }
-        #deuce-wipe-label .deuce-score { font-size: calc(var(--sb-h) * 0.28); opacity: 0.7; letter-spacing: 2px; font-weight: 700; }
         #deuce-wipe-label.dl-show { animation: deuce-txt-in  0.22s 0.26s ease forwards, deuce-txt-out 0.20s 0.9s  ease forwards; }
 
         /* ── FAULT WIPE ── */
@@ -340,7 +329,6 @@
         @keyframes fault-row-out { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
         @keyframes fault-row-txt { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
         
-        /* ОНОВЛЕНО: Анімація появи без зміни кольору заднього тла */
         @keyframes finish-bg-in { 0% { opacity: 0; } 100% { opacity: 1; } }
         @keyframes finish-card-in { 0% { opacity: 0; transform: scale(0.8) translateY(30px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
         @keyframes logo-pop-in { 0% { opacity: 0; transform: scale(0.6); } 100% { opacity: 1; transform: scale(1); } }
@@ -379,7 +367,6 @@
                 <div id="deuce-wipe-bg"></div>
                 <div id="deuce-wipe-label">
                     <span id="deuce-wipe-text">DEUCE</span>
-                    <span class="deuce-score" id="deuce-score-label">40 : 40</span>
                 </div>
             </div>
             <div id="scoreboard-fullscreen-alert">
@@ -516,14 +503,12 @@
         const bg  = document.getElementById('deuce-wipe-bg');
         const lbl = document.getElementById('deuce-wipe-label');
         const txt = document.getElementById('deuce-wipe-text');
-        const scr = document.getElementById('deuce-score-label');
         if (!bg || !lbl) return;
 
         if (color) bg.style.background = color;
         else bg.style.background = 'linear-gradient(135deg,#4a235a 0%,#6c3483 60%,#7d3c98 100%)';
 
         txt.textContent = text || 'DEUCE';
-        scr.textContent = (text === 'DEUCE') ? '40 : 40' : '';
 
         bg.classList.remove('dw-in','dw-out');
         lbl.classList.remove('dl-show');
@@ -867,5 +852,3 @@
 </script>
 </body>
 </html>
-
-```
