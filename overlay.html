@@ -255,7 +255,7 @@
         .fault-row-bg.fr-out { animation: fault-row-out 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         .fault-row-lbl.fr-txt-show { animation: fault-row-txt 0.18s 0.18s ease forwards; }
 
-        /* ── ВІДНОВЛЕНО: НИЖНЯ ВИСУВНА ПЛАШКА ДЛЯ ПОІНТІВ ── */
+        /* ── BOTTOM NOTIF PLANK ── */
         #bottom-notif { 
             position: absolute; 
             top: 100%; 
@@ -395,7 +395,7 @@
             100% { transform: translateX(100%); opacity: 0; }
         }
 
-        /* ── ВІДНОВЛЕНО: СТИЛІ ТА СВІТЛО ДЛЯ PREMIUM MATCH INTRO OVERLAY (ТАБЛО VS) ── */
+        /* ── PREMIUM MATCH INTRO OVERLAY ── */
         #match-intro-overlay { 
             position: fixed; inset: 0; width: 100vw; height: 100vh;
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
@@ -439,18 +439,17 @@
         .intro-vs { font-family: 'Inter', sans-serif; font-size: 36px; font-weight: 900; color: var(--accent-blue); text-shadow: 0 0 25px var(--accent-blue), 0 2px 8px rgba(0,0,0,0.6); opacity: 0; transform: scale(0.5); }
         .intro-court { font-size: 15px; font-weight: 900; color: #ffffff; text-transform: uppercase; letter-spacing: 5px; text-align: center; margin-bottom: 25px; opacity: 0; transform: translateY(-20px); transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); text-shadow: 0 3px 10px rgba(0,0,0,0.9); }
 
-        /* ── СУЦІЛЬНА ЗАСТАВКА ФОНУ (РЕЖИМ КАМЕРИ) ── */
+        /* ── ОНОВЛЕНО: СТИЛІ ДЛЯ КРАСИВОЇ ПОВНОЕКРАННОЇ ЗАСТАВКИ КАМЕРИ (ПІДТРИМКА ОБС / IFRAME) ── */
         #tv-camera-cover-overlay {
             position: fixed; inset: 0; width: 100vw; height: 100vh;
-            background: #222222; z-index: 28000; display: flex;
+            background: #111113; z-index: 28000; display: flex;
             align-items: center; justify-content: center; opacity: 0;
-            pointer-events: none; transition: opacity 0.5s ease;
+            pointer-events: none; transition: opacity 0.4s ease;
         }
         #tv-camera-cover-overlay.active { opacity: 1; pointer-events: auto; }
-        自由-cover-media-box { max-width: 85%; max-height: 85%; display: flex; align-items: center; justify-content: center; border-radius: 16px; overflow: hidden; box-shadow: 0 25px 65px rgba(0,0,0,0.7); }
-        #camera-cover-img { max-width: 100%; max-height: 80vh; object-fit: contain; }
-        #camera-cover-video { max-width: 100%; max-height: 80vh; object-fit: contain; }
-        #camera-cover-iframe { width: 80vw; height: 45vw; max-height: 80vh; border: none; }
+        #camera-cover-media-box { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
+        #camera-cover-img { max-width: 80%; max-height: 80vh; object-fit: contain; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+        #camera-cover-iframe { width: 100%; height: 100%; border: none; position: absolute; inset: 0; }
 
         @keyframes intro-bg-in { 0% { opacity: 0; } 100% { opacity: 1; } }
         @keyframes intro-bg-out { 0% { opacity: 1; } 100% { opacity: 0; } }
@@ -499,7 +498,6 @@
 <div id="tv-camera-cover-overlay">
     <div id="camera-cover-media-box">
         <img id="camera-cover-img" src="" style="display:none;" alt="">
-        <video id="camera-cover-video" style="display:none;" autoplay loop muted controls></video>
         <iframe id="camera-cover-iframe" style="display:none;" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
 </div>
@@ -632,6 +630,7 @@
     let lastGoldenWinnerKey = "";
     let forceShowStats = false;
     let statsTimeout = null;
+    let activeCameraTrackUrl = "";
 
     let animQueue = [];
     let animBusy  = false;
@@ -757,7 +756,7 @@
         document.getElementById('intro-p2-display').innerText = p2name;
         document.getElementById('intro-court-display').innerText = courtName;
 
-        /* ОНОВЛЕНО: ЛОГІКА АВТОМАТИЧНОГО ПЕРЕМИКАННЯ ФОТО / ВІДЕО ЗІ ЗВУКОМ ДЛЯ КОМАНДИ 1 */
+        /* ЛОГІКА АВТОМАТИЧНОГО ПЕРЕМИКАННЯ ФОТО / ВІДЕО ЗІ ЗВУКОМ ДЛЯ КОМАНДИ 1 */
         const t1PhotoImg = document.getElementById('intro-t1-photo');
         const t1VideoEl = document.getElementById('intro-t1-video');
         const t1PhotoWrap = document.getElementById('intro-t1-photo-wrap');
@@ -767,9 +766,9 @@
             if (ui.team1Photo.startsWith('data:video') || ui.team1Photo.includes('.mp4')) {
                 t1PhotoImg.style.display = 'none';
                 t1VideoEl.src = ui.team1Photo;
-                t1VideoEl.muted = false; // Грає зі звуком!
+                t1VideoEl.muted = false;
                 t1VideoEl.style.display = 'block';
-                if(showIntro) t1VideoEl.play().catch(e => console.log("Audio block: ", e));
+                if(showIntro) t1VideoEl.play().catch(e => console.log(e));
             } else {
                 t1VideoEl.style.display = 'none';
                 t1VideoEl.src = '';
@@ -781,7 +780,7 @@
             t1VideoEl.src = '';
         }
 
-        /* ОНОВЛЕНО: ЛОГІКА АВТОМАТИЧНОГО ПЕРЕМИКАННЯ ФОТО / ВІДЕО ЗІ ЗВУКОМ ДЛЯ КОМАНДИ 2 */
+        /* ЛОГІКА АВТОМАТИЧНОГО ПЕРЕМИКАННЯ ФОТО / ВІДЕО ЗІ ЗВУКОМ ДЛЯ КОМАНДИ 2 */
         const t2PhotoImg = document.getElementById('intro-t2-photo');
         const t2VideoEl = document.getElementById('intro-t2-video');
         const t2PhotoWrap = document.getElementById('intro-t2-photo-wrap');
@@ -789,11 +788,11 @@
         if (ui.team2Photo) {
             t2PhotoWrap.style.display = 'block';
             if (ui.team2Photo.startsWith('data:video') || ui.team2Photo.includes('.mp4')) {
-                t1PhotoImg.style.display = 'none';
+                t2PhotoImg.style.display = 'none';
                 t2VideoEl.src = ui.team2Photo;
-                t2VideoEl.muted = false; // Грає зі звуком!
+                t2VideoEl.muted = false;
                 t2VideoEl.style.display = 'block';
-                if(showIntro) t2VideoEl.play().catch(e => console.log("Audio block: ", e));
+                if(showIntro) t2VideoEl.play().catch(e => console.log(e));
             } else {
                 t2VideoEl.style.display = 'none';
                 t2VideoEl.src = '';
@@ -986,7 +985,6 @@
             }
         }
 
-        /* ОНОВЛЕНО: АНІМАЦІЯ ПОЯВИ ЗАСТАВКИ VS СВІТИТЬСЯ СТАБІЛЬНО */
         const introOverlay = document.getElementById('match-intro-overlay');
         if (showIntro && !introOverlay.classList.contains('active')) {
             introOverlay.classList.remove('closing');
@@ -1035,37 +1033,49 @@
             qrContainer.classList.remove('active');
         }
 
-        /* ЛОГІКА ВІДОБРАЖЕННЯ СУЦІЛЬНОЇ ЗАСТАВКИ КАМЕРИ З ФОТО/ВІДЕО */
+        /* ОНОВЛЕНО: ЛОГІКА З ПРІОРИТЕТОМ ФОТО/ЛОГОТИПУ ТА ЦИКЛІЧНОГО YOUTUBE ЗІ ЗВУКОМ НА ВЕСЬ ЕКРАН */
         const camOverlay = document.getElementById('tv-camera-cover-overlay');
         const camImg = document.getElementById('camera-cover-img');
-        const camVid = document.getElementById('camera-cover-video');
         const camFrame = document.getElementById('camera-cover-iframe');
 
         if (state.showCameraCover) {
             if (!camOverlay.classList.contains('active')) {
-                camImg.style.display = 'none'; camVid.style.display = 'none'; camFrame.style.display = 'none';
+                camImg.style.display = 'none'; camFrame.style.display = 'none';
                 
                 if (ui.cameraVideoUrl) {
                     let videoLink = ui.cameraVideoUrl;
-                    if (videoLink.includes('youtube.com/watch?v=')) {
-                        videoLink = videoLink.replace('watch?v=', 'embed/') + '?autoplay=1&mute=1&loop=1';
+                    let videoId = "";
+                    
+                    // Парсимо ID відео з лінків YouTube
+                    if (videoLink.includes('v=')) {
+                        videoId = videoLink.split('v=')[1].split('&')[0];
                     } else if (videoLink.includes('youtu.be/')) {
-                        videoLink = videoLink.replace('youtu.be/', 'youtube.com/embed/') + '?autoplay=1&mute=1&loop=1';
+                        videoId = videoLink.split('youtu.be/')[1].split('?')[0];
+                    } else if (videoLink.includes('embed/')) {
+                        videoId = videoLink.split('embed/')[1].split('?')[0];
                     }
-                    camFrame.src = videoLink; camFrame.style.display = 'block';
-                } else if (ui.cameraAssetSrc) {
-                    if (ui.cameraAssetSrc.startsWith('data:video') || ui.cameraAssetSrc.includes('mp4')) {
-                        camVid.src = ui.cameraAssetSrc; camVid.style.display = 'block';
+                    
+                    if (videoId) {
+                        // autoplay=1 (старт), loop=1 (повтор), playlist=ID (обов'язковий для loop), mute=0 (ЗВУК Є!)
+                        videoLink = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=1&playlist=${videoId}&controls=0&modestbranding=1&rel=0`;
+                        camFrame.src = videoLink;
+                        camFrame.style.display = 'block';
                     } else {
-                        camImg.src = ui.cameraAssetSrc; camImg.style.display = 'block';
+                        // Якщо це прямий лінк на .mp4 або інший потоковий файл
+                        camFrame.src = videoLink;
+                        camFrame.style.display = 'block';
                     }
+                } else if (ui.cameraAssetSrc) {
+                    // Якщо лінк порожній - виводимо завантажену картинку чи логотип по центру
+                    camImg.src = ui.cameraAssetSrc;
+                    camImg.style.display = 'block';
                 }
                 camOverlay.classList.add('active');
             }
         } else {
             if (camOverlay.classList.contains('active')) {
                 camOverlay.classList.remove('active');
-                camVid.src = ''; camFrame.src = '';
+                camFrame.src = '';
             }
         }
 
