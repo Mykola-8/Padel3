@@ -78,9 +78,8 @@
             font-size: 13px; font-weight: 900; text-transform: uppercase;
             letter-spacing: 1px; transition: 0.4s; opacity: 0; z-index: 1;
         }
-        #tiebreak-panel { top: -35px; right: 25px; border-radius: 6px 6px 0 0; }
         #proset-indicator { top: -35px; left: 40%; border-radius: 6px 6px 0 0; }
-        #tiebreak-panel.active, #proset-indicator.active { opacity: 1; transform: translateY(-10px); }
+        #proset-indicator.active { opacity: 1; transform: translateY(-10px); }
         
         #scoreboard-main {
             flex: 1; background: var(--panel-bg); border-left: 12px solid var(--accent-blue);
@@ -446,44 +445,30 @@
         @keyframes intro-left-in  { 0% { opacity:0; transform: translateX(-120px); } 100% { opacity:1; transform: translateX(0); } }
         @keyframes intro-right-in { 0% { opacity:0; transform: translateX(120px); } 100% { opacity:1; transform: translateX(0); } }
         @keyframes intro-vs-pop   { 0% { opacity:0; transform: scale(0.4) rotate(-15deg); } 50% { transform: scale(1.1) rotate(5deg); } 100% { opacity:1; transform: scale(1) rotate(0deg); } }
-        
-        #match-intro-overlay.active .intro-team-block.t-left .intro-photo-wrap,
-        #match-intro-overlay.active .intro-team-block.t-left .intro-team-logo,
-        #match-intro-overlay.active .intro-team-block.t-left .intro-team { animation: intro-left-in 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; }
-        #match-intro-overlay.active .intro-team-block.t-right .intro-photo-wrap,
-        #match-intro-overlay.active .intro-team-block.t-right .intro-team-logo,
-        #match-intro-overlay.active .intro-team-block.t-right .intro-team { animation: intro-right-in 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; }
-        #match-intro-overlay.active .intro-vs { animation: intro-vs-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards; }
-        #match-intro-overlay.active .intro-court { opacity: 1; transform: translateY(0); transition-delay: 0.4s; }
 
-        @keyframes deuce-wipe-in { 0% { transform: translateX(100%); } 100% { transform: translateX(0%); } }
-        @keyframes deuce-wipe-out { 0% { transform: translateX(0%); } 100% { transform: translateX(-100%); } }
-        @keyframes deuce-txt-in { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
-        @keyframes deuce-txt-out { 0% { opacity: 1; } 100% { opacity: 0; } }
-        @keyframes fault-row-in { 0% { transform: translateX(100%); } 100% { transform: translateX(0); } }
-        @keyframes fault-row-out { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
-        @keyframes fault-row-txt { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
-        
-        @keyframes finish-bg-in { 0% { opacity: 0; } 100% { opacity: 1; } }
-        @keyframes finish-bg-out { 0% { opacity: 1; } 100% { opacity: 0; } }
-        @keyframes finish-card-in { 0% { opacity: 0; transform: scale(0.8) translateY(30px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
-        @keyframes finish-card-out { 0% { opacity: 1; transform: scale(1) translateY(0); } 100% { opacity: 0; transform: scale(0.96) translateY(-25px); } }
-        
-        @keyframes logo-pop-in { 0% { opacity: 0; transform: scale(0.6); } 100% { opacity: 1; transform: scale(1); } }
-        @keyframes logo-pop-out { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.6); } }
-        
-        @keyframes bn-slide-in { 0% { opacity: 0; transform: translateX(-50%) translateY(-22px); } 100% { opacity: 1; transform: translateX(-50%) translateY(4px); } }
-        @keyframes bn-slide-out { 0% { opacity: 1; transform: translateX(-50%) translateY(4px); } 100% { opacity: 0; transform: translateX(-50%) translateY(-22px); } }
-        @keyframes bn-txt-in { 0% { opacity: 0; } 100% { opacity: 1; } }
-
-        @keyframes gp-shimmer {
-            0%, 100% { opacity: 1; background-color: transparent; }
-            50% { opacity: 0.4; background-color: rgba(255, 215, 0, 0.15); }
+        /* ── ОНОВЛЕНО: СТИЛІ ДЛЯ КРАСИВОЇ ПОВНОЕКРАННОЇ ЗАСТАВКИ КАМЕРИ ── */
+        #tv-camera-cover-overlay {
+            position: fixed; inset: 0; width: 100vw; height: 100vh;
+            background: #222222; z-index: 28000; display: flex;
+            align-items: center; justify-content: center; opacity: 0;
+            pointer-events: none; transition: opacity 0.5s ease;
         }
-        .gp-winner-shimmer { animation: gp-shimmer 0.6s ease-in-out 5; }
+        #tv-camera-cover-overlay.active { opacity: 1; pointer-events: auto; }
+        #camera-cover-media-box { max-width: 85%; max-height: 85%; display: flex; align-items: center; justify-content: center; border-radius: 16px; overflow: hidden; box-shadow: 0 25px 65px rgba(0,0,0,0.7); }
+        #camera-cover-img { max-width: 100%; max-height: 80vh; object-fit: contain; }
+        #camera-cover-video { max-width: 100%; max-height: 80vh; object-fit: contain; }
+        #camera-cover-iframe { width: 80vw; height: 45vw; max-height: 80vh; border: none; }
     </style>
 </head>
 <body>
+
+<div id="tv-camera-cover-overlay">
+    <div id="camera-cover-media-box">
+        <img id="camera-cover-img" src="" style="display:none;" alt="">
+        <video id="camera-cover-video" style="display:none;" autoplay loop muted controls></video>
+        <iframe id="camera-cover-iframe" style="display:none;" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+</div>
 
 <div id="scoreboard-anchor">
     <div id="tb-overlay-container">
@@ -493,7 +478,6 @@
 
     <div id="logo-container"><img id="logo-img" src="" alt=""></div>
     <div id="proset-indicator" class="popup-label">PRO-SET 8</div>
-    <div id="tiebreak-panel" class="popup-label">TIE-BREAK</div>
     
     <div id="bottom-notif">
         <div class="bn-bg"></div>
@@ -764,16 +748,10 @@
         if (ui.logoSrc) document.getElementById('logo-img').src = ui.logoSrc;
         document.getElementById('logo-container').classList.toggle('active', showLogo && !!ui.logoSrc);
 
-        document.getElementById('tiebreak-panel').classList.toggle('active', isTiebreak);
-        document.getElementById('proset-indicator').classList.toggle('active', isProset);
-        if (isProset) document.getElementById('proset-indicator').innerText = `PRO-SET ${prosetLimit}`;
-
-        /* ОНОВЛЕНО: ДОДАНО ПЛАШКУ TIE-BREAK ЯК ОДИН З ВАРІАНТІВ НИЖНЬОЇ ПЛАШКИ */
         const bnEl   = document.getElementById('bottom-notif');
         const bnText = document.getElementById('bn-text-el');
         let notif  = state.notifText || "";
         
-        // Якщо зараз розігрується тай-брейк і в базі немає іншого пріоритетного тексту нотифікації
         if (!notif && isTiebreak) {
             notif = "TIE-BREAK";
         }
@@ -785,7 +763,7 @@
             if (notif.includes('BREAK'))  bnColor = '#e67e22';
             if (notif.includes('SET'))    bnColor = '#9b59b6';
             if (notif.includes('GOLDEN')) bnColor = '#c8a200';
-            if (notif.includes('TIE-BREAK')) bnColor = '#666666'; // Колір під сірий стиль тайбрейку
+            if (notif.includes('TIE-BREAK')) bnColor = '#666666';
             
             bnEl.style.setProperty('--bn-color', bnColor);
             bnEl.dataset.lastNotif = notif;
@@ -896,7 +874,6 @@
             }
         }
 
-        /* СТАТИСТИКА МАТЧУ ЗМЕНШЕНА ДО 7 СЕКУНД */
         if (state.showStats && !forceShowStats) {
             forceShowStats = true;
             updateStatsPanel(state);
@@ -943,7 +920,7 @@
             }
         }
 
-        /* ОНОВЛЕНО: АНІМАЦІЯ ТАЙ-БРЕЙК WIPE ОДИН РАЗ ЗА СЕТ (НА БАЗІ УНІКАЛЬНОГО КЛЮЧА СЕТУ) */
+        /* АНІМАЦІЯ ТАЙ-БРЕЙК WIPE ОДИН РАЗ ЗА СЕТ */
         const tbBg = document.getElementById('tb-wipe-bg');
         const tbTxt = document.getElementById('tb-wipe-text');
         const tbMatchKey = "SET_" + activeSetIndex + "_TB";
@@ -957,7 +934,6 @@
                 tbTxt.style.animation = "";
             }, 1500);
         } else if (!isTiebreak) {
-            // Очищуємо ключ тільки якщо ми не в тай-брейку (наприклад, скинули матч)
             if(state.games && state.games[0]===0 && state.games[1]===0 && setsHistory[0].length===0) {
                 state._lastTBKey = "";
             }
@@ -975,6 +951,41 @@
             qrContainer.classList.add('active');
         } else {
             qrContainer.classList.remove('active');
+        }
+
+        /* ОНОВЛЕНО: ЛОГІКА ВІДОБРАЖЕННЯ СУЦІЛЬНОЇ ЗАСТАВКИ КАМЕРИ З ФОТО/ВІДЕО */
+        const camOverlay = document.getElementById('tv-camera-cover-overlay');
+        const camImg = document.getElementById('camera-cover-img');
+        const camVid = document.getElementById('camera-cover-video');
+        const camFrame = document.getElementById('camera-cover-iframe');
+
+        if (state.showCameraCover) {
+            if (!camOverlay.classList.contains('active')) {
+                camImg.style.display = 'none'; camVid.style.display = 'none'; camFrame.style.display = 'none';
+                
+                if (ui.cameraVideoUrl) {
+                    // Якщо вставили посилання на YouTube або інше потокове відео
+                    let videoLink = ui.cameraVideoUrl;
+                    if (videoLink.includes('youtube.com/watch?v=')) {
+                        videoLink = videoLink.replace('watch?v=', 'embed/') + '?autoplay=1&mute=1&loop=1';
+                    } else if (videoLink.includes('youtu.be/')) {
+                        videoLink = videoLink.replace('youtu.be/', 'youtube.com/embed/') + '?autoplay=1&mute=1&loop=1';
+                    }
+                    camFrame.src = videoLink; camFrame.style.display = 'block';
+                } else if (ui.cameraAssetSrc) {
+                    if (ui.cameraAssetSrc.startsWith('data:video') || ui.cameraAssetSrc.includes('mp4')) {
+                        camVid.src = ui.cameraAssetSrc; camVid.style.display = 'block';
+                    } else {
+                        camImg.src = ui.cameraAssetSrc; camImg.style.display = 'block';
+                    }
+                }
+                camOverlay.classList.add('active');
+            }
+        } else {
+            if (camOverlay.classList.contains('active')) {
+                camOverlay.classList.remove('active');
+                camVid.src = ''; camFrame.src = '';
+            }
         }
 
         if (ui.statLogoT) document.getElementById('stat-logo-t').src = ui.statLogoT;
@@ -1014,68 +1025,3 @@
             bodyHtml += `<td class="stats-set-column">
                 <div class="stats-games-num">${s1[i]}</div>
                 ${tLabel ? `<div class="stats-time-label">${tLabel}</div>` : ''}
-            </td>`;
-        }
-        bodyHtml += `</tr><tr class="stats-row" style="border:none;"><td class="stats-team-name">${n2}</td>`;
-        for(let i=0; i<totalSets; i++) { bodyHtml += `<td class="stats-set-column"><div class="stats-games-num">${s2[i]}</div></td>`; }
-        bodyHtml += `</tr>`;
-        document.getElementById('stats-table-body').innerHTML = bodyHtml;
-    }
-
-    function updateFinishPanel(state) {
-        const n1 = state.p1name || "Команда А"; const n2 = state.p2name || "Команда Б";
-        const sh = state.setsHistory || [[],[]]; const st = state.setTimes || [];
-        
-        let totalSets = Math.max((sh[0] || []).length, (sh[1] || []).length, 1);
-
-        let headHtml = `<th style="text-align:left; padding-left:20px;">Команда</th>`;
-        for(let s=1; s<=totalSets; s++) headHtml += `<th class="finish-cell-set">S${s}</th>`;
-        document.getElementById('finish-table-head').innerHTML = headHtml;
-        
-        let html = `<tr class="finish-row"><td class="finish-team">${n1}</td>`;
-        for(let i=0; i<totalSets; i++){
-            const v = (sh[0] && sh[0][i]!==undefined)?sh[0][i]:'-';
-            const won = (sh[0] && sh[1] && sh[0][i]!==undefined && sh[1][i]!==undefined && sh[0][i]>sh[1][i]);
-            html += `<td class="finish-cell-set"><span class="finish-box-score${won?' winner-box':''}">${v}</span>`;
-            if(st && st[i] && i===0) html += `<div style="font-size:16px;color:#7eb8ff;margin-top:3px;font-weight:900;">${st[i]}'</div>`;
-            html += `</td>`;
-        }
-        html += `</tr><tr class="finish-row" style="border:none;"><td class="finish-team">${n2}</td>`;
-        for(let i=0; i<totalSets; i++){
-            const v = (sh[1] && sh[1][i]!==undefined)?sh[1][i]:'-';
-            const won = (sh[0] && sh[1] && sh[0][i]!==undefined && sh[1][i]!==undefined && sh[1][i]>sh[0][i]);
-            html += `<td class="finish-cell-set"><span class="finish-box-score${won?' winner-box':''}">${v}</span>`;
-            if(st && st[i] && i>0) html += `<div style="font-size:16px;color:#7eb8ff;margin-top:3px;font-weight:900;">${st[i]}'</div>`;
-            html += `</td>`;
-        }
-        html += `</tr>`;
-        document.getElementById('finish-table-body').innerHTML = html;
-    }
-
-    let _lastSponsorKeys = "";
-    function renderSponsorLogos(logos) {
-        const bar = document.getElementById('sponsor-logos-bar'); if (!bar) return;
-        const key = logos.map(l => l.src + l.visible).join('|'); if (key === _lastSponsorKeys) return;
-        _lastSponsorKeys = key;
-        const visibleLogos = logos.filter(l => l.src && l.visible !== false);
-        [...bar.children].forEach(el => { el.classList.remove('slw-show'); el.classList.add('slw-hide'); });
-        setTimeout(() => {
-            bar.innerHTML = '';
-            visibleLogos.forEach((l, i) => {
-                const wrap = document.createElement('div'); wrap.className = 'sponsor-logo-wrap';
-                const img = document.createElement('img'); img.src = l.src; img.alt = '';
-                wrap.appendChild(img); bar.appendChild(wrap);
-                setTimeout(() => wrap.classList.add('slw-show'), i * 80);
-            });
-        }, visibleLogos.length === 0 ? 0 : 300);
-    }
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const courtId = urlParams.get('court') || '1';
-    document.title = `Padel Overlay — Court ${courtId}`;
-
-    const gameRef = ref(db, `padel/court${courtId}`);
-    onValue(gameRef, (snapshot) => { renderOverlay(snapshot.val()); });
-</script>
-</body>
-</html>
