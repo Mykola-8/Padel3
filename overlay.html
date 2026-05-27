@@ -198,7 +198,7 @@
             background: rgba(20, 20, 26, 0.75);
             border: 1px solid rgba(255,255,255,0.15); 
             box-shadow: 0 30px 70px rgba(0,0,0,0.85);
-            width: fit-content; min-width: 480px; border-radius: 22px; padding: 38px 54px; position: relative; display: flex; flex-direction: column; gap: 16px;
+            width: fit-content; min-width: 480px; border-radius: 22px; padding: 38px 54px; position: relative; display: flex; flex-content: column; gap: 16px;
         }
         .stats-logo-left  { position: absolute; top: 15px; left: 20px;  height: 45px; max-width: 120px; object-fit: contain; }
         .stats-logo-right { position: absolute; top: 15px; right: 20px; height: 45px; max-width: 120px; object-fit: contain; }
@@ -312,7 +312,7 @@
         .sponsor-logo-wrap.slw-hide { animation: logo-pop-out 0.28s ease forwards; }
         .sponsor-logo-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }
 
-        /* ── ЕЛЕМЕНТИ QR-КОДУ (ОНОВЛЕНО: ДОДАНО СТИЛЬ ДЛЯ ЛАКОНІЧНОГО ТЕКСТУ) ── */
+        /* ── ЕЛЕМЕНТИ QR-КОДУ (ОНОВЛЕНО: ТЕКСТ ТА КОНТЕЙНЕР) ── */
         #tv-qr-container {
             position: absolute;
             bottom: 40px;
@@ -354,6 +354,46 @@
             color: #ffffff;
             text-shadow: 0 2px 6px rgba(0,0,0,0.85);
             text-align: center;
+        }
+
+        /* ── TIE-BREAK OVERLAY (ОНОВЛЕНО: СІРИЙ ФОН ПЕРЕКРИВАЄ ТАБЛО НА 1.5 СЕКУНДИ) ── */
+        #tb-overlay-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 500;
+            overflow: hidden;
+            pointer-events: none;
+            border-radius: var(--sb-radius);
+        }
+        #tb-wipe-bg {
+            position: absolute;
+            inset: 0;
+            background: #666666;
+            transform: translateX(-100%);
+        }
+        #tb-wipe-text {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--team-font-family);
+            font-size: calc(var(--sb-h) * 0.45);
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: 5px;
+            opacity: 0;
+        }
+        .tb-wipe-active { animation: tb-wipe-anim 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+        @keyframes tb-wipe-anim {
+            0% { transform: translateX(-100%); }
+            20% { transform: translateX(0%); }
+            80% { transform: translateX(0%); opacity: 1; }
+            100% { transform: translateX(100%); opacity: 0; }
         }
 
         /* ── PREMIUM MATCH INTRO OVERLAY (ОНОВЛЕНО: ДОДАНІ КЛАСИ ТА АНІМАЦІЯ ПОЯВИ/ВИХОДУ) ── */
@@ -400,6 +440,9 @@
         .intro-vs { font-family: 'Inter', sans-serif; font-size: 36px; font-weight: 900; color: var(--accent-blue); text-shadow: 0 0 25px var(--accent-blue), 0 2px 8px rgba(0,0,0,0.6); opacity: 0; transform: scale(0.5); }
         .intro-court { font-size: 15px; font-weight: 900; color: #ffffff; text-transform: uppercase; letter-spacing: 5px; text-align: center; margin-bottom: 25px; opacity: 0; transform: translateY(-20px); transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); text-shadow: 0 3px 10px rgba(0,0,0,0.9); }
 
+        @keyframes intro-bg-in { 0% { opacity: 0; } 100% { opacity: 1; } }
+        @keyframes intro-bg-out { 0% { opacity: 1; } 100% { opacity: 0; } }
+
         @keyframes intro-left-in  { 0% { opacity:0; transform: translateX(-120px); } 100% { opacity:1; transform: translateX(0); } }
         @keyframes intro-right-in { 0% { opacity:0; transform: translateX(120px); } 100% { opacity:1; transform: translateX(0); } }
         @keyframes intro-vs-pop   { 0% { opacity:0; transform: scale(0.4) rotate(-15deg); } 50% { transform: scale(1.1) rotate(5deg); } 100% { opacity:1; transform: scale(1) rotate(0deg); } }
@@ -412,9 +455,6 @@
         #match-intro-overlay.active .intro-team-block.t-right .intro-team { animation: intro-right-in 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; }
         #match-intro-overlay.active .intro-vs { animation: intro-vs-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards; }
         #match-intro-overlay.active .intro-court { opacity: 1; transform: translateY(0); transition-delay: 0.4s; }
-
-        @keyframes intro-bg-in { 0% { opacity: 0; } 100% { opacity: 1; } }
-        @keyframes intro-bg-out { 0% { opacity: 1; } 100% { opacity: 0; } }
 
         @keyframes deuce-wipe-in { 0% { transform: translateX(100%); } 100% { transform: translateX(0%); } }
         @keyframes deuce-wipe-out { 0% { transform: translateX(0%); } 100% { transform: translateX(-100%); } }
@@ -446,6 +486,11 @@
 <body>
 
 <div id="scoreboard-anchor">
+    <div id="tb-overlay-container">
+        <div id="tb-wipe-bg"></div>
+        <div id="tb-wipe-text">TIE-BREAK</div>
+    </div>
+
     <div id="logo-container"><img id="logo-img" src="" alt=""></div>
     <div id="proset-indicator" class="popup-label">PRO-SET 8</div>
     <div id="tiebreak-panel" class="popup-label">TIE-BREAK</div>
@@ -840,7 +885,7 @@
             }
         }
 
-        /* ОНОВЛЕНО: СТАТИСТИКА МАТЧУ ЗМЕНШЕНА ДО 7 СЕКУНД (З ПЛАВНИМИ АНІМАЦІЯМИ) */
+        /* ОНОВЛЕНО: СТАТИСТИКА МАТЧУ ЗМЕНШЕНА ДО 7 СЕКУНД З ПЛАВНИМИ АНІМАЦІЯМИ */
         if (state.showStats && !forceShowStats) {
             forceShowStats = true;
             updateStatsPanel(state);
@@ -855,7 +900,7 @@
                     statsEl.classList.remove('active', 'closing');
                     forceShowStats = false;
                 }, 400);
-            }, 7000); /* Змінено з 10000 на 7000 мілісекунд */
+            }, 7000);
         }
 
         document.getElementById('scoreboard-anchor').classList.toggle('hidden-board', showBoard === false || showFinish || showIntro);
@@ -874,7 +919,7 @@
             }
         }
 
-        /* ОНОВЛЕНО: ЗАБЕЗПЕЧЕНО ПРАВИЛЬНИЙ ВИХІД ТА ВХІД ДЛЯ ЗАСТАВКИ ТАБЛО VS (INTRO) */
+        /* ОНОВЛЕНО: СИНХРОНІЗАЦІЯ ТАБЛО VS (INTRO) З АНІМАЦІЯМИ ВХОДУ ТА ВИХОДУ */
         const introOverlay = document.getElementById('match-intro-overlay');
         if (showIntro && !introOverlay.classList.contains('active')) {
             introOverlay.classList.remove('closing');
@@ -888,7 +933,22 @@
             }
         }
 
-        /* ОНОВЛЕНО: ЛАКОНІЧНИЙ ОПИС ДЛЯ ОТОБРАЖЕННЯ ЗНИЗУ QR КОДУ */
+        /* ОНОВЛЕНО: ЛОГІКА ТАЙ-БРЕЙК WIPE НА 1.5 СЕКУНДИ ЗЛІВА НАПРАВО */
+        const tbBg = document.getElementById('tb-wipe-bg');
+        const tbTxt = document.getElementById('tb-wipe-text');
+        if (isTiebreak && !state._lastTB) {
+            state._lastTB = true;
+            tbBg.classList.add('tb-wipe-active');
+            tbTxt.style.animation = "tb-wipe-anim 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards";
+            setTimeout(() => {
+                tbBg.classList.remove('tb-wipe-active');
+                tbTxt.style.animation = "";
+            }, 1500);
+        } else if (!isTiebreak) {
+            state._lastTB = false;
+        }
+
+        /* ОНОВЛЕНО: ГЕНЕРАЦІЯ QR-КОДУ ТА ВИВЕДЕННЯ ЛАКОНІЧНОГО ТЕКСТУ ПІДПИСУ */
         const showQR = state.showQR || state.hideScoreOnly || false;
         const qrUrl = state.qrUrl || state.qrLink || ui.qrUrl || "";
         const qrContainer = document.getElementById('tv-qr-container');
@@ -896,8 +956,6 @@
         if (showQR && qrUrl) {
             const encodedUrl = encodeURIComponent(qrUrl);
             document.getElementById('tv-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&color=000000&bgcolor=ffffff&data=${encodedUrl}`;
-            
-            // Відображаємо текст підпису з бази, або за замовчуванням "SCAN TO WATCH"
             document.getElementById('tv-qr-text').textContent = state.qrText || "SCAN TO WATCH";
             qrContainer.classList.add('active');
         } else {
