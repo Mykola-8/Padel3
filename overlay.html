@@ -198,7 +198,7 @@
             background: rgba(20, 20, 26, 0.75);
             border: 1px solid rgba(255,255,255,0.15); 
             box-shadow: 0 30px 70px rgba(0,0,0,0.85);
-            width: fit-content; min-width: 480px; border-radius: 22px; padding: 38px 54px; position: relative; display: flex; flex-content: column; gap: 16px;
+            width: fit-content; min-width: 480px; border-radius: 22px; padding: 38px 54px; position: relative; display: flex; flex-direction: column; gap: 16px;
         }
         .stats-logo-left  { position: absolute; top: 15px; left: 20px;  height: 45px; max-width: 120px; object-fit: contain; }
         .stats-logo-right { position: absolute; top: 15px; right: 20px; height: 45px; max-width: 120px; object-fit: contain; }
@@ -312,7 +312,7 @@
         .sponsor-logo-wrap.slw-hide { animation: logo-pop-out 0.28s ease forwards; }
         .sponsor-logo-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }
 
-        /* ── ЕЛЕМЕНТИ QR-КОДУ (ОНОВЛЕНО: ТЕКСТ ТА КОНТЕЙНЕР) ── */
+        /* ── ЕЛЕМЕНТИ QR-КОДУ (ОНОВЛЕНО: ТЕКСТ НАД КОДОМ + ЗМЕНШЕНО РОЗМІР ДО 115PX) ── */
         #tv-qr-container {
             position: absolute;
             bottom: 40px;
@@ -332,22 +332,22 @@
         }
         .qr-card-box {
             background: #ffffff;
-            padding: 12px;
-            border-radius: 14px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            padding: 10px;
+            border-radius: 12px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.55);
             display: flex;
             align-items: center;
             justify-content: center;
         }
         #tv-qr-img {
-            width: 150px;
-            height: 150px;
+            width: 115px; /* Зменшено з 150px */
+            height: 115px; /* Зменшено з 150px */
             display: block;
         }
         .qr-text-lbl {
-            margin-top: 8px;
+            margin-bottom: 8px; /* Перенесено відступ вниз, бо текст тепер вгорі */
             font-family: var(--team-font-family);
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -356,7 +356,7 @@
             text-align: center;
         }
 
-        /* ── TIE-BREAK OVERLAY (ОНОВЛЕНО: СІРИЙ ФОН ПЕРЕКРИВАЄ ТАБЛО НА 1.5 СЕКУНДИ) ── */
+        /* ── TIE-BREAK OVERLAY (СІРИЙ ФОН ПЕРЕКРИВАЄ ТАБЛО НА 1.5 СЕКУНДИ) ── */
         #tb-overlay-container {
             position: absolute;
             top: 0;
@@ -396,7 +396,7 @@
             100% { transform: translateX(100%); opacity: 0; }
         }
 
-        /* ── PREMIUM MATCH INTRO OVERLAY (ОНОВЛЕНО: ДОДАНІ КЛАСИ ТА АНІМАЦІЯ ПОЯВИ/ВИХОДУ) ── */
+        /* ── PREMIUM MATCH INTRO OVERLAY (СИНХРОНІЗАЦІЯ VS ЗАСТАВКИ) ── */
         #match-intro-overlay { 
             position: fixed; inset: 0; width: 100vw; height: 100vh;
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
@@ -556,10 +556,10 @@
 <div id="sponsor-logos-bar"></div>
 
 <div id="tv-qr-container">
+    <div id="tv-qr-text" class="qr-text-lbl">SCAN TO WATCH</div>
     <div class="qr-card-box">
         <img id="tv-qr-img" src="" alt="QR">
     </div>
-    <div id="tv-qr-text" class="qr-text-lbl">SCAN TO WATCH</div>
 </div>
 
 <div id="match-intro-overlay">
@@ -885,7 +885,7 @@
             }
         }
 
-        /* ОНОВЛЕНО: СТАТИСТИКА МАТЧУ ЗМЕНШЕНА ДО 7 СЕКУНД З ПЛАВНИМИ АНІМАЦІЯМИ */
+        /* СТАТИСТИКА МАТЧУ ЗМЕНШЕНА ДО 7 СЕКУНД */
         if (state.showStats && !forceShowStats) {
             forceShowStats = true;
             updateStatsPanel(state);
@@ -919,7 +919,6 @@
             }
         }
 
-        /* ОНОВЛЕНО: СИНХРОНІЗАЦІЯ ТАБЛО VS (INTRO) З АНІМАЦІЯМИ ВХОДУ ТА ВИХОДУ */
         const introOverlay = document.getElementById('match-intro-overlay');
         if (showIntro && !introOverlay.classList.contains('active')) {
             introOverlay.classList.remove('closing');
@@ -933,7 +932,7 @@
             }
         }
 
-        /* ОНОВЛЕНО: ЛОГІКА ТАЙ-БРЕЙК WIPE НА 1.5 СЕКУНДИ ЗЛІВА НАПРАВО */
+        /* ЛОГІКА ТАЙ-БРЕЙК WIPE НА 1.5 СЕКУНДИ ЗЛІВА НАПРАВО */
         const tbBg = document.getElementById('tb-wipe-bg');
         const tbTxt = document.getElementById('tb-wipe-text');
         if (isTiebreak && !state._lastTB) {
@@ -948,7 +947,7 @@
             state._lastTB = false;
         }
 
-        /* ОНОВЛЕНО: ГЕНЕРАЦІЯ QR-КОДУ ТА ВИВЕДЕННЯ ЛАКОНІЧНОГО ТЕКСТУ ПІДПИСУ */
+        /* ОНОВЛЕНО: ГЕНЕРАЦІЯ ТА ВІДОБРАЖЕННЯ ТЕКСТУ ПІДПИСУ ВГОРІ (НАД QR КОДОМ) */
         const showQR = state.showQR || state.hideScoreOnly || false;
         const qrUrl = state.qrUrl || state.qrLink || ui.qrUrl || "";
         const qrContainer = document.getElementById('tv-qr-container');
@@ -956,6 +955,8 @@
         if (showQR && qrUrl) {
             const encodedUrl = encodeURIComponent(qrUrl);
             document.getElementById('tv-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&color=000000&bgcolor=ffffff&data=${encodedUrl}`;
+            
+            // Текст тепер вгорі коду
             document.getElementById('tv-qr-text').textContent = state.qrText || "SCAN TO WATCH";
             qrContainer.classList.add('active');
         } else {
