@@ -285,7 +285,7 @@
         <div class="toggle-row" style="background: rgba(0, 85, 255, 0.05);">
             <div>
                 <div class="toggle-label" style="color: #5599ff;">Заставка на весь екран (Камера)</div>
-                <div class="toggle-sublabel">Перекриває весь оверлей сірим фоном/медіа</div>
+                <div class="toggle-sublabel">Перекриває оверлей сірим фоном або YouTube-відео</div>
             </div>
             <label class="switch"><input type="checkbox" id="tog-camera-cover" onchange="sendToggle('showCameraCover', this.checked)"><span class="slider"></span></label>
         </div>
@@ -308,12 +308,12 @@
                         <video id="prev-vid-cammedia" style="width:100%;height:100%;object-fit:cover;display:none;" autoplay loop muted></video>
                         <span id="prev-empty-cammedia" style="font-size:12px;opacity:0.3;text-align:center;">немає<br>медіа</span>
                     </div>
-                    <label class="file-btn" style="flex:1;text-align:center;">Завантажити Фото / Відео<input type="file" accept="image/*,video/*" style="display:none" onchange="uploadCameraAsset(event)"></label>
+                    <label class="file-btn" style="flex:1;text-align:center;">Завантажити Фото / Логотип<input type="file" accept="image/*" style="display:none" onchange="uploadCameraAsset(event)"></label>
                     <button onclick="clearCameraAsset()" style="background:rgba(231,76,60,0.15);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;">✕</button>
                 </div>
                 <div style="display:flex; align-items:center; width:100%; gap:10px; margin-top:6px;">
-                    <label style="font-size:11px; color:rgba(255,255,255,0.5); flex:1;">Або лінк на відео:</label>
-                    <input type="text" id="s-camera-video-url" placeholder="https://..." style="width:180px; text-align:left;" oninput="liveUpdateCameraLink()">
+                    <label style="font-size:11px; color:rgba(255,255,255,0.5); flex:1;">YouTube лінк на відео:</label>
+                    <input type="text" id="s-camera-video-url" placeholder="https://youtube.com/..." style="width:180px; text-align:left;" oninput="window.liveUpdateCameraLink()">
                 </div>
             </div>
         </div>
@@ -405,7 +405,7 @@
                         <img id="prev-img-t1photo" src="" style="width:100%;height:100%;object-fit:cover;display:none;">
                         <span id="prev-empty-t1photo" style="font-size:14px;opacity:0.3;">👤 фотo</span>
                     </div>
-                    <label class="file-btn" style="flex:1;text-align:center;">Завантажити Фото<input type="file" accept="image/*" style="display:none" onchange="uploadIntroAsset(event,'team1Photo','t1photo')"></label>
+                    <label class="file-btn" style="flex:1;text-align:center;">Завантажити Фото/Відео<input type="file" accept="image/*,video/*" style="display:none" onchange="uploadIntroAsset(event,'team1Photo','t1photo')"></label>
                     <button onclick="clearIntroAsset('team1Photo','t1photo')" style="background:rgba(231,76,60,0.15);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;">✕</button>
                 </div>
                 <div style="display:flex; align-items:center; gap:10px; width:100%; margin-top:4px;">
@@ -425,7 +425,7 @@
                         <img id="prev-img-t2photo" src="" style="width:100%;height:100%;object-fit:cover;display:none;">
                         <span id="prev-empty-t2photo" style="font-size:14px;opacity:0.3;">👤 фотo</span>
                     </div>
-                    <label class="file-btn" style="flex:1;text-align:center;">Завантажити Фото<input type="file" accept="image/*" style="display:none" onchange="uploadIntroAsset(event,'team2Photo','t2photo')"></label>
+                    <label class="file-btn" style="flex:1;text-align:center;">Завантажити Фото/Відео<input type="file" accept="image/*,video/*" style="display:none" onchange="uploadIntroAsset(event,'team2Photo','t2photo')"></label>
                     <button onclick="clearIntroAsset('team2Photo','t2photo')" style="background:rgba(231,76,60,0.15);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;">✕</button>
                 </div>
                 <div style="display:flex; align-items:center; gap:10px; width:100%; margin-top:4px;">
@@ -895,7 +895,6 @@
         pushState();
     }
 
-    /* ОНОВЛЕНО: ЛІНК НА ВІДЕО ДЛЯ КАМЕРИ */
     function liveUpdateCameraLink() {
         ui.cameraVideoUrl = document.getElementById('s-camera-video-url').value || "";
         pushState();
@@ -954,34 +953,28 @@
         else { img.src = ''; img.style.display = 'none'; empty.style.display = 'block'; }
     }
 
-    /* ОНОВЛЕНО: ЗАВАНТАЖЕННЯ ТА ПРЕВ'Ю МЕДІА КАМЕРИ */
     function uploadCameraAsset(event) {
         const file = event.target.files[0]; if (!file) return;
         const r = new FileReader();
         r.onload = () => {
             ui.cameraAssetSrc = r.result;
-            renderCameraAssetPreview(r.result, file.type);
+            renderCameraAssetPreview(r.result);
             pushState();
         };
         r.readAsDataURL(file);
     }
     function clearCameraAsset() {
         ui.cameraAssetSrc = '';
-        renderCameraAssetPreview('', '');
+        renderCameraAssetPreview('');
         pushState();
     }
-    function renderCameraAssetPreview(src, type) {
+    function renderCameraAssetPreview(src) {
         const img = document.getElementById('prev-img-cammedia');
-        const vid = document.getElementById('prev-vid-cammedia');
         const empty = document.getElementById('prev-empty-cammedia');
-        img.style.display = 'none'; vid.style.display = 'none'; empty.style.display = 'block';
         if (src) {
-            empty.style.display = 'none';
-            if (type.startsWith('video') || src.startsWith('data:video')) {
-                vid.src = src; vid.style.display = 'block';
-            } else {
-                img.src = src; img.style.display = 'block';
-            }
+            img.src = src; img.style.display = 'block'; empty.style.display = 'none';
+        } else {
+            img.src = ''; img.style.display = 'none'; empty.style.display = 'block';
         }
     }
 
@@ -993,7 +986,7 @@
         if (ui.team1Logo)  renderIntroAssetPreview('t1logo', ui.team1Logo);
         if (ui.team2Photo) renderIntroAssetPreview('t2photo', ui.team2Photo);
         if (ui.team2Logo)  renderIntroAssetPreview('t2logo', ui.team2Logo);
-        if (ui.cameraAssetSrc) renderCameraAssetPreview(ui.cameraAssetSrc, ui.cameraAssetSrc.includes('video')?'video':'image');
+        if (ui.cameraAssetSrc) renderCameraAssetPreview(ui.cameraAssetSrc);
         if (document.getElementById('tog-logo-main')) document.getElementById('tog-logo-main').checked = !!state.showLogo;
     }
 
