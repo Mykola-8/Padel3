@@ -255,7 +255,7 @@
         .fault-row-bg.fr-out { animation: fault-row-out 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         .fault-row-lbl.fr-txt-show { animation: fault-row-txt 0.18s 0.18s ease forwards; }
 
-        /* ── BOTTOM NOTIF PLANK ── */
+        /* ── ВІДНОВЛЕНО: НИЖНЯ ВИСУВНА ПЛАШКА ДЛЯ ПОІНТІВ ── */
         #bottom-notif { 
             position: absolute; 
             top: 100%; 
@@ -311,7 +311,7 @@
         .sponsor-logo-wrap.slw-hide { animation: logo-pop-out 0.28s ease forwards; }
         .sponsor-logo-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }
 
-        /* ── ЕЛЕМЕНТИ QR-КОДУ (УПАКОВАНО ТА ЗМЕНШЕНО ДО 115PX) ── */
+        /* ── QR-КОД ── */
         #tv-qr-container {
             position: absolute;
             bottom: 40px;
@@ -355,7 +355,7 @@
             text-align: center;
         }
 
-        /* ── TIE-BREAK OVERLAY (СІРИЙ ФОН ПЕРЕКРИВАЄ ТАБЛО НА 1.5 СЕКУНДИ) ── */
+        /* ── TIE-BREAK OVERLAY ── */
         #tb-overlay-container {
             position: absolute;
             top: 0;
@@ -395,12 +395,12 @@
             100% { transform: translateX(100%); opacity: 0; }
         }
 
-        /* ── PREMIUM MATCH INTRO OVERLAY ── */
+        /* ── ВІДНОВЛЕНО: СТИЛІ ТА СВІТЛО ДЛЯ PREMIUM MATCH INTRO OVERLAY (ТАБЛО VS) ── */
         #match-intro-overlay { 
             position: fixed; inset: 0; width: 100vw; height: 100vh;
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             opacity: 0; pointer-events: none;
-            z-index: 19000; background: transparent;
+            z-index: 19000; background: rgba(5, 5, 8, 0.45);
         }
         #match-intro-overlay.active { animation: intro-bg-in 0.5s ease forwards; pointer-events: auto; }
         #match-intro-overlay.closing { animation: intro-bg-out 0.5s ease forwards; pointer-events: none; }
@@ -411,7 +411,7 @@
             display: flex; align-items: center; justify-content: center; 
             gap: 40px; 
             position: relative;
-            background: rgba(15, 15, 20, 0.70); 
+            background: rgba(15, 15, 20, 0.85); 
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 28px;
             padding: 40px 60px;
@@ -431,7 +431,7 @@
             box-shadow: 0 20px 45px rgba(0,0,0,0.65); 
             margin-bottom: 20px; display: none; opacity: 0;
         }
-        .intro-photo-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        .intro-photo-wrap img, .intro-photo-wrap video { width: 100%; height: 100%; object-fit: cover; }
         .intro-team-logo { height: 50px; max-width: 140px; object-fit: contain; margin-bottom: 12px; display: none; opacity: 0; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5)); }
         
         .intro-team { font-family: var(--team-font-family); font-size: 42px; font-weight: 800; text-transform: uppercase; color: #ffffff; text-shadow: 0 4px 15px rgba(0,0,0,0.95); opacity: 0; letter-spacing: 1.5px; }
@@ -439,14 +439,7 @@
         .intro-vs { font-family: 'Inter', sans-serif; font-size: 36px; font-weight: 900; color: var(--accent-blue); text-shadow: 0 0 25px var(--accent-blue), 0 2px 8px rgba(0,0,0,0.6); opacity: 0; transform: scale(0.5); }
         .intro-court { font-size: 15px; font-weight: 900; color: #ffffff; text-transform: uppercase; letter-spacing: 5px; text-align: center; margin-bottom: 25px; opacity: 0; transform: translateY(-20px); transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); text-shadow: 0 3px 10px rgba(0,0,0,0.9); }
 
-        @keyframes intro-bg-in { 0% { opacity: 0; } 100% { opacity: 1; } }
-        @keyframes intro-bg-out { 0% { opacity: 1; } 100% { opacity: 0; } }
-
-        @keyframes intro-left-in  { 0% { opacity:0; transform: translateX(-120px); } 100% { opacity:1; transform: translateX(0); } }
-        @keyframes intro-right-in { 0% { opacity:0; transform: translateX(120px); } 100% { opacity:1; transform: translateX(0); } }
-        @keyframes intro-vs-pop   { 0% { opacity:0; transform: scale(0.4) rotate(-15deg); } 50% { transform: scale(1.1) rotate(5deg); } 100% { opacity:1; transform: scale(1) rotate(0deg); } }
-
-        /* ── ОНОВЛЕНО: СТИЛІ ДЛЯ КРАСИВОЇ ПОВНОЕКРАННОЇ ЗАСТАВКИ КАМЕРИ ── */
+        /* ── СУЦІЛЬНА ЗАСТАВКА ФОНУ (РЕЖИМ КАМЕРИ) ── */
         #tv-camera-cover-overlay {
             position: fixed; inset: 0; width: 100vw; height: 100vh;
             background: #222222; z-index: 28000; display: flex;
@@ -454,10 +447,51 @@
             pointer-events: none; transition: opacity 0.5s ease;
         }
         #tv-camera-cover-overlay.active { opacity: 1; pointer-events: auto; }
-        #camera-cover-media-box { max-width: 85%; max-height: 85%; display: flex; align-items: center; justify-content: center; border-radius: 16px; overflow: hidden; box-shadow: 0 25px 65px rgba(0,0,0,0.7); }
+        自由-cover-media-box { max-width: 85%; max-height: 85%; display: flex; align-items: center; justify-content: center; border-radius: 16px; overflow: hidden; box-shadow: 0 25px 65px rgba(0,0,0,0.7); }
         #camera-cover-img { max-width: 100%; max-height: 80vh; object-fit: contain; }
         #camera-cover-video { max-width: 100%; max-height: 80vh; object-fit: contain; }
         #camera-cover-iframe { width: 80vw; height: 45vw; max-height: 80vh; border: none; }
+
+        @keyframes intro-bg-in { 0% { opacity: 0; } 100% { opacity: 1; } }
+        @keyframes intro-bg-out { 0% { opacity: 1; } 100% { opacity: 0; } }
+        @keyframes intro-left-in  { 0% { opacity:0; transform: translateX(-120px); } 100% { opacity:1; transform: translateX(0); } }
+        @keyframes intro-right-in { 0% { opacity:0; transform: translateX(120px); } 100% { opacity:1; transform: translateX(0); } }
+        @keyframes intro-vs-pop   { 0% { opacity:0; transform: scale(0.4) rotate(-15deg); } 50% { transform: scale(1.1) rotate(5deg); } 100% { opacity:1; transform: scale(1) rotate(0deg); } }
+        
+        #match-intro-overlay.active .intro-team-block.t-left .intro-photo-wrap,
+        #match-intro-overlay.active .intro-team-block.t-left .intro-team-logo,
+        #match-intro-overlay.active .intro-team-block.t-left .intro-team { animation: intro-left-in 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; }
+        #match-intro-overlay.active .intro-team-block.t-right .intro-photo-wrap,
+        #match-intro-overlay.active .intro-team-block.t-right .intro-team-logo,
+        #match-intro-overlay.active .intro-team-block.t-right .intro-team { animation: intro-right-in 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; }
+        #match-intro-overlay.active .intro-vs { animation: intro-vs-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards; }
+        #match-intro-overlay.active .intro-court { opacity: 1; transform: translateY(0); transition-delay: 0.4s; }
+
+        @keyframes deuce-wipe-in { 0% { transform: translateX(100%); } 100% { transform: translateX(0%); } }
+        @keyframes deuce-wipe-out { 0% { transform: translateX(0%); } 100% { transform: translateX(-100%); } }
+        @keyframes deuce-txt-in { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
+        @keyframes deuce-txt-out { 0% { opacity: 1; } 100% { opacity: 0; } }
+        @keyframes fault-row-in { 0% { transform: translateX(100%); } 100% { transform: translateX(0); } }
+        @keyframes fault-row-out { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        @keyframes fault-row-txt { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
+        
+        @keyframes finish-bg-in { 0% { opacity: 0; } 100% { opacity: 1; } }
+        @keyframes finish-bg-out { 0% { opacity: 1; } 100% { opacity: 0; } }
+        @keyframes finish-card-in { 0% { opacity: 0; transform: scale(0.8) translateY(30px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes finish-card-out { 0% { opacity: 1; transform: scale(1) translateY(0); } 100% { opacity: 0; transform: scale(0.96) translateY(-25px); } }
+        
+        @keyframes logo-pop-in { 0% { opacity: 0; transform: scale(0.6); } 100% { opacity: 1; transform: scale(1); } }
+        @keyframes logo-pop-out { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.6); } }
+        
+        @keyframes bn-slide-in { 0% { opacity: 0; transform: translateX(-50%) translateY(-22px); } 100% { opacity: 1; transform: translateX(-50%) translateY(4px); } }
+        @keyframes bn-slide-out { 0% { opacity: 1; transform: translateX(-50%) translateY(4px); } 100% { opacity: 0; transform: translateX(-50%) translateY(-22px); } }
+        @keyframes bn-txt-in { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+        @keyframes gp-shimmer {
+            0%, 100% { opacity: 1; background-color: transparent; }
+            50% { opacity: 0.4; background-color: rgba(255, 215, 0, 0.15); }
+        }
+        .gp-winner-shimmer { animation: gp-shimmer 0.6s ease-in-out 5; }
     </style>
 </head>
 <body>
@@ -554,7 +588,10 @@
         <div class="intro-card">
             <div class="intro-team-block t-left">
                 <img id="intro-t1-logo" class="intro-team-logo" src="" alt="">
-                <div id="intro-t1-photo-wrap" class="intro-photo-wrap"><img id="intro-t1-photo" src="" alt=""></div>
+                <div id="intro-t1-photo-wrap" class="intro-photo-wrap">
+                    <img id="intro-t1-photo" src="" style="display:none;" alt="">
+                    <video id="intro-t1-video" style="display:none;" loop autoplay playsinline></video>
+                </div>
                 <div class="intro-team" id="intro-p1-display">Команда А</div>
             </div>
             <div class="intro-vs-box">
@@ -562,7 +599,10 @@
             </div>
             <div class="intro-team-block t-right">
                 <img id="intro-t2-logo" class="intro-team-logo" src="" alt="">
-                <div id="intro-t2-photo-wrap" class="intro-photo-wrap"><img id="intro-t2-photo" src="" alt=""></div>
+                <div id="intro-t2-photo-wrap" class="intro-photo-wrap">
+                    <img id="intro-t2-photo" src="" style="display:none;" alt="">
+                    <video id="intro-t2-video" style="display:none;" loop autoplay playsinline></video>
+                </div>
                 <div class="intro-team" id="intro-p2-display">Команда Б</div>
             </div>
         </div>
@@ -717,15 +757,53 @@
         document.getElementById('intro-p2-display').innerText = p2name;
         document.getElementById('intro-court-display').innerText = courtName;
 
+        /* ОНОВЛЕНО: ЛОГІКА АВТОМАТИЧНОГО ПЕРЕМИКАННЯ ФОТО / ВІДЕО ЗІ ЗВУКОМ ДЛЯ КОМАНДИ 1 */
         const t1PhotoImg = document.getElementById('intro-t1-photo');
+        const t1VideoEl = document.getElementById('intro-t1-video');
         const t1PhotoWrap = document.getElementById('intro-t1-photo-wrap');
-        if (ui.team1Photo) { t1PhotoImg.src = ui.team1Photo; t1PhotoWrap.style.display = 'block'; }
-        else { t1PhotoImg.src = ''; t1PhotoWrap.style.display = 'none'; }
+        
+        if (ui.team1Photo) {
+            t1PhotoWrap.style.display = 'block';
+            if (ui.team1Photo.startsWith('data:video') || ui.team1Photo.includes('.mp4')) {
+                t1PhotoImg.style.display = 'none';
+                t1VideoEl.src = ui.team1Photo;
+                t1VideoEl.muted = false; // Грає зі звуком!
+                t1VideoEl.style.display = 'block';
+                if(showIntro) t1VideoEl.play().catch(e => console.log("Audio block: ", e));
+            } else {
+                t1VideoEl.style.display = 'none';
+                t1VideoEl.src = '';
+                t1PhotoImg.src = ui.team1Photo;
+                t1PhotoImg.style.display = 'block';
+            }
+        } else {
+            t1PhotoWrap.style.display = 'none';
+            t1VideoEl.src = '';
+        }
 
+        /* ОНОВЛЕНО: ЛОГІКА АВТОМАТИЧНОГО ПЕРЕМИКАННЯ ФОТО / ВІДЕО ЗІ ЗВУКОМ ДЛЯ КОМАНДИ 2 */
         const t2PhotoImg = document.getElementById('intro-t2-photo');
+        const t2VideoEl = document.getElementById('intro-t2-video');
         const t2PhotoWrap = document.getElementById('intro-t2-photo-wrap');
-        if (ui.team2Photo) { t2PhotoImg.src = ui.team2Photo; t2PhotoWrap.style.display = 'block'; }
-        else { t2PhotoImg.src = ''; t2PhotoWrap.style.display = 'none'; }
+        
+        if (ui.team2Photo) {
+            t2PhotoWrap.style.display = 'block';
+            if (ui.team2Photo.startsWith('data:video') || ui.team2Photo.includes('.mp4')) {
+                t1PhotoImg.style.display = 'none';
+                t2VideoEl.src = ui.team2Photo;
+                t2VideoEl.muted = false; // Грає зі звуком!
+                t2VideoEl.style.display = 'block';
+                if(showIntro) t2VideoEl.play().catch(e => console.log("Audio block: ", e));
+            } else {
+                t2VideoEl.style.display = 'none';
+                t2VideoEl.src = '';
+                t2PhotoImg.src = ui.team2Photo;
+                t2PhotoImg.style.display = 'block';
+            }
+        } else {
+            t2PhotoWrap.style.display = 'none';
+            t2VideoEl.src = '';
+        }
 
         const t1LogoImg = document.getElementById('intro-t1-logo');
         if (ui.team1Logo) { t1LogoImg.src = ui.team1Logo; t1LogoImg.style.display = 'block'; }
@@ -748,6 +826,7 @@
         if (ui.logoSrc) document.getElementById('logo-img').src = ui.logoSrc;
         document.getElementById('logo-container').classList.toggle('active', showLogo && !!ui.logoSrc);
 
+        /* СИНХРОНІЗАЦІЯ І ВИСУВАННЯ НИЖНЬОЇ ПЛАШКИ ЗНИЗУ */
         const bnEl   = document.getElementById('bottom-notif');
         const bnText = document.getElementById('bn-text-el');
         let notif  = state.notifText || "";
@@ -907,6 +986,7 @@
             }
         }
 
+        /* ОНОВЛЕНО: АНІМАЦІЯ ПОЯВИ ЗАСТАВКИ VS СВІТИТЬСЯ СТАБІЛЬНО */
         const introOverlay = document.getElementById('match-intro-overlay');
         if (showIntro && !introOverlay.classList.contains('active')) {
             introOverlay.classList.remove('closing');
@@ -916,6 +996,8 @@
                 introOverlay.classList.add('closing');
                 setTimeout(() => {
                     introOverlay.classList.remove('active', 'closing');
+                    if (t1VideoEl) t1VideoEl.pause();
+                    if (t2VideoEl) t2VideoEl.pause();
                 }, 500);
             }
         }
@@ -953,7 +1035,7 @@
             qrContainer.classList.remove('active');
         }
 
-        /* ОНОВЛЕНО: ЛОГІКА ВІДОБРАЖЕННЯ СУЦІЛЬНОЇ ЗАСТАВКИ КАМЕРИ З ФОТО/ВІДЕО */
+        /* ЛОГІКА ВІДОБРАЖЕННЯ СУЦІЛЬНОЇ ЗАСТАВКИ КАМЕРИ З ФОТО/ВІДЕО */
         const camOverlay = document.getElementById('tv-camera-cover-overlay');
         const camImg = document.getElementById('camera-cover-img');
         const camVid = document.getElementById('camera-cover-video');
@@ -964,7 +1046,6 @@
                 camImg.style.display = 'none'; camVid.style.display = 'none'; camFrame.style.display = 'none';
                 
                 if (ui.cameraVideoUrl) {
-                    // Якщо вставили посилання на YouTube або інше потокове відео
                     let videoLink = ui.cameraVideoUrl;
                     if (videoLink.includes('youtube.com/watch?v=')) {
                         videoLink = videoLink.replace('watch?v=', 'embed/') + '?autoplay=1&mute=1&loop=1';
