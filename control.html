@@ -106,8 +106,10 @@
         .btn-fault { background: linear-gradient(135deg, #dc2626, #b91c1c); height: 80px; font-size: 22px; }
         .btn-undo { background: linear-gradient(135deg, #555, #444); height: 80px; font-size: 22px; }
         
-        .btn-finish-s { background: linear-gradient(135deg, #d97706, #b45309); border: none; border-radius: 14px; color: white; font-size: 15px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; padding: 16px; width: 100%; }
-        .btn-reset-s { background: transparent; border: 1px solid rgba(231,76,60,0.4); color: #e74c3c; border-radius: 14px; font-size: 14px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; padding: 14px; width: 100%; }
+        .btn-finish-s { background: linear-gradient(135deg, #d97706, #b45309); border: none; border-radius: 12px; color: white; font-size: 14px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; padding: 12px; width: 100%; transition: transform 0.1s; }
+        .btn-finish-s:active { transform: scale(0.97); }
+        .btn-reset-s { background: transparent; border: 1px solid rgba(231,76,60,0.4); color: #e74c3c; border-radius: 12px; font-size: 13px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; padding: 11px; width: 100%; transition: transform 0.1s; }
+        .btn-reset-s:active { transform: scale(0.97); background: rgba(231,76,60,0.05); }
 
         /* LIVE SCOREBOARD PREVIEW */
         #preview-wrap { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
@@ -282,12 +284,17 @@
             <label class="switch"><input type="checkbox" id="tog-logo" onchange="sendToggle('showLogo', this.checked)"><span class="slider"></span></label>
         </div>
         
-        <div class="toggle-row" style="background: rgba(0, 85, 255, 0.05);">
+        <div class="toggle-row" style="background: rgba(0, 85, 255, 0.05); border-bottom: 1px solid var(--border);">
             <div>
                 <div class="toggle-label" style="color: #5599ff;">Заставка на весь екран (Камера)</div>
                 <div class="toggle-sublabel">Перекриває оверлей сірим фоном або YouTube-відео</div>
             </div>
             <label class="switch"><input type="checkbox" id="tog-camera-cover" onchange="sendToggle('showCameraCover', this.checked)"><span class="slider"></span></label>
+        </div>
+
+        <div style="padding: 14px 16px; background: rgba(255,255,255,0.02); display: flex; flex-direction: column; gap: 10px;">
+            <button class="btn-finish-s" onclick="sendAction('finish')">🏆 КІНЕЦЬ МАТЧУ</button>
+            <button class="btn-reset-s" onclick="confirmReset()">⚠️ СКИНУТИ МАТЧ</button>
         </div>
     </div>
 </div>
@@ -382,7 +389,7 @@
                     <label class="switch"><input type="checkbox" id="s-hide-score-only" onchange="sendToggle('hideScoreOnly', this.checked)"><span class="slider"></span></label>
                 </div>
                 <div style="display: flex; flex-direction: column; width: 100%; gap: 6px; padding: 4px 0;">
-                    <div style="display: flex; align-items: center; width: 100; gap: 10px;">
+                    <div style="display: flex; align-items: center; width: 100%; gap: 10px;">
                         <label style="font-size: 11px; color: rgba(255,255,255,0.5); flex: 1; text-align: left;">Опис (Над кодом):</label>
                         <input type="text" id="s-qr-text" placeholder="SCAN TO WATCH..." style="width: 190px; text-align: left; padding: 4px 8px; font-size: 12px;" oninput="liveUpdateQRData()">
                     </div>
@@ -565,14 +572,6 @@
                     <button onclick="clearLogo('statLogoF','statF')" style="background:rgba(231,76,60,0.15);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;">✕</button>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="settings-section">
-        <div class="settings-section-title">Управління матчем</div>
-        <div class="settings-card" style="padding:14px; display:flex; flex-direction:column; gap:10px;">
-            <button class="btn-finish-s" onclick="sendAction('finish'); closeSettings()">🏆 КІНЕЦЬ МАТЧУ</button>
-            <button class="btn-reset-s" onclick="confirmReset()">⚠️ СКИНУТИ МАТЧ</button>
         </div>
     </div>
 
@@ -837,8 +836,8 @@
                 }
             }
         }
-        if (state.isTiebreak && state.activeSetIndex !== (state._lastTBIdx||0)) {
-            state._lastTBIdx = state.activeSetIndex;
+        if (state.isTiebreak && state.activeSetIndex !== (state._lastTBKeyIdx||0)) {
+            state._lastTBKeyIdx = state.activeSetIndex;
             alertText = "TIE-BREAK"; alertMode = "tiebreak";
         }
         state.notifText = txt;
