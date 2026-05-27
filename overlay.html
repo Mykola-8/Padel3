@@ -312,7 +312,7 @@
         .sponsor-logo-wrap.slw-hide { animation: logo-pop-out 0.28s ease forwards; }
         .sponsor-logo-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }
 
-        /* ── ЕЛЕМЕНТИ QR-КОДУ (ОНОВЛЕНО: ТЕКСТ НАД КОДОМ + ЗМЕНШЕНО РОЗМІР ДО 115PX) ── */
+        /* ── ЕЛЕМЕНТИ QR-КОДУ (УПАКОВАНО ТА ЗМЕНШЕНО ДО 115PX) ── */
         #tv-qr-container {
             position: absolute;
             bottom: 40px;
@@ -340,12 +340,12 @@
             justify-content: center;
         }
         #tv-qr-img {
-            width: 115px; /* Зменшено з 150px */
-            height: 115px; /* Зменшено з 150px */
+            width: 115px;
+            height: 115px;
             display: block;
         }
         .qr-text-lbl {
-            margin-bottom: 8px; /* Перенесено відступ вниз, бо текст тепер вгорі */
+            margin-bottom: 8px;
             font-family: var(--team-font-family);
             font-size: 15px;
             font-weight: 700;
@@ -396,7 +396,7 @@
             100% { transform: translateX(100%); opacity: 0; }
         }
 
-        /* ── PREMIUM MATCH INTRO OVERLAY (СИНХРОНІЗАЦІЯ VS ЗАСТАВКИ) ── */
+        /* ── PREMIUM MATCH INTRO OVERLAY ── */
         #match-intro-overlay { 
             position: fixed; inset: 0; width: 100vw; height: 100vh;
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
@@ -494,11 +494,13 @@
     <div id="logo-container"><img id="logo-img" src="" alt=""></div>
     <div id="proset-indicator" class="popup-label">PRO-SET 8</div>
     <div id="tiebreak-panel" class="popup-label">TIE-BREAK</div>
+    
     <div id="bottom-notif">
         <div class="bn-bg"></div>
         <div class="bn-dot"></div>
         <div class="bn-text" id="bn-text-el"></div>
     </div>
+    
     <div id="drawer" class="points-drawer">
         <div class="point-box" id="p1-score">0</div>
         <div class="point-box" id="p2-score">0</div>
@@ -766,9 +768,16 @@
         document.getElementById('proset-indicator').classList.toggle('active', isProset);
         if (isProset) document.getElementById('proset-indicator').innerText = `PRO-SET ${prosetLimit}`;
 
+        /* ОНОВЛЕНО: ДОДАНО ПЛАШКУ TIE-BREAK ЯК ОДИН З ВАРІАНТІВ НИЖНЬОЇ ПЛАШКИ */
         const bnEl   = document.getElementById('bottom-notif');
         const bnText = document.getElementById('bn-text-el');
-        const notif  = state.notifText || "";
+        let notif  = state.notifText || "";
+        
+        // Якщо зараз розігрується тай-брейк і в базі немає іншого пріоритетного тексту нотифікації
+        if (!notif && isTiebreak) {
+            notif = "TIE-BREAK";
+        }
+
         const prevNotif = bnEl.dataset.lastNotif || "";
 
         if (notif && notif !== prevNotif) {
@@ -776,6 +785,8 @@
             if (notif.includes('BREAK'))  bnColor = '#e67e22';
             if (notif.includes('SET'))    bnColor = '#9b59b6';
             if (notif.includes('GOLDEN')) bnColor = '#c8a200';
+            if (notif.includes('TIE-BREAK')) bnColor = '#666666'; // Колір під сірий стиль тайбрейку
+            
             bnEl.style.setProperty('--bn-color', bnColor);
             bnEl.dataset.lastNotif = notif;
             bnText.textContent = notif;
@@ -932,11 +943,13 @@
             }
         }
 
-        /* ЛОГІКА ТАЙ-БРЕЙК WIPE НА 1.5 СЕКУНДИ ЗЛІВА НАПРАВО */
+        /* ОНОВЛЕНО: АНІМАЦІЯ ТАЙ-БРЕЙК WIPE ОДИН РАЗ ЗА СЕТ (НА БАЗІ УНІКАЛЬНОГО КЛЮЧА СЕТУ) */
         const tbBg = document.getElementById('tb-wipe-bg');
         const tbTxt = document.getElementById('tb-wipe-text');
-        if (isTiebreak && !state._lastTB) {
-            state._lastTB = true;
+        const tbMatchKey = "SET_" + activeSetIndex + "_TB";
+
+        if (isTiebreak && state._lastTBKey !== tbMatchKey) {
+            state._lastTBKey = tbMatchKey;
             tbBg.classList.add('tb-wipe-active');
             tbTxt.style.animation = "tb-wipe-anim 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards";
             setTimeout(() => {
@@ -944,10 +957,13 @@
                 tbTxt.style.animation = "";
             }, 1500);
         } else if (!isTiebreak) {
-            state._lastTB = false;
+            // Очищуємо ключ тільки якщо ми не в тай-брейку (наприклад, скинули матч)
+            if(state.games && state.games[0]===0 && state.games[1]===0 && setsHistory[0].length===0) {
+                state._lastTBKey = "";
+            }
         }
 
-        /* ОНОВЛЕНО: ГЕНЕРАЦІЯ ТА ВІДОБРАЖЕННЯ ТЕКСТУ ПІДПИСУ ВГОРІ (НАД QR КОДОМ) */
+        /* ГЕНЕРАЦІЯ ТА ВІДОБРАЖЕННЯ ТЕКСТУ ПІДПИСУ ВГОРІ */
         const showQR = state.showQR || state.hideScoreOnly || false;
         const qrUrl = state.qrUrl || state.qrLink || ui.qrUrl || "";
         const qrContainer = document.getElementById('tv-qr-container');
@@ -955,8 +971,6 @@
         if (showQR && qrUrl) {
             const encodedUrl = encodeURIComponent(qrUrl);
             document.getElementById('tv-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&color=000000&bgcolor=ffffff&data=${encodedUrl}`;
-            
-            // Текст тепер вгорі коду
             document.getElementById('tv-qr-text').textContent = state.qrText || "SCAN TO WATCH";
             qrContainer.classList.add('active');
         } else {
