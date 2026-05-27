@@ -439,7 +439,7 @@
         .intro-vs { font-family: 'Inter', sans-serif; font-size: 36px; font-weight: 900; color: var(--accent-blue); text-shadow: 0 0 25px var(--accent-blue), 0 2px 8px rgba(0,0,0,0.6); opacity: 0; transform: scale(0.5); }
         .intro-court { font-size: 15px; font-weight: 900; color: #ffffff; text-transform: uppercase; letter-spacing: 5px; text-align: center; margin-bottom: 25px; opacity: 0; transform: translateY(-20px); transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); text-shadow: 0 3px 10px rgba(0,0,0,0.9); }
 
-        /* ── ОНОВЛЕНО: СТИЛІ ДЛЯ КРАСИВОЇ ПОВНОЕКРАННОЇ ЗАСТАВКИ КАМЕРИ (ПІДТРИМКА ОБС / IFRAME) ── */
+        /* ── СТИЛІ ЦЕНТРУВАННЯ І МАСШТАБУ ЗАСТАВКИ КАМЕРИ ── */
         #tv-camera-cover-overlay {
             position: fixed; inset: 0; width: 100vw; height: 100vh;
             background: #111113; z-index: 28000; display: flex;
@@ -630,7 +630,6 @@
     let lastGoldenWinnerKey = "";
     let forceShowStats = false;
     let statsTimeout = null;
-    let activeCameraTrackUrl = "";
 
     let animQueue = [];
     let animBusy  = false;
@@ -1033,7 +1032,7 @@
             qrContainer.classList.remove('active');
         }
 
-        /* ОНОВЛЕНО: ЛОГІКА З ПРІОРИТЕТОМ ФОТО/ЛОГОТИПУ ТА ЦИКЛІЧНОГО YOUTUBE ЗІ ЗВУКОМ НА ВЕСЬ ЕКРАН */
+        /* ВИПРАВЛЕНО: ПЛЕЄР YOUTUBE ЗАПУСКАЄТЬСЯ ВІДРАЗУ ЗІ ЗВУКОМ ПРИ ВКЛ ЗАСТАВКИ КАМЕРИ */
         const camOverlay = document.getElementById('tv-camera-cover-overlay');
         const camImg = document.getElementById('camera-cover-img');
         const camFrame = document.getElementById('camera-cover-iframe');
@@ -1046,7 +1045,6 @@
                     let videoLink = ui.cameraVideoUrl;
                     let videoId = "";
                     
-                    // Парсимо ID відео з лінків YouTube
                     if (videoLink.includes('v=')) {
                         videoId = videoLink.split('v=')[1].split('&')[0];
                     } else if (videoLink.includes('youtu.be/')) {
@@ -1056,17 +1054,15 @@
                     }
                     
                     if (videoId) {
-                        // autoplay=1 (старт), loop=1 (повтор), playlist=ID (обов'язковий для loop), mute=0 (ЗВУК Є!)
+                        // mute=0 та autoplay=1 гарантують миттєвий старт трансляції зі звуком!
                         videoLink = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=1&playlist=${videoId}&controls=0&modestbranding=1&rel=0`;
                         camFrame.src = videoLink;
                         camFrame.style.display = 'block';
                     } else {
-                        // Якщо це прямий лінк на .mp4 або інший потоковий файл
                         camFrame.src = videoLink;
                         camFrame.style.display = 'block';
                     }
                 } else if (ui.cameraAssetSrc) {
-                    // Якщо лінк порожній - виводимо завантажену картинку чи логотип по центру
                     camImg.src = ui.cameraAssetSrc;
                     camImg.style.display = 'block';
                 }
