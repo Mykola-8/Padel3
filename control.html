@@ -352,9 +352,15 @@
                     </div>
                     <label class="switch"><input type="checkbox" id="s-hide-score-only" onchange="sendToggle('hideScoreOnly', this.checked)"><span class="slider"></span></label>
                 </div>
-                <div style="display: flex; align-items: center; width: 100%; gap: 10px; margin-top: 4px;">
-                    <label style="font-size: 11px; color: rgba(255,255,255,0.5); flex: 1; text-align: left;">Посилання QR:</label>
-                    <input type="text" id="s-qr-url" placeholder="Встав посилання сюди..." style="width: 190px; text-align: left; padding: 4px 8px; font-size: 12px;" oninput="liveUpdateQRUrl()">
+                <div style="display: flex; flex-direction: column; width: 100%; gap: 6px; padding: 4px 0;">
+                    <div style="display: flex; align-items: center; width: 100; gap: 10px;">
+                        <label style="font-size: 11px; color: rgba(255,255,255,0.5); flex: 1; text-align: left;">Опис (Над кодом):</label>
+                        <input type="text" id="s-qr-text" placeholder="SCAN TO WATCH..." style="width: 190px; text-align: left; padding: 4px 8px; font-size: 12px;" oninput="liveUpdateQRData()">
+                    </div>
+                    <div style="display: flex; align-items: center; width: 100%; gap: 10px;">
+                        <label style="font-size: 11px; color: rgba(255,255,255,0.5); flex: 1; text-align: left;">Посилання QR:</label>
+                        <input type="text" id="s-qr-url" placeholder="Встав посилання сюди..." style="width: 190px; text-align: left; padding: 4px 8px; font-size: 12px;" oninput="liveUpdateQRData()">
+                    </div>
                 </div>
             </div>
         </div>
@@ -558,7 +564,7 @@
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
     const firebaseConfig = {
-        apiKey: "AIzaSyDf6PYBjF096FRE-fUUo5boS8jsieVS9xA",
+        apiKey: "AIzaSyDf6PYBjF09FRE-fUUo5boS8jsieVS9xA",
         authDomain: "padel3-overley.firebaseapp.com",
         databaseURL: "https://padel3-overley-default-rtdb.europe-west1.firebasedatabase.app",
         projectId: "padel3-overley",
@@ -613,7 +619,7 @@
         notifText: "", showFinish: false, showIntro: false, showLogo: false,
         showBoard: true, showStats: false, deuceMode: "golden", prosetLimit: 8,
         americanLimit: 15, p1name: "Команда А", p2name: "Команда Б",
-        courtName: "COURT 1", alertKey: "", alertText: "", alertMode: "", faultTeam: null, isGoldenActive: false, hideScoreOnly: false, goldenWinnerKey: "", qrUrl: ""
+        courtName: "COURT 1", alertKey: "", alertText: "", alertMode: "", faultTeam: null, isGoldenActive: false, hideScoreOnly: false, goldenWinnerKey: "", qrUrl: "", qrText: ""
     };
     let ui = {
         accentBlue: '#0055ff', ballColor: '#ccff00', teamNameColor: '#ffffff',
@@ -854,9 +860,10 @@
         pushState(); updateControlUI();
     }
 
-    /* ОНОВЛЕНО: ФУНКЦІЯ ОНОВЛЕННЯ ПОСИЛАННЯ ДЛЯ QR КОДУ В РЕАЛЬНОМУ ЧАСІ */
-    function liveUpdateQRUrl() {
+    /* ОНОВЛЕНО: СИНХРОНІЗАЦІЯ ДАНИХ ОПИСУ ТА ПОСИЛАННЯ ДЛЯ QR КОДУ */
+    function liveUpdateQRData() {
         state.qrUrl = document.getElementById('s-qr-url').value || "";
+        state.qrText = document.getElementById('s-qr-text').value || "";
         pushState();
     }
 
@@ -935,12 +942,13 @@
                 showLogo: state.showLogo, showBoard: true, showStats: false,
                 prosetLimit: state.prosetLimit, americanLimit: state.americanLimit,
                 p1name: "Команда А", p2name: "Команда Б", courtName: `COURT ${currentCourt}`,
-                alertKey: "", alertText: "", alertMode: "", faultTeam: null, _setStartTime: null, _lastStatsIsSetEnd: false, hideScoreOnly: false, goldenWinnerKey: "", qrUrl: ""
+                alertKey: "", alertText: "", alertMode: "", faultTeam: null, _setStartTime: null, _lastStatsIsSetEnd: false, hideScoreOnly: false, goldenWinnerKey: "", qrUrl: "", qrText: ""
             };
             historyStack = []; gamePointCountP1 = 0; gamePointCountP2 = 0;
             document.getElementById('s-p1').value = "Команда А";
             document.getElementById('s-p2').value = "Команда Б";
             document.getElementById('s-qr-url').value = "";
+            document.getElementById('s-qr-text').value = "";
             set(gameRef, { state, ui }).catch(e => console.error(e));
             updateControlUI();
         }
@@ -1002,8 +1010,9 @@
         document.getElementById('s-american-limit').value = state.americanLimit || 15;
         document.getElementById('s-hide-score-only').checked = !!state.hideScoreOnly;
         
-        /* ОНОВЛЕНО: ПІДТЯГУВАННЯ ЗНАЧЕННЯ ПОСИЛАННЯ В ІНПУТ З БАЗИ ПРИ ВІДКРИТТІ НАЛАШТУВАНЬ */
+        /* ОНОВЛЕНО: ЗАВАНТАЖЕННЯ З Бази В ІНПУТИ QR */
         document.getElementById('s-qr-url').value = state.qrUrl || "";
+        document.getElementById('s-qr-text').value = state.qrText || "";
         
         if(ui.sbW) document.getElementById('g-w').value = parseInt(ui.sbW);
         if(ui.sbH) document.getElementById('g-h').value = parseInt(ui.sbH);
@@ -1045,9 +1054,9 @@
     window.liveUpdateName = liveUpdateName; window.liveUpdateUI = liveUpdateUI; window.gVal = gVal;
     window.confirmReset = confirmReset; window.closeSettings = () => document.getElementById('settings-panel').classList.remove('open');
     
-    /* ОНОВЛЕНО: ДОДАНО liveUpdateQRUrl У СПИСОК ЗБЕРЕЖЕННЯ ОПЦІЙ КНОПКИ "ЗБЕРЕГТИ ВСЕ" */
-    window.saveAllSettings = () => { liveUpdateName(); liveUpdateQRUrl(); liveUpdateUI(); sendMode(); window.closeSettings(); };
-    window.liveUpdateQRUrl = liveUpdateQRUrl;
+    /* ОНОВЛЕНО: ДОДАНО ЗБЕРЕЖЕННЯ ОПИСУ QR В КНОПКУ */
+    window.saveAllSettings = () => { liveUpdateName(); liveUpdateQRData(); liveUpdateUI(); sendMode(); window.closeSettings(); };
+    window.liveUpdateQRData = liveUpdateQRData;
     
     window.addSponsorSlot = addSponsorSlot; window.removeSponsor = removeSponsor; window.toggleSponsor = toggleSponsor; window.uploadSponsor = uploadSponsor;
     window.uploadLogoUI = uploadLogoUI; window.clearLogo = clearLogo;
