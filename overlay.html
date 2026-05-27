@@ -151,7 +151,6 @@
             transform: skewX(var(--sb-skew)) translateX(0); border-radius: 0 var(--sb-radius) var(--sb-radius) 0;
         }
         .points-active { transform: skewX(var(--sb-skew)) translateX(100%); }
-        .points-hidden-forced { opacity: 0 !important; pointer-events: none !important; transform: skewX(var(--sb-skew)) translateX(100%) !important; }
         
         .point-box {
             flex: 1; display: flex; align-items: center; justify-content: center;
@@ -209,7 +208,7 @@
         .stats-team-name { text-align: left; font-size: 36px; font-weight: bold; font-family: var(--team-font-family); padding-right: 40px; color: white; white-space: nowrap; text-transform: uppercase; }
         .stats-set-column { width: 95px; text-align: center; }
         .stats-games-num  { font-size: 46px; font-weight: 900; font-family: var(--team-font-family); color: white; }
-        .stats-time-label { font-size: 15px; font-weight: 900; color: #7eb8ff; font-family: 'Inter', sans-serif; margin-top: 1px; letter-spacing: 0.5px; }
+        .stats-time-label { font-size: 20px; font-weight: 900; color: #7eb8ff; font-family: 'Inter', sans-serif; margin-top: 1px; letter-spacing: 0.5px; }
         
         /* ── ТАБЛО РЕЗУЛЬТАТУ / КІНЕЦЬ МАТЧУ ── */
         #match-finish-overlay {
@@ -219,6 +218,7 @@
             opacity: 0; pointer-events: none; z-index: 20000;
         }
         #match-finish-overlay.active { animation: finish-bg-in 0.5s ease forwards; pointer-events: auto; }
+        #match-finish-overlay.closing { animation: finish-bg-out 0.5s ease forwards; pointer-events: none; }
         
         .finish-card {
             background: rgba(15, 15, 20, 0.85);
@@ -229,6 +229,8 @@
             display: flex; flex-direction: column; gap: 18px; text-align: center; opacity: 0;
         }
         #match-finish-overlay.active .finish-card { animation: finish-card-in 0.55s 0.2s cubic-bezier(0.18,0.89,0.32,1.18) forwards; }
+        #match-finish-overlay.closing .finish-card { animation: finish-card-out 0.45s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+        
         .finish-title { font-size: 28px; font-weight: 900; letter-spacing: 3px; color: #ffffff; text-transform: uppercase; margin: 0; text-shadow: 0 0 15px rgba(0,85,255,0.6), 0 2px 4px rgba(0,0,0,0.6); }
         .finish-table { min-width: 530px; border-collapse: collapse; margin-top: 5px; }
         .finish-row { border-bottom: 1px solid rgba(255,255,255,0.1); height: 75px; }
@@ -254,40 +256,94 @@
         .fault-row-bg.fr-out { animation: fault-row-out 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         .fault-row-lbl.fr-txt-show { animation: fault-row-txt 0.18s 0.18s ease forwards; }
 
-        /* ── BOTTOM NOTIF PLANK (ОНОВЛЕНО: ТЕКСТ ЗБІЛЬШЕНО, ШИРИНУ ЗМЕНШЕНО ПО КРАЯХ) ── */
+        /* ── BOTTOM NOTIF PLANK ── */
         #bottom-notif { 
             position: absolute; 
             top: 100%; 
-            left: 50%; /* Центрування по осі X */
-            width: fit-content; /* Табло обтискає текст по краях */
-            min-width: 250px;
-            padding: 0 35px; /* Компактні внутрішні поля */
-            height: 38px; 
+            left: 50%; 
+            width: fit-content; 
+            min-width: 260px;
+            padding: 0 38px; 
+            height: 44px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             pointer-events: none; 
             z-index: 50; 
-            transform: translateX(-50%) translateY(-19px); /* Початкове зміщення для центру */
+            transform: translateX(-50%) translateY(-22px); 
             opacity: 0; 
             box-sizing: border-box;
         }
-        .bn-bg { position: absolute; inset: 0; background: rgba(30,30,35,0.82); border-left: 4px solid var(--bn-color, var(--accent-blue)); border-radius: 6px; backdrop-filter: blur(10px); box-shadow: 0 4px 18px rgba(0,0,0,0.45); }
+        .bn-bg { position: absolute; inset: 0; background: rgba(30,30,35,0.85); border-left: 5px solid var(--bn-color, var(--accent-blue)); border-radius: 6px; backdrop-filter: blur(10px); box-shadow: 0 5px 22px rgba(0,0,0,0.55); }
         .bn-bg::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: var(--bn-color, var(--accent-blue)); opacity: 0.5; }
-        .bn-text { position: relative; z-index: 1; font-family: var(--team-font-family); font-size: 18px; /* Збільшено з 15px для кращої читаємості */ font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #ffffff; opacity: 0; white-space: nowrap; }
-        .bn-dot { position: relative; z-index: 1; width: 6px; height: 6px; border-radius: 50%; background: var(--bn-color, var(--accent-blue)); box-shadow: 0 0 6px var(--bn-color, var(--accent-blue)); margin-right: 8px; flex-shrink: 0; opacity: 0; }
+        .bn-text { position: relative; z-index: 1; font-family: var(--team-font-family); font-size: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #ffffff; opacity: 0; white-space: nowrap; text-shadow: 0 2px 6px rgba(0,0,0,0.85); }
+        .bn-dot { position: relative; z-index: 1; width: 7px; height: 7px; border-radius: 50%; background: var(--bn-color, var(--accent-blue)); box-shadow: 0 0 8px var(--bn-color, var(--accent-blue)); margin-right: 10px; flex-shrink: 0; opacity: 0; }
         
-        /* Збережено translateX(-50%) у ключових кадрах, щоб плашка не злітала з центру */
         #bottom-notif.bn-show { animation: bn-slide-in 0.36s cubic-bezier(0.4,0,0.2,1) forwards; }
         #bottom-notif.bn-hide { animation: bn-slide-out 0.28s cubic-bezier(0.4,0,0.2,1) forwards; }
         #bottom-notif.bn-show .bn-text { animation: bn-txt-in 0.22s 0.28s ease forwards; }
         #bottom-notif.bn-show .bn-dot  { animation: bn-txt-in 0.18s 0.26s ease forwards; }
 
-        #sponsor-logos-bar { position: fixed; top: 28px; right: 32px; display: flex; flex-direction: row; align-items: center; gap: 14px; z-index: 9000; }
-        .sponsor-logo-wrap { width: 80px; height: 52px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: rgba(255,255,255,0.07); backdrop-filter: blur(8px); box-shadow: 0 2px 14px rgba(0,0,0,0.28), 0 0 0 1px rgba(255,255,255,0.08); padding: 7px 10px; box-sizing: border-box; opacity: 0; }
+        #sponsor-logos-bar { 
+            position: fixed; 
+            top: 28px; 
+            left: 50%; 
+            display: flex; 
+            flex-direction: row; 
+            align-items: center; 
+            gap: 14px; 
+            z-index: 9000; 
+        }
+        .sponsor-logo-wrap { 
+            width: 80px; 
+            height: 52px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            box-sizing: border-box; 
+            opacity: 0; 
+            background: transparent; 
+            border: none; 
+            box-shadow: none; 
+            backdrop-filter: none; 
+            padding: 0; 
+        }
         .sponsor-logo-wrap.slw-show { animation: logo-pop-in  0.42s cubic-bezier(0.175,0.885,0.32,1.275) forwards; }
         .sponsor-logo-wrap.slw-hide { animation: logo-pop-out 0.28s ease forwards; }
-        .sponsor-logo-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 1px 5px rgba(0,0,0,0.3)); }
+        .sponsor-logo-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }
+
+        /* ── ЕЛЕМЕНТИ ОНОВЛЕНОГО QR-КОДУ (ПЛАВНА ПОЯВА ТА СТИЛЬНИЙ КАРКАС) ── */
+        #tv-qr-container {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0;
+            transform: scale(0.85) translateY(15px);
+            transition: opacity 0.45s cubic-bezier(0.25, 1, 0.5, 1), transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+            pointer-events: none;
+            z-index: 9500;
+        }
+        #tv-qr-container.active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+        .qr-card-box {
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 14px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #tv-qr-img {
+            width: 150px;
+            height: 150px;
+            display: block;
+        }
 
         /* ── PREMIUM MATCH INTRO OVERLAY ── */
         #match-intro-overlay { 
@@ -350,12 +406,15 @@
         @keyframes fault-row-txt { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
         
         @keyframes finish-bg-in { 0% { opacity: 0; } 100% { opacity: 1; } }
+        @keyframes finish-bg-out { 0% { opacity: 1; } 100% { opacity: 0; } }
         @keyframes finish-card-in { 0% { opacity: 0; transform: scale(0.8) translateY(30px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes finish-card-out { 0% { opacity: 1; transform: scale(1) translateY(0); } 100% { opacity: 0; transform: scale(0.96) translateY(-25px); } }
+        
         @keyframes logo-pop-in { 0% { opacity: 0; transform: scale(0.6); } 100% { opacity: 1; transform: scale(1); } }
         @keyframes logo-pop-out { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.6); } }
         
-        @keyframes bn-slide-in { 0% { opacity: 0; transform: translateX(-50%) translateY(-19px); } 100% { opacity: 1; transform: translateX(-50%) translateY(4px); } }
-        @keyframes bn-slide-out { 0% { opacity: 1; transform: translateX(-50%) translateY(4px); } 100% { opacity: 0; transform: translateX(-50%) translateY(-19px); } }
+        @keyframes bn-slide-in { 0% { opacity: 0; transform: translateX(-50%) translateY(-22px); } 100% { opacity: 1; transform: translateX(-50%) translateY(4px); } }
+        @keyframes bn-slide-out { 0% { opacity: 1; transform: translateX(-50%) translateY(4px); } 100% { opacity: 0; transform: translateX(-50%) translateY(-22px); } }
         @keyframes bn-txt-in { 0% { opacity: 0; } 100% { opacity: 1; } }
 
         @keyframes gp-shimmer {
@@ -431,6 +490,12 @@
 </div>
 
 <div id="sponsor-logos-bar"></div>
+
+<div id="tv-qr-container">
+    <div class="qr-card-box">
+        <img id="tv-qr-img" src="" alt="QR">
+    </div>
+</div>
 
 <div id="match-intro-overlay">
     <div class="intro-container">
@@ -568,7 +633,6 @@
         const p1name = state.p1name || "Команда А";
         const p2name = state.p2name || "Команда Б";
         const courtName = state.courtName || "COURT 1";
-        const hideScoreOnly = state.hideScoreOnly || false;
 
         if (ui.accentBlue) updateStyle('--accent-blue', ui.accentBlue);
         if (ui.ballColor) updateStyle('--ball-color', ui.ballColor);
@@ -629,7 +693,6 @@
         
         const drawerEl = document.getElementById('drawer');
         drawerEl.classList.toggle('points-active', isGameActive);
-        drawerEl.classList.toggle('points-hidden-forced', hideScoreOnly);
 
         if (ui.logoSrc) document.getElementById('logo-img').src = ui.logoSrc;
         document.getElementById('logo-container').classList.toggle('active', showLogo && !!ui.logoSrc);
@@ -689,7 +752,15 @@
                         const txtEl = document.getElementById('fullscreen-alert-text');
 
                         const glowMap = { golden:'#d4ac0d', tiebreak:'#c0392b', normal:null };
-                        const glowColor = glowMap[capturedMode] || '#0055ff';
+                        let glowColor = glowMap[capturedMode] || '#0055ff';
+                        
+                        const txtUpper = capturedText.toUpperCase();
+                        const isPointAlert = txtUpper.includes("BREAK") || txtUpper.includes("GAME") || txtUpper.includes("БРЕЙК") || txtUpper.includes("ГЕЙМ");
+                        
+                        if (isPointAlert) {
+                            glowColor = '#006400';
+                        }
+
                         ring.style.setProperty('--glow-color', glowColor);
                         el.style.setProperty('--glow-color', glowColor);
 
@@ -709,7 +780,9 @@
                         ring.classList.remove('glow-out');
                         ring.classList.add('glow-active');
                         
-                        if (capturedMode === 'golden') {
+                        if (isPointAlert) {
+                            bg.style.background = '#006400';
+                        } else if (capturedMode === 'golden') {
                             bg.style.background = 'linear-gradient(135deg, #9a7d0a 0%, #b7950b 60%, #d4ac0d 100%)';
                         } else {
                             bg.style.background = glowColor;
@@ -747,7 +820,6 @@
             }
         }
 
-        /* ОНОВЛЕНО: ТАБЛИЦЯ СТАТИСТИКИ ТРИМАЄТЬСЯ 10 СЕКУНД ТА ПЛАВНО ЗАКРИВАЄТЬСЯ */
         if (state.showStats && !forceShowStats) {
             forceShowStats = true;
             updateStatsPanel(state);
@@ -757,12 +829,12 @@
             
             if (statsTimeout) clearTimeout(statsTimeout);
             statsTimeout = setTimeout(() => {
-                statsEl.classList.add('closing'); /* Запуск CSS-анімації закриття */
+                statsEl.classList.add('closing');
                 setTimeout(() => {
                     statsEl.classList.remove('active', 'closing');
                     forceShowStats = false;
-                }, 400); /* Чекаємо 0.4с до завершення анімації згасання */
-            }, 10000); /* 10000мс = 10 секунд на екрані */
+                }, 400);
+            }, 10000);
         }
 
         document.getElementById('scoreboard-anchor').classList.toggle('hidden-board', showBoard === false || showFinish || showIntro);
@@ -770,12 +842,29 @@
         const finishOverlay = document.getElementById('match-finish-overlay');
         if (showFinish && !finishOverlay.classList.contains('active')) {
             updateFinishPanel(state);
+            finishOverlay.classList.remove('closing');
             finishOverlay.classList.add('active');
-        } else if (!showFinish) {
-            finishOverlay.classList.remove('active');
+        } else if (!showFinish && finishOverlay.classList.contains('active')) {
+            if (!finishOverlay.classList.contains('closing')) {
+                finishOverlay.classList.add('closing');
+                setTimeout(() => {
+                    finishOverlay.classList.remove('active', 'closing');
+                }, 500);
+            }
         }
 
-        document.getElementById('match-intro-overlay').classList.toggle('active', !!showIntro);
+        /* ОНОВЛЕНО: ЛОГІКА ЗЧИТУВАННЯ ТА ГЕНЕРАЦІЇ QR КОДУ З БАЗИ ДАНИХ */
+        const showQR = state.showQR || state.hideScoreOnly || false; // Підтримка обох ключів галочки
+        const qrUrl = state.qrUrl || state.qrLink || ui.qrUrl || ""; // Очікування посилання
+        const qrContainer = document.getElementById('tv-qr-container');
+
+        if (showQR && qrUrl) {
+            const encodedUrl = encodeURIComponent(qrUrl);
+            document.getElementById('tv-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&color=000000&bgcolor=ffffff&data=${encodedUrl}`;
+            qrContainer.classList.add('active');
+        } else {
+            qrContainer.classList.remove('active');
+        }
 
         if (ui.statLogoT) document.getElementById('stat-logo-t').src = ui.statLogoT;
         if (ui.statLogoF) document.getElementById('stat-logo-f').src = ui.statLogoF;
@@ -837,7 +926,7 @@
             const v = (sh[0] && sh[0][i]!==undefined)?sh[0][i]:'-';
             const won = (sh[0] && sh[1] && sh[0][i]!==undefined && sh[1][i]!==undefined && sh[0][i]>sh[1][i]);
             html += `<td class="finish-cell-set"><span class="finish-box-score${won?' winner-box':''}">${v}</span>`;
-            if(st && st[i] && i===0) html += `<div style="font-size:11px;color:#7eb8ff;margin-top:2px;font-weight:900;">${st[i]}'</div>`;
+            if(st && st[i] && i===0) html += `<div style="font-size:16px;color:#7eb8ff;margin-top:3px;font-weight:900;">${st[i]}'</div>`;
             html += `</td>`;
         }
         html += `</tr><tr class="finish-row" style="border:none;"><td class="finish-team">${n2}</td>`;
@@ -845,7 +934,7 @@
             const v = (sh[1] && sh[1][i]!==undefined)?sh[1][i]:'-';
             const won = (sh[0] && sh[1] && sh[0][i]!==undefined && sh[1][i]!==undefined && sh[1][i]>sh[0][i]);
             html += `<td class="finish-cell-set"><span class="finish-box-score${won?' winner-box':''}">${v}</span>`;
-            if(st && st[i] && i>0) html += `<div style="font-size:11px;color:#7eb8ff;margin-top:2px;font-weight:900;">${st[i]}'</div>`;
+            if(st && st[i] && i>0) html += `<div style="font-size:16px;color:#7eb8ff;margin-top:3px;font-weight:900;">${st[i]}'</div>`;
             html += `</td>`;
         }
         html += `</tr>`;
