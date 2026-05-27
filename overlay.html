@@ -1025,3 +1025,68 @@
             bodyHtml += `<td class="stats-set-column">
                 <div class="stats-games-num">${s1[i]}</div>
                 ${tLabel ? `<div class="stats-time-label">${tLabel}</div>` : ''}
+            </td>`;
+        }
+        bodyHtml += `</tr><tr class="stats-row" style="border:none;"><td class="stats-team-name">${n2}</td>`;
+        for(let i=0; i<totalSets; i++) { bodyHtml += `<td class="stats-set-column"><div class="stats-games-num">${s2[i]}</div></td>`; }
+        bodyHtml += `</tr>`;
+        document.getElementById('stats-table-body').innerHTML = bodyHtml;
+    }
+
+    function updateFinishPanel(state) {
+        const n1 = state.p1name || "Команда А"; const n2 = state.p2name || "Команда Б";
+        const sh = state.setsHistory || [[],[]]; const st = state.setTimes || [];
+        
+        let totalSets = Math.max((sh[0] || []).length, (sh[1] || []).length, 1);
+
+        let headHtml = `<th style="text-align:left; padding-left:20px;">Команда</th>`;
+        for(let s=1; s<=totalSets; s++) headHtml += `<th class="finish-cell-set">S${s}</th>`;
+        document.getElementById('finish-table-head').innerHTML = headHtml;
+        
+        let html = `<tr class="finish-row"><td class="finish-team">${n1}</td>`;
+        for(let i=0; i<totalSets; i++){
+            const v = (sh[0] && sh[0][i]!==undefined)?sh[0][i]:'-';
+            const won = (sh[0] && sh[1] && sh[0][i]!==undefined && sh[1][i]!==undefined && sh[0][i]>sh[1][i]);
+            html += `<td class="finish-cell-set"><span class="finish-box-score${won?' winner-box':''}">${v}</span>`;
+            if(st && st[i] && i===0) html += `<div style="font-size:16px;color:#7eb8ff;margin-top:3px;font-weight:900;">${st[i]}'</div>`;
+            html += `</td>`;
+        }
+        html += `</tr><tr class="finish-row" style="border:none;"><td class="finish-team">${n2}</td>`;
+        for(let i=0; i<totalSets; i++){
+            const v = (sh[1] && sh[1][i]!==undefined)?sh[1][i]:'-';
+            const won = (sh[0] && sh[1] && sh[0][i]!==undefined && sh[1][i]!==undefined && sh[1][i]>sh[0][i]);
+            html += `<td class="finish-cell-set"><span class="finish-box-score${won?' winner-box':''}">${v}</span>`;
+            if(st && st[i] && i>0) html += `<div style="font-size:16px;color:#7eb8ff;margin-top:3px;font-weight:900;">${st[i]}'</div>`;
+            html += `</td>`;
+        }
+        html += `</tr>`;
+        document.getElementById('finish-table-body').innerHTML = html;
+    }
+
+    let _lastSponsorKeys = "";
+    function renderSponsorLogos(logos) {
+        const bar = document.getElementById('sponsor-logos-bar'); if (!bar) return;
+        const key = logos.map(l => l.src + l.visible).join('|'); if (key === _lastSponsorKeys) return;
+        _lastSponsorKeys = key;
+        const visibleLogos = logos.filter(l => l.src && l.visible !== false);
+        [...bar.children].forEach(el => { el.classList.remove('slw-show'); el.classList.add('slw-hide'); });
+        setTimeout(() => {
+            bar.innerHTML = '';
+            visibleLogos.forEach((l, i) => {
+                const wrap = document.createElement('div'); wrap.className = 'sponsor-logo-wrap';
+                const img = document.createElement('img'); img.src = l.src; img.alt = '';
+                wrap.appendChild(img); bar.appendChild(wrap);
+                setTimeout(() => wrap.classList.add('slw-show'), i * 80);
+            });
+        }, visibleLogos.length === 0 ? 0 : 300);
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const courtId = urlParams.get('court') || '1';
+    document.title = `Padel Overlay — Court ${courtId}`;
+
+    const gameRef = ref(db, `padel/court${courtId}`);
+    onValue(gameRef, (snapshot) => { renderOverlay(snapshot.val()); });
+</script>
+</body>
+</html>
