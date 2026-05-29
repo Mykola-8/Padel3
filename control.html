@@ -122,7 +122,6 @@
         #mini-main { flex: 1; display: flex; flex-direction: column; border-left: 8px solid #0055ff; border-radius: 8px 0 0 8px; overflow: hidden; }
         .mini-row { display: flex; align-items: center; flex: 1; padding: 0 8px; border-bottom: 1px solid rgba(255,255,255,0.08); overflow: hidden; }
         .mini-row:last-child { border-bottom: none; }
-        .mini-row.mini-solo-row { border-bottom: none !important; }
         .mini-name { flex: 1; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: white; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .mini-dot { width: 10px; height: 10px; border-radius: 50%; margin: 0 6px; opacity: 0; flex-shrink: 0; transition: opacity 0.3s; }
         .mini-dot.active { opacity: 1; }
@@ -256,7 +255,7 @@
 
     <div class="section-gap"></div>
 
-    <div class="score-section" id="control-serve-block">
+    <div class="score-section">
         <div class="score-section-title">Подача</div>
         <div style="padding: 10px 12px;">
             <div class="serve-switch" id="serve-switch">
@@ -288,7 +287,7 @@
         <div class="toggle-row" style="background: rgba(0, 85, 255, 0.05); border-bottom: 1px solid var(--border);">
             <div>
                 <div class="toggle-label" style="color: #5599ff;">Заставка на весь екран (Камера)</div>
-                <div class="toggle-sublabel">Перекриває оверлей фотографією або відео (.mp4/YouTube)</div>
+                <div class="toggle-sublabel">Перекриває оверлей фотографією або плеєром YouTube</div>
             </div>
             <label class="switch"><input type="checkbox" id="tog-camera-cover" onchange="sendToggle('showCameraCover', this.checked)"><span class="slider"></span></label>
         </div>
@@ -299,6 +298,7 @@
         </div>
     </div>
 </div>
+
 <div id="settings-panel">
     <div id="settings-header">
         <h2>⚙️ Налаштування</h2>
@@ -364,26 +364,13 @@
                 <input type="number" id="s-proset-limit" value="8" min="1" max="20" style="width:60px" onchange="sendMode()">
             </div>
             <div class="toggle-row">
-                <div><div class="toggle-label">Американка (гейми)</div></div>
+                <div><div class="toggle-label">Американка</div></div>
                 <label class="switch"><input type="checkbox" id="s-american" onchange="sendMode()"><span class="slider"></span></label>
             </div>
             <div class="settings-input-row">
                 <label>Геймів (Американка)</label>
                 <input type="number" id="s-american-limit" value="15" min="1" max="30" style="width:60px" onchange="sendMode()">
             </div>
-
-            <div class="toggle-row" style="background: rgba(46, 204, 113, 0.05); border-top: 1px solid var(--border);">
-                <div>
-                    <div class="toggle-label" style="color: #2ecc71;">SOLO Американка</div>
-                    <div class="toggle-sublabel">Матч завершується, коли сума балів досягне ліміту</div>
-                </div>
-                <label class="switch"><input type="checkbox" id="s-solo-american" onchange="sendMode()"><span class="slider"></span></label>
-            </div>
-            <div class="settings-input-row" style="background: rgba(46, 204, 113, 0.03);">
-                <label>Ліміт в сумі (SOLO)</label>
-                <input type="number" id="s-solo-limit" value="21" min="1" max="30" style="width:60px" onchange="sendMode()">
-            </div>
-
             <div class="settings-input-row">
                 <label>Правило розіграшу (Deuce)</label>
                 <select id="s-deuce-mode" onchange="sendMode()" style="width: 180px;">
@@ -396,7 +383,7 @@
             <div class="toggle-row" style="flex-direction: column; align-items: stretch; gap: 8px;">
                 <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                     <div>
-                        <div class="toggle-label">QR код</div>
+                        <div class="toggle-label">QR cod</div>
                         <div class="toggle-sublabel">Вивести згенерований QR-код на екран</div>
                     </div>
                     <label class="switch"><input type="checkbox" id="s-hide-score-only" onchange="sendToggle('hideScoreOnly', this.checked)"><span class="slider"></span></label>
@@ -548,7 +535,7 @@
                 <div style="display:flex; align-items:center; width:100%; gap:10px;">
                     <div style="flex:1">
                         <div class="toggle-label">Логотип табла</div>
-                        <div class="toggle-sublabel">Чистий логотип без білої рамки ліворуч табла</div>
+                        <div class="toggle-sublabel">Виїжджає зверху-зліва</div>
                     </div>
                     <label class="switch"><input type="checkbox" id="tog-logo-main" onchange="sendToggle('showLogo',this.checked)"><span class="slider"></span></label>
                 </div>
@@ -599,9 +586,10 @@
     <button class="save-settings-btn" onclick="saveAllSettings()">💾 ЗБЕРЕГТИ ВСЕ</button>
     <div style="height:20px"></div>
 </div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDf6PYBjF096FRE-fUUo5boS8jsieVS9xA",
@@ -617,490 +605,531 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    const urlParams = new URLSearchParams(window.location.search);
-    let courtId = urlParams.get('court') || '1';
-    let currentDBState = null;
-    let localUIState = {};
-    let undoHistory = [];
+    const TOTAL_COURTS = 8;
+    let currentCourt = 1;
+    let gameRef = ref(db, 'padel/court1');
 
-    // Ініціалізація вибору кортів
-    const bar = document.getElementById('court-bar');
-    if (bar) {
-        let h = `<span class="court-label">КОРТ:</span>`;
-        for(let i=1; i<=6; i++) {
-            h += `<button class="court-chip${String(i)===courtId?' active':''}" onclick="switchCourt('${i}')">COURT ${i}</button>`;
+    function buildCourtBar() {
+        const bar = document.getElementById('court-bar');
+        bar.innerHTML = '<span class="court-label">Корт:</span>';
+        for (let i = 1; i <= TOTAL_COURTS; i++) {
+            const btn = document.createElement('button');
+            btn.className = 'court-chip' + (i===1?' active':'');
+            btn.textContent = 'Court ' + i;
+            btn.onclick = () => switchCourt(i);
+            btn.id = 'court-chip-' + i;
+            bar.appendChild(btn);
         }
-        bar.innerHTML = h;
     }
 
-    window.switchCourt = function(id) {
-        window.location.search = `?court=${id}`;
+    function switchCourt(n) {
+        currentCourt = n;
+        gameRef = ref(db, 'padel/court' + n);
+        document.querySelectorAll('.court-chip').forEach(c => c.classList.remove('active'));
+        document.getElementById('court-chip-' + n).classList.add('active');
+        document.getElementById('topbar-court').textContent = 'COURT ' + n;
+        historyStack = [];
+        onValue(gameRef, (snap) => {
+            const d = snap.val();
+            if (d) {
+                if (d.state) state = { ...state, ...d.state };
+                if (d.ui) ui = { ...ui, ...d.ui };
+            }
+            updateControlUI();
+        }, { onlyOnce: true });
+    }
+
+    const pts = [0, 15, 30, 40, "AD"];
+    let state = {
+        scores: [0,0], games: [0,0], setsHistory: [[],[]], server: 0,
+        isGameActive: false, isTiebreak: false, isAmerican: false,
+        isProset: false, deuceCycles: 0, setTimes: [0,0,0], activeSetIndex: 0,
+        notifText: "", showFinish: false, showIntro: false, showLogo: false,
+        showBoard: true, showStats: false, deuceMode: "golden", prosetLimit: 8,
+        americanLimit: 15, p1name: "Команда А", p2name: "Команда Б",
+        courtName: "COURT 1", alertKey: "", alertText: "", alertMode: "", faultTeam: null, isGoldenActive: false, hideScoreOnly: false, goldenWinnerKey: "", qrUrl: "", qrText: "", showCameraCover: false
     };
+    let ui = {
+        accentBlue: '#0055ff', ballColor: '#ccff00', teamNameColor: '#ffffff',
+        scoreColor: '#ffffff', panelBg: 'rgba(60,60,60,0.7)', drawerBg: 'rgba(40,40,40,0.8)',
+        popupBg: '#444444', popupText: '#ffffff', finishBg: 'rgba(255,255,255,0.03)',
+        fontFamily: "'Oswald', sans-serif", sbW: '750px', sbH: '150px',
+        sbRadius: '10px', sbSkew: '0deg', logoW: '35%', logoH: '50%',
+        sbTop: 500, sbLeft: 100, logoSrc: '', statLogoT: '', statLogoF: '', sponsorLogos: [],
+        team1Photo: '', team2Photo: '', team1Logo: '', team2Logo: '', cameraAssetSrc: '', cameraAssetType: '', cameraVideoUrl: ''
+    };
+    let historyStack = [];
+    let gamePointCountP1 = 0, gamePointCountP2 = 0;
 
-    const ptsLabels = [0, 15, 30, 40, "AD"];
-    let dbRef = ref(db, `padel/court${courtId}`);
+    function vibTap(btnEl, pattern) {
+        if (navigator.vibrate) navigator.vibrate(pattern || 40);
+        if (btnEl) {
+            btnEl.classList.remove('btn-tapped');
+            void btnEl.offsetWidth;
+            btnEl.classList.add('btn-tapped');
+            setTimeout(() => btnEl.classList.remove('btn-tapped'), 300);
+        }
+    }
 
-    // Головний слухач бази даних
-    onValue(dbRef, (snapshot) => {
-        const d = snapshot.val();
-        if(!d) { resetDBInit(); return; }
-        currentDBState = d;
-        if(d.ui) localUIState = d.ui;
-        renderControllerPreview(d);
+    function pushState() {
+        set(gameRef, { state, ui }).catch(e => console.error(e));
+    }
+
+    const connRef = ref(db, '.info/connected');
+    onValue(connRef, (snap) => {
+        const el = document.getElementById('conn-status');
+        if (snap.val()) { el.textContent = 'ОНЛАЙН'; el.className = 'online'; }
+        else { el.textContent = 'ОФЛАЙН'; el.className = 'offline'; }
     });
 
-    function resetDBInit() {
-        const init = {
-            state: { scores:[0,0], games:[0,0], setsHistory:[[],[]], server:0, isGameActive:true, isTiebreak:false, isAmerican:false, isSoloAmerican:false, activeSetIndex:0, showBoard:true, showIntro:false, showLogo:false, showFinish:false, showStats:false, showCameraCover:false, notifText:"" },
-            ui: { p1name:"Команда А", p2name:"Команда Б", courtName:"COURT 1", fontFamily:"'Oswald', sans-serif" }
-        };
-        set(dbRef, init);
+    onValue(gameRef, (snap) => {
+        const d = snap.val();
+        if (d) {
+            if (d.state) state = { ...state, ...d.state };
+            if (d.ui) ui = { ...ui, ...d.ui };
+        }
+        updateControlUI();
+    }, { onlyOnce: true });
+
+    function addPoint(p) {
+        historyStack.push(JSON.parse(JSON.stringify(state)));
+        if (!state.isGameActive) {
+            state.isGameActive = true;
+            if (!state._setStartTime) state._setStartTime = Date.now();
+        }
+        const o = 1 - p;
+
+        if (state.isAmerican) {
+            state.scores[p]++;
+            if (state.scores[p] >= state.americanLimit) winGame(p);
+            if ((state.scores[0]+state.scores[1])%2===0) state.server = 1-state.server;
+        } else if (state.isTiebreak) {
+            state.scores[p]++;
+            if (state.scores[p]>=7 && state.scores[p]-state.scores[o]>=2) winGame(p);
+            else if ((state.scores[0]+state.scores[1])%2===1) state.server = 1-state.server;
+        } else {
+            if (state.isGoldenActive) {
+                state.isGoldenActive = false;
+                state.goldenWinnerKey = "GW_" + p + "_" + Date.now();
+                winGame(p);
+                pushState();
+                updateControlUI();
+                return;
+            }
+
+            if (state.scores[p] < 3) {
+                state.scores[p]++;
+                if (state.scores[0] === 3 && state.scores[1] === 3) {
+                    if (state.deuceMode === 'golden') {
+                        state.isGoldenActive = true;
+                        state.alertKey = "GP_" + Date.now();
+                        state.alertText = "GOLDEN POINT";
+                        state.alertMode = "golden";
+                    } else {
+                        state.deuceCycles = 1;
+                        state.alertKey = "DEUCE_" + Date.now();
+                        state.alertText = "DEUCE";
+                        state.alertMode = "deuce";
+                    }
+                }
+            } else if (state.scores[p] === 3) {
+                if (state.scores[o] < 3) {
+                    winGame(p);
+                } else if (state.scores[o] === 3) {
+                    state.scores[p] = 4;
+                } else if (state.scores[o] === 4) {
+                    state.scores[o] = 3;
+                    if (state.deuceMode === '2deuce') {
+                        state.deuceCycles++;
+                        if (state.deuceCycles >= 3) {
+                            state.isGoldenActive = true;
+                            state.alertKey = "GP_" + Date.now();
+                            state.alertText = "GOLDEN POINT";
+                            state.alertMode = "golden";
+                        } else {
+                            state.alertKey = "DEUCE_" + Date.now();
+                            state.alertText = "DEUCE";
+                            state.alertMode = "deuce";
+                        }
+                    } else {
+                        state.alertKey = "DEUCE_" + Date.now();
+                        state.alertText = "DEUCE";
+                        state.alertMode = "deuce";
+                    }
+                }
+            } else if (state.scores[p] === 4) {
+                winGame(p);
+            }
+        }
+        computeNotif();
+        pushState();
+        updateControlUI();
     }
 
-    function renderControllerPreview(d) {
-        const state = d.state || {};
-        const ui = d.ui || {};
-        const scores = state.scores || [0,0];
-        const games = state.games || [0,0];
-        const sh = state.setsHistory || [[],[]];
+    function winGame(p) {
+        state.games[p]++;
+        state.scores = [0,0]; state.deuceCycles = 0; state.isGoldenActive = false; state.isGameActive = false;
+        state.server = 1-state.server;
+        gamePointCountP1 = 0; gamePointCountP2 = 0;
 
-        // Тексти
-        document.getElementById('topbar-court').innerText = ui.courtName || `COURT ${courtId}`;
-        document.getElementById('disp-p1').innerText = ui.p1name || "Команда А";
-        document.getElementById('disp-p2').innerText = ui.p2name || "Команда Б";
-        document.getElementById('disp-p1-short').innerText = ui.p1name || "Команда А";
-        document.getElementById('disp-p2-short').innerText = ui.p2name || "Команда Б";
-        document.getElementById('mini-p1').innerText = ui.p1name || "Команда А";
-        document.getElementById('mini-p2').innerText = ui.p2name || "Команда Б";
-        document.getElementById('serve-p1-lbl').innerText = ui.p1name || "Команда А";
-        document.getElementById('serve-p2-lbl').innerText = ui.p2name || "Команда Б";
+        const totalGames = state.games[0]+state.games[1];
+        const isOddGame = totalGames%2!==0;
+        const lim = state.prosetLimit || 8;
 
-        // Подача
-        document.getElementById('serve-0').classList.toggle('active', state.server === 0);
-        document.getElementById('serve-1').classList.toggle('active', state.server === 1);
-        document.getElementById('mini-dot-0').classList.toggle('active', state.server === 0);
-        document.getElementById('mini-dot-1').classList.toggle('active', state.server === 1);
+        let isSetFinished = false;
+        if (state.isProset) {
+            if (state.isTiebreak || (state.games[p]>=lim && state.games[p]-state.games[1-p]>=2)) isSetFinished = true;
+            else if (state.games[0]===lim-1 && state.games[1]===lim-1) state.isTiebreak = true;
+        } else if (!state.isAmerican) {
+            if (state.isTiebreak || (state.games[p]>=6 && state.games[p]-state.games[1-p]>=2)) isSetFinished = true;
+            else if (state.games[0]===6 && state.games[1]===6) state.isTiebreak = true;
+        } else { isSetFinished = true; }
 
-        // Рахунок великий і міні
-        const getL = (i) => {
-            if (state.isAmerican || state.isSoloAmerican || state.isTiebreak) return scores[i];
-            return scores[i] === 4 ? "AD" : (scores[1-i] === 4 ? "" : ptsLabels[scores[i]]);
+        if (isSetFinished) {
+            const now = Date.now();
+            const setStart = state._setStartTime || now;
+            const elapsed = Math.max(1, Math.round((now - setStart) / 60000));
+            if (!state.setTimes) state.setTimes = [0,0,0];
+            state.setTimes[state.activeSetIndex||0] = elapsed;
+
+            state.setsHistory[0].push(state.games[0]);
+            state.setsHistory[1].push(state.games[1]);
+            state.games = [0,0]; state.isTiebreak = false;
+            state.activeSetIndex = Math.min((state.activeSetIndex||0)+1, 2);
+            state._setStartTime = Date.now();
+
+            state._lastStatsIsSetEnd = true;
+            state.showStats = true;
+            setTimeout(() => { state.showStats = false; state._lastStatsIsSetEnd = false; pushState(); }, 5100);
+        } else if (isOddGame) {
+            state._lastStatsIsSetEnd = false;
+            state.showStats = true;
+            setTimeout(() => { state.showStats = false; pushState(); }, 5100);
+        }
+    }
+
+    function computeNotif() {
+        const s = state.scores; const g = state.games;
+        let txt = ""; let alertText = ""; let alertMode = "";
+
+        if (state.isGoldenActive) {
+            txt = "GOLDEN POINT";
+        } else if (state.isGameActive && !state.isTiebreak && !state.isAmerican) {
+            const isDeuceSituation = (s[0]===3 && s[1]===3);
+            if (!isDeuceSituation) {
+                for (let i=0; i<2; i++) {
+                    if (s[i]>=3 && s[i]>s[1-i]) {
+                        const lim = state.isProset ? (state.prosetLimit||8)-1 : 5;
+                        const isSetPt = g[i]>=lim;
+                        const isBreak = state.server!==i;
+                        if (isSetPt) { txt="SET POINT"; alertText="SET POINT"; alertMode="normal"; }
+                        else {
+                            if (i===0) { gamePointCountP1++; txt=(isBreak?`BREAK POINT #${gamePointCountP1}`:`GAME POINT #${gamePointCountP1}`); }
+                            else { gamePointCountP2++; txt=(isBreak?`BREAK POINT #${gamePointCountP2}`:`GAME POINT #${gamePointCountP2}`); }
+                            
+                            let currentCount = (i === 0) ? gamePointCountP1 : gamePointCountP2;
+                            if (currentCount <= 1) {
+                                alertText = isBreak ? "BREAK POINT" : "GAME POINT"; alertMode = "normal";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (state.isTiebreak && state.activeSetIndex !== (state._lastTBKeyIdx||0)) {
+            state._lastTBKeyIdx = state.activeSetIndex;
+            alertText = "TIE-BREAK"; alertMode = "tiebreak";
+        }
+        state.notifText = txt;
+        if (alertText) {
+            if (!state.alertKey || (!state.alertKey.startsWith("DEUCE_") && !state.alertKey.startsWith("GP_"))) {
+                state.alertKey = alertText + "_" + Date.now();
+                state.alertText = alertText; state.alertMode = alertMode;
+            }
+        }
+    }
+
+    function doFault(btnEl) {
+        const kicker = state.server;
+        state.faultTeam = kicker;
+        vibTap(btnEl, [60, 40, 60]);
+        addPoint(1 - kicker);
+        state.alertKey = "FAULT_" + kicker + "_" + Date.now();
+        state.faultTeam = kicker;
+        pushState();
+        updateControlUI();
+        setTimeout(() => { state.faultTeam = null; pushState(); }, 1600);
+    }
+
+    function doUndo(btnEl) {
+        if (historyStack.length > 0) {
+            vibTap(btnEl, [30, 20, 30]);
+            state = historyStack.pop();
+            pushState();
+            updateControlUI();
+        }
+    }
+
+    function setServer(p) { state.server = p; pushState(); updateControlUI(); }
+    function sendToggle(key, val) { state[key] = val; pushState(); }
+    function sendMode() {
+        state.isAmerican = document.getElementById('s-american').checked;
+        state.isProset = document.getElementById('s-proset').checked;
+        state.deuceMode = document.getElementById('s-deuce-mode').value;
+        state.prosetLimit = parseInt(document.getElementById('s-proset-limit').value)||8;
+        state.americanLimit = parseInt(document.getElementById('s-american-limit').value)||15;
+        state.scores = [0,0]; state.isGameActive = false; state.deuceCycles = 0; state.isGoldenActive = false;
+        pushState();
+    }
+    function liveUpdateName() {
+        state.p1name = document.getElementById('s-p1').value || "Команда А";
+        state.p2name = document.getElementById('s-p2').value || "Команда Б";
+        state.courtName = document.getElementById('s-court').value || "COURT 1";
+        pushState(); updateControlUI();
+    }
+
+    function liveUpdateQRData() {
+        state.qrUrl = document.getElementById('s-qr-url').value || "";
+        state.qrText = document.getElementById('s-qr-text').value || "";
+        pushState();
+    }
+
+    function liveUpdateCameraLink() {
+        ui.cameraVideoUrl = document.getElementById('s-camera-video-url').value || "";
+        pushState();
+    }
+
+    function liveUpdateUI() {
+        const hexToRgba = (hex, a) => {
+            const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+            return `rgba(${r},${g},${b},${a})`;
         };
+        const pa = document.getElementById('c-panel-alpha').value/100;
+        const da = document.getElementById('c-drawer-alpha').value/100;
+        document.getElementById('c-panel-alpha-val').textContent = document.getElementById('c-panel-alpha').value;
+        document.getElementById('c-drawer-alpha-val').textContent = document.getElementById('c-drawer-alpha').value;
 
-        document.getElementById('disp-score-p1').innerText = getL(0);
-        document.getElementById('disp-score-p2').innerText = getL(1);
-        document.getElementById('mini-score-p1').innerText = getL(0);
-        document.getElementById('mini-score-p2').innerText = getL(1);
-        document.getElementById('btn-score-p1').innerText = getL(0);
-        document.getElementById('btn-score-p2').innerText = getL(1);
+        ui.accentBlue = document.getElementById('c-accent').value;
+        ui.ballColor = document.getElementById('c-ball').value;
+        ui.teamNameColor = document.getElementById('c-names').value;
+        ui.scoreColor = document.getElementById('c-score').value;
+        ui.panelBg = hexToRgba(document.getElementById('c-panel').value, pa);
+        ui.drawerBg = hexToRgba(document.getElementById('c-panel').value, da);
+        ui.popupBg = document.getElementById('c-popup').value;
+        ui.fontFamily = document.getElementById('s-font').value;
+        ui.sbW      = document.getElementById('g-w').value + 'px';
+        ui.sbH      = document.getElementById('g-h').value + 'px';
+        ui.sbSkew   = document.getElementById('g-skew').value + 'deg';
+        ui.sbRadius = document.getElementById('g-radius').value + 'px';
+        ui.sbTop    = parseInt(document.getElementById('g-y').value);
+        ui.sbLeft   = parseInt(document.getElementById('g-x').value);
+        ui.sbScale  = (document.getElementById('g-scale').value / 100).toFixed(2);
+        pushState();
+    }
 
-        document.getElementById('disp-games-p1').innerText = games[0];
-        document.getElementById('disp-games-p2').innerText = games[1];
+    function gVal(inId, outId) { document.getElementById(outId).textContent = document.getElementById(inId).value; }
+    function uploadLogoUI(event, key, slot) {
+        const file = event.target.files[0]; if (!file) return;
+        const r = new FileReader(); r.onload = () => { ui[key] = r.result; renderLogoPreview(slot, r.result); pushState(); }; r.readAsDataURL(file);
+    }
+    function clearLogo(key, slot) { ui[key] = ''; renderLogoPreview(slot, ''); pushState(); }
+    function renderLogoPreview(slot, src) {
+        const img = document.getElementById('prev-img-' + slot); const empty = document.getElementById('prev-empty-' + slot);
+        if (!img || !empty) return;
+        if (src) { img.src = src; img.style.display = 'block'; empty.style.display = 'none'; }
+        else { img.src = ''; img.style.display = 'none'; empty.style.display = 'block'; }
+    }
 
-        // Історія сетів у превʼю
-        [0,1].forEach(p => {
-            let h = ""; const hArr = sh[p] || [];
-            hArr.forEach(g => h += `<div class="mini-set">${g}</div>`);
-            h += `<div class="mini-set cur">${games[p]}</div>`;
-            document.getElementById(`mini-sets-p${p+1}`).innerHTML = h;
-        });
+    function uploadIntroAsset(event, key, slot) {
+        const file = event.target.files[0]; if (!file) return;
+        const r = new FileReader(); r.onload = () => { ui[key] = r.result; renderIntroAssetPreview(slot, r.result); pushState(); }; r.readAsDataURL(file);
+    }
+    function clearIntroAsset(key, slot) { ui[key] = ''; renderIntroAssetPreview(slot, ''); pushState(); }
+    function renderIntroAssetPreview(slot, src) {
+        const img = document.getElementById('prev-img-' + slot); const empty = document.getElementById('prev-empty-' + slot);
+        if (!img || !empty) return;
+        if (src) { img.src = src; img.style.display = 'block'; empty.style.display = 'none'; }
+        else { img.src = ''; img.style.display = 'none'; empty.style.display = 'block'; }
+    }
 
-        // Тумблери ефіру
-        document.getElementById('tog-board').checked = state.showBoard !== false;
+    function uploadCameraAsset(event) {
+        const file = event.target.files[0]; if (!file) return;
+        const r = new FileReader();
+        r.onload = () => {
+            ui.cameraAssetSrc = r.result;
+            ui.cameraAssetType = file.type.startsWith('video/') ? 'video' : 'image';
+            renderCameraAssetPreview(r.result, ui.cameraAssetType);
+            pushState();
+        };
+        r.readAsDataURL(file);
+    }
+    function clearCameraAsset() {
+        ui.cameraAssetSrc = '';
+        ui.cameraAssetType = '';
+        renderCameraAssetPreview('', '');
+        pushState();
+    }
+    function renderCameraAssetPreview(src, type) {
+        const img   = document.getElementById('prev-img-cammedia');
+        const vid   = document.getElementById('prev-vid-cammedia');
+        const empty = document.getElementById('prev-empty-cammedia');
+        img.style.display = 'none'; vid.style.display = 'none'; empty.style.display = 'none';
+        if (src && (type === 'video' || (src.startsWith && src.startsWith('data:video')))) {
+            vid.src = src; vid.style.display = 'block';
+        } else if (src) {
+            img.src = src; img.style.display = 'block';
+        } else {
+            empty.style.display = 'block';
+        }
+    }
+
+    function refreshLogoPreviews() {
+        if (ui.logoSrc)   renderLogoPreview('main',  ui.logoSrc);
+        if (ui.statLogoT) renderLogoPreview('statT', ui.statLogoT);
+        if (ui.statLogoF) renderLogoPreview('statF', ui.statLogoF);
+        if (ui.team1Photo) renderIntroAssetPreview('t1photo', ui.team1Photo);
+        if (ui.team1Logo)  renderIntroAssetPreview('t1logo', ui.team1Logo);
+        if (ui.team2Photo) renderIntroAssetPreview('t2photo', ui.team2Photo);
+        if (ui.team2Logo)  renderIntroAssetPreview('t2logo', ui.team2Logo);
+        if (ui.cameraAssetSrc) renderCameraAssetPreview(ui.cameraAssetSrc, ui.cameraAssetType || '');
+        if (document.getElementById('tog-logo-main')) document.getElementById('tog-logo-main').checked = !!state.showLogo;
+    }
+
+    function confirmReset() {
+        if (confirm(`Скинути матч на Court ${currentCourt}?`)) {
+            state = {
+                scores: [0,0], games: [0,0], setsHistory: [[],[]], server: 0,
+                isGameActive: false, isTiebreak: false, isAmerican: state.isAmerican,
+                isProset: state.isProset, deuceMode: state.deuceMode || "golden",
+                deuceCycles: 0, isGoldenActive: false, setTimes: [0,0,0], activeSetIndex: 0,
+                notifText: "", showFinish: false, showIntro: false,
+                showLogo: state.showLogo, showBoard: true, showStats: false,
+                prosetLimit: state.prosetLimit, americanLimit: state.americanLimit,
+                p1name: "Команда А", p2name: "Команда Б", courtName: `COURT ${currentCourt}`,
+                alertKey: "", alertText: "", alertMode: "", faultTeam: null, _setStartTime: null, _lastStatsIsSetEnd: false, hideScoreOnly: false, goldenWinnerKey: "", qrUrl: "", qrText: "", showCameraCover: false
+            };
+            historyStack = []; gamePointCountP1 = 0; gamePointCountP2 = 0;
+            document.getElementById('s-p1').value = "Команда А";
+            document.getElementById('s-p2').value = "Команда Б";
+            document.getElementById('s-qr-url').value = "";
+            document.getElementById('s-qr-text').value = "";
+            document.getElementById('tog-camera-cover').checked = false;
+            set(gameRef, { state, ui }).catch(e => console.error(e));
+            updateControlUI();
+        }
+    }
+
+    function updateControlUI() {
+        const s = state.scores; const g = state.games;
+        const p1 = state.p1name || "Команда А"; const p2 = state.p2name || "Команда Б";
+
+        document.getElementById('disp-p1').textContent = p1;
+        document.getElementById('disp-p2').textContent = p2;
+        document.getElementById('disp-p1-short').textContent = p1.toUpperCase().substring(0,10);
+        document.getElementById('disp-p2-short').textContent = p2.toUpperCase().substring(0,10);
+        document.getElementById('serve-p1-lbl').textContent = p1.toUpperCase().substring(0,7);
+        document.getElementById('serve-p2-lbl').textContent = p2.toUpperCase().substring(0,7);
+
+        const getL = (i) => {
+            if (state.isAmerican || state.isTiebreak) return s[i];
+            return s[i]===4 ? "AD" : (s[1-i]===4 ? "" : pts[s[i]]);
+        };
+        document.getElementById('disp-score-p1').textContent = getL(0);
+        document.getElementById('disp-score-p2').textContent = getL(1);
+        document.getElementById('disp-games-p1').textContent = g[0];
+        document.getElementById('disp-games-p2').textContent = g[1];
+
+        document.getElementById('serve-0').classList.toggle('active', state.server===0);
+        document.getElementById('serve-1').classList.toggle('active', state.server===1);
+
+        if (document.getElementById('tog-board')) document.getElementById('tog-board').checked = state.showBoard !== false;
         document.getElementById('tog-intro').checked = !!state.showIntro;
         document.getElementById('tog-logo').checked = !!state.showLogo;
         document.getElementById('tog-camera-cover').checked = !!state.showCameraCover;
 
-        // Плашки станів
-        document.getElementById('mini-tb-badge').classList.toggle('active', !!state.isTiebreak);
-        const nBadge = document.getElementById('mini-notif-badge');
-        if(state.notifText) { nBadge.innerText = state.notifText; nBadge.classList.add('active'); }
-        else { nBadge.classList.remove('active'); }
-        
-        document.getElementById('drawer').classList.toggle('points-active', !!state.isGameActive);
+        document.getElementById('mini-p1').textContent = p1.toUpperCase();
+        document.getElementById('mini-p2').textContent = p2.toUpperCase();
+        document.getElementById('mini-score-p1').textContent = getL(0);
+        document.getElementById('mini-score-p2').textContent = getL(1);
+        document.getElementById('mini-drawer').classList.toggle('points-active', state.isGameActive);
+        document.getElementById('mini-dot-0').classList.toggle('active', state.server===0);
+        document.getElementById('mini-dot-1').classList.toggle('active', state.server===1);
+        [0,1].forEach(p => {
+            let h = ""; Object.values(state.setsHistory[p] || []).forEach(gv => h += `<div class="mini-set">${gv}</div>`);
+            h += `<div class="mini-set cur">${g[p]}</div>`; document.getElementById(`mini-sets-p${p+1}`).innerHTML = h;
+        });
+        document.getElementById('mini-tb-badge').classList.toggle('active', state.isTiebreak);
+        document.getElementById('mini-notif-badge').textContent = state.notifText || '';
+        document.getElementById('mini-notif-badge').classList.toggle('active', !!state.notifText);
+        document.getElementById('btn-score-p1').textContent = getL(0);
+        document.getElementById('btn-score-p2').textContent = getL(1);
     }
 
-    // ЛОГІКА МАТЕМАТИЧНОГО ОБРАХУНКУ ТА SOLO АМЕРИКАНКИ
-    window.sendAction = function(type, team, btnEl) {
-        if(!currentDBState) return;
-        if(btnEl) { btnEl.classList.remove('btn-tapped'); void btnEl.offsetWidth; btnEl.classList.add('btn-tapped'); }
-
-        // Клонуємо стан для історії скасувань (Undo)
-        undoHistory.push(JSON.parse(JSON.stringify(currentDBState.state)));
-        if(undoHistory.length > 20) undoHistory.shift();
-
-        let s = currentDBState.state;
-        let sc = s.scores || [0,0];
-        let gm = s.games || [0,0];
-        let sh = s.setsHistory || [[],[]];
-
-        if(type === 'undo') {
-            if(undoHistory.length > 0) {
-                undoHistory.pop(); // видаляємо поточний
-                let prevState = undoHistory.pop();
-                if(prevState) { s = prevState; }
-            }
-        } else if(type === 'fault') {
-            s.alertKey = "FAULT_" + s.server + "_" + Date.now();
-        } else if(type === 'finish') {
-            s.showFinish = !s.showFinish;
-        } else if(type === 'point') {
-            s.alertKey = "";
-            
-            // 1. ЛОГІКА SOLO АМЕРИКАНКИ (В СУМІ БАЛІВ)
-            if(s.isSoloAmerican) {
-                sc[team]++;
-                let totalSum = sc[0] + sc[1];
-                let limit = parseInt(s.soloLimit) || 21;
-                
-                if(totalSum >= limit) {
-                    s.notifText = "МАТЧ ЗАВЕРШЕНО";
-                    s.showFinish = true;
-                    s.isGameActive = false;
-                }
-            } 
-            // 2. ЗВИЧАЙНА АМЕРИКАНКА (ЗА ЛІМІТОМ ГЕЙМІВ)
-            else if(s.isAmerican) {
-                sc[team]++;
-                let limit = parseInt(s.americanLimit) || 15;
-                if(sc[team] >= limit) {
-                    gm[team]++;
-                    sc = [0,0];
-                    s.alertKey = "GAME_" + team + "_" + Date.now();
-                    s.alertText = "GAME WON";
-                    s.alertMode = "normal";
-                }
-            } 
-            // 3. ТАЙ-БРЕЙК
-            else if(s.isTiebreak) {
-                sc[team]++;
-                if(sc[team] >= 7 && (sc[team] - sc[1-team] >= 2)) {
-                    gm[team]++;
-                    sh[0].push(gm[0]);
-                    sh[1].push(gm[1]);
-                    gm = [0,0];
-                    sc = [0,0];
-                    s.isTiebreak = false;
-                    s.activeSetIndex++;
-                    s.alertKey = "SET_" + team + "_" + Date.now();
-                    s.alertText = "SET WON";
-                    s.alertMode = "normal";
-                }
-            } 
-            // 4. КЛАСИЧНИЙ ПАДЕЛ РАХУНОК (0-15-30-40-AD)
-            else {
-                if(sc[team] === 3 && sc[1-team] === 3) { // 40:40
-                    if(s.deuceMode === 'golden') {
-                        sc[team] = 4; // AD для переможця золотого м'яча
-                    } else {
-                        sc[team] = 4; // класична перевага
-                    }
-                } else if(sc[team] === 4) { // Була перевага, стає гейм
-                    sc[team] = 5;
-                } else if(sc[1-team] === 4) { // У суперника була перевага, стає рівно
-                    sc[1-team] = 3;
-                    sc[team] = 3;
-                } else {
-                    sc[team]++;
-                }
-
-                // Перевірка взяття гейму
-                if(sc[team] >= 4 && (sc[team] === 5 || sc[1-team] < 3 || s.deuceMode === 'golden')) {
-                    gm[team]++;
-                    sc = [0,0];
-                    s.alertKey = "GAME_" + team + "_" + Date.now();
-                    s.alertText = "GAME WON";
-                    s.alertMode = "normal";
-
-                    // Перевірка виграшу сету
-                    let maxGames = s.isProset ? (parseInt(s.prosetLimit) || 8) : 6;
-                    if(gm[team] >= maxGames && (gm[team] - gm[1-team] >= 2)) {
-                        sh[0].push(gm[0]); sh[1].push(gm[1]);
-                        gm = [0,0]; s.activeSetIndex++;
-                        s.alertKey = "SET_" + team + "_" + Date.now();
-                        s.alertText = "SET WON";
-                    } else if(gm[0] === maxGames && gm[1] === maxGames) {
-                        s.isTiebreak = true;
-                    }
-                }
-            }
-
-            s.scores = sc;
-            s.games = gm;
-            s.setsHistory = sh;
-        }
-
-        set(ref(db, `padel/court${courtId}/state`), s);
-    };
-
-    window.setServer = function(team) {
-        set(ref(db, `padel/court${courtId}/state/server`), team);
-    };
-
-    window.sendToggle = function(path, value) {
-        set(ref(db, `padel/court${courtId}/state/${path}`), value);
-    };
-
-    // НАЛАШТУВАННЯ ТА ЖИВЕ ОНОВЛЕННЯ
     window.openSettings = function() {
-        if(!currentDBState) return;
-        const ui = currentDBState.ui || {};
-        const state = currentDBState.state || {};
-
-        document.getElementById('s-p1').value = ui.p1name || "Команда А";
-        document.getElementById('s-p2').value = ui.p2name || "Команда Б";
-        document.getElementById('s-court').value = ui.courtName || "COURT 1";
-        document.getElementById('s-font').value = ui.fontFamily || "'Oswald', sans-serif";
-        
-        document.getElementById('s-proset').checked = !!state.isProset;
-        document.getElementById('s-proset-limit').value = state.prosetLimit || 8;
+        document.getElementById('s-p1').value = state.p1name || "Команда А";
+        document.getElementById('s-p2').value = state.p2name || "Команда Б";
+        document.getElementById('s-court').value = state.courtName || "COURT 1";
         document.getElementById('s-american').checked = !!state.isAmerican;
-        document.getElementById('s-american-limit').value = state.americanLimit || 15;
-        
-        // Поля SOLO американки
-        document.getElementById('s-solo-american').checked = !!state.isSoloAmerican;
-        document.getElementById('s-solo-limit').value = state.soloLimit || 21;
-
+        document.getElementById('s-proset').checked = !!state.isProset;
         document.getElementById('s-deuce-mode').value = state.deuceMode || "golden";
-        document.getElementById('s-qr-text').value = state.qrText || "SCAN TO WATCH";
-        document.getElementById('s-qr-url').value = ui.qrUrl || "";
+        document.getElementById('s-proset-limit').value = state.prosetLimit || 8;
+        document.getElementById('s-american-limit').value = state.americanLimit || 15;
+        document.getElementById('s-hide-score-only').checked = !!state.hideScoreOnly;
+        
+        document.getElementById('s-qr-url').value = state.qrUrl || "";
+        document.getElementById('s-qr-text').value = state.qrText || "";
         document.getElementById('s-camera-video-url').value = ui.cameraVideoUrl || "";
+        
+        if(ui.sbW) document.getElementById('g-w').value = parseInt(ui.sbW);
+        if(ui.sbH) document.getElementById('g-h').value = parseInt(ui.sbH);
+        if(ui.sbSkew) document.getElementById('g-skew').value = parseInt(ui.sbSkew);
+        if(ui.sbRadius) document.getElementById('g-radius').value = parseInt(ui.sbRadius);
+        if(ui.sbTop) document.getElementById('g-y').value = ui.sbTop;
+        if(ui.sbLeft) document.getElementById('g-x').value = ui.sbLeft;
+        if(ui.sbScale) document.getElementById('g-scale').value = Math.round(ui.sbScale * 100);
 
-        // Позиції геометрії
-        const props = ['g-w','g-h','g-scale','g-skew','g-radius','g-x','g-y'];
-        props.forEach(p => {
-            let key = p.replace('g-','sb').replace('x','Left').replace('y','Top').replace('w','W').replace('h','H').replace('scale','Scale').replace('radius','Radius').replace('skew','Skew');
-            if(ui[key] !== undefined) {
-                document.getElementById(p).value = ui[key];
-                document.getElementById(p+'-val').innerText = ui[key];
-            }
+        const list = document.getElementById('sponsor-logo-list'); list.innerHTML = '';
+        (ui.sponsorLogos || []).forEach((logo, i) => {
+            const row = document.createElement('div'); row.className = 'settings-input-row';
+            row.innerHTML = `
+                <div style="flex:1"><div class="toggle-label" style="font-size:11px;">Лого ${i+1}</div>${logo.src ? `<img src="${logo.src}" style="height:28px;max-width:80px;object-fit:contain;border-radius:4px;margin-top:4px;opacity:0.8;">` : '<div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:2px;">немає</div>'}</div>
+                <label class="switch"><input type="checkbox" ${logo.visible!==false?'checked':''} onchange="toggleSponsor(${i},this.checked)"><span class="slider"></span></label>
+                <label class="file-btn">↑<input type="file" accept="image/*" style="display:none" onchange="uploadSponsor(event,${i})"></label>
+                <button onclick="removeSponsor(${i})" style="background:rgba(231,76,60,0.2);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;border-radius:8px;padding:5px 10px;font-size:13px;cursor:pointer;">✕</button>
+            `; list.appendChild(row);
         });
-
-        // Оновлення прев'ю картинок
-        renderPreviewBox('main', ui.logoSrc);
-        renderPreviewBox('statT', ui.statLogoT);
-        renderPreviewBox('statF', ui.statLogoF);
-        renderCameraPreviewBox(ui.cameraAssetSrc);
-
-        // Відображення списку спонсорів
-        renderSponsorList(ui.sponsorLogos || []);
-
+        refreshLogoPreviews();
         document.getElementById('settings-panel').classList.add('open');
     };
 
-    window.closeSettings = function() {
-        document.getElementById('settings-panel').classList.remove('open');
-    };
-
-    window.gVal = function(id, valId) {
-        document.getElementById(valId).innerText = document.getElementById(id).value;
-    };
-
-    window.liveUpdateName = function() {
-        const u = {
-            p1name: document.getElementById('s-p1').value,
-            p2name: document.getElementById('s-p2').value,
-            courtName: document.getElementById('s-court').value
-        };
-        set(ref(db, `padel/court${courtId}/ui/p1name`), u.p1name);
-        set(ref(db, `padel/court${courtId}/ui/p2name`), u.p2name);
-        set(ref(db, `padel/court${courtId}/ui/courtName`), u.courtName);
-    };
-
-    window.liveUpdateUI = function() {
-        const uiPath = `padel/court${courtId}/ui`;
-        set(ref(db, `${uiPath}/fontFamily`), document.getElementById('s-font').value);
-        set(ref(db, `${uiPath}/accentBlue`), document.getElementById('c-accent').value);
-        set(ref(db, `${uiPath}/ballColor`), document.getElementById('c-ball').value);
-        set(ref(db, `${uiPath}/teamNameColor`), document.getElementById('c-names').value);
-        set(ref(db, `${uiPath}/scoreColor`), document.getElementById('c-score').value);
-        
-        // Альфа-канали кольорів
-        let pColor = document.getElementById('c-panel').value;
-        let pAlpha = document.getElementById('c-panel-alpha').value;
-        document.getElementById('c-panel-alpha-val').innerText = pAlpha;
-        let r1 = parseInt(pColor.slice(1,3),16), g1 = parseInt(pColor.slice(3,5),16), b1 = parseInt(pColor.slice(5,7),16);
-        set(ref(db, `${uiPath}/panelBg`), `rgba(${r1},${g1},${b1},${pAlpha/100})`);
-
-        let popColor = document.getElementById('c-popup').value;
-        let dAlpha = document.getElementById('c-drawer-alpha').value;
-        document.getElementById('c-drawer-alpha-val').innerText = dAlpha;
-        let r2 = parseInt(popColor.slice(1,3),16), g2 = parseInt(popColor.slice(3,5),16), b2 = parseInt(popColor.slice(5,7),16);
-        set(ref(db, `${uiPath}/popupBg`), popColor);
-        set(ref(db, `${uiPath}/drawerBg`), `rgba(${r2},${g2},${b2},${dAlpha/100})`);
-
-        // Геометрія
-        set(ref(db, `${uiPath}/sbW`), document.getElementById('g-w').value + 'px');
-        set(ref(db, `${uiPath}/sbH`), document.getElementById('g-h').value + 'px');
-        set(ref(db, `${uiPath}/sbScale`), document.getElementById('g-scale').value / 100);
-        set(ref(db, `${uiPath}/sbSkew`), document.getElementById('g-skew').value + 'deg');
-        set(ref(db, `${uiPath}/sbRadius`), document.getElementById('g-radius').value + 'px');
-        set(ref(db, `${uiPath}/sbLeft`), parseInt(document.getElementById('g-x').value));
-        set(ref(db, `${uiPath}/sbTop`), parseInt(document.getElementById('g-y').value));
-    };
-
-    window.sendMode = function() {
-        const statePath = `padel/court${courtId}/state`;
-        set(ref(db, `${statePath}/isProset`), document.getElementById('s-proset').checked);
-        set(ref(db, `${statePath}/prosetLimit`), parseInt(document.getElementById('s-proset-limit').value));
-        set(ref(db, `${statePath}/isAmerican`), document.getElementById('s-american').checked);
-        set(ref(db, `${statePath}/americanLimit`), parseInt(document.getElementById('s-american-limit').value));
-        
-        // Перемикачі SOLO американки
-        set(ref(db, `${statePath}/isSoloAmerican`), document.getElementById('s-solo-american').checked);
-        set(ref(db, `${statePath}/soloLimit`), parseInt(document.getElementById('s-solo-limit').value));
-
-        set(ref(db, `${statePath}/deuceMode`), document.getElementById('s-deuce-mode').value);
-    };
-
-    window.liveUpdateQRData = function() {
-        set(ref(db, `padel/court${courtId}/state/qrText`), document.getElementById('s-qr-text').value);
-        set(ref(db, `padel/court${courtId}/ui/qrUrl`), document.getElementById('s-qr-url').value);
-    };
-
-    window.liveUpdateCameraLink = function() {
-        set(ref(db, `padel/court${courtId}/ui/cameraVideoUrl`), document.getElementById('s-camera-video-url').value);
-    };
-
-    // ФУНКЦІЇ ЗАВАНТАЖЕННЯ МЕДІА (BASE64 СТИСНЕННЯ)
-    window.uploadLogoUI = function(e, dbField, prevKey) {
-        const file = e.target.files[0]; if(!file) return;
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-            let base64 = evt.target.result;
-            set(ref(db, `padel/court${courtId}/ui/${dbField}`), base64);
-            renderPreviewBox(prevKey, base64);
-        };
-        reader.readAsDataURL(file);
-    };
-
-    window.clearLogo = function(dbField, prevKey) {
-        set(ref(db, `padel/court${courtId}/ui/${dbField}`), "");
-        renderPreviewBox(prevKey, "");
-    };
-
-    function renderPreviewBox(key, src) {
-        const img = document.getElementById(`prev-img-${key}`);
-        const empty = document.getElementById(`prev-empty-${key}`);
-        if(src) { img.src = src; img.style.display = 'block'; empty.style.display = 'none'; }
-        else { img.src = ''; img.style.display = 'none'; empty.style.display = 'block'; }
+    function toggleSponsor(i, val) { if (ui.sponsorLogos[i]) { ui.sponsorLogos[i].visible = val; pushState(); } }
+    function removeSponsor(i) { ui.sponsorLogos.splice(i, 1); window.openSettings(); pushState(); }
+    function uploadSponsor(event, i) {
+        const file = event.target.files[0]; if (!file) return;
+        const r = new FileReader(); r.onload = () => { if (!ui.sponsorLogos[i]) ui.sponsorLogos[i] = { visible: true }; ui.sponsorLogos[i].src = r.result; window.openSettings(); pushState(); }; r.readAsDataURL(file);
     }
+    function addSponsorSlot() { if (!ui.sponsorLogos) ui.sponsorLogos = []; ui.sponsorLogos.push({ src: '', visible: true }); window.openSettings(); }
 
-    window.uploadCameraAsset = function(e) {
-        const file = e.target.files[0]; if(!file) return;
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-            let base64 = evt.target.result;
-            set(ref(db, `padel/court${courtId}/ui/cameraAssetSrc`), base64);
-            set(ref(db, `padel/court${courtId}/ui/cameraVideoUrl`), ""); 
-            document.getElementById('s-camera-video-url').value = "";
-            renderCameraPreviewBox(base64);
-        };
-        reader.readAsDataURL(file);
+    window.sendAction = (type, p, btnEl) => {
+        if (type==='point') { vibTap(btnEl, 35); addPoint(p); }
+        else if (type==='fault') doFault(btnEl);
+        else if (type==='undo')  doUndo(btnEl);
+        else if (type==='finish') { state.showFinish = !state.showFinish; pushState(); }
     };
+    window.setServer = setServer; window.sendToggle = sendToggle; window.sendMode = sendMode;
+    window.liveUpdateName = liveUpdateName; window.liveUpdateUI = liveUpdateUI; window.gVal = gVal;
+    window.confirmReset = confirmReset; window.closeSettings = () => document.getElementById('settings-panel').classList.remove('open');
+    
+    window.saveAllSettings = () => { liveUpdateName(); liveUpdateQRData(); liveUpdateCameraLink(); liveUpdateUI(); sendMode(); window.closeSettings(); };
+    window.liveUpdateQRData = liveUpdateQRData;
+    window.liveUpdateCameraLink = liveUpdateCameraLink;
+    
+    window.addSponsorSlot = addSponsorSlot; window.removeSponsor = removeSponsor; window.toggleSponsor = toggleSponsor; window.uploadSponsor = uploadSponsor;
+    window.uploadLogoUI = uploadLogoUI; window.clearLogo = clearLogo;
+    window.uploadIntroAsset = uploadIntroAsset; window.clearIntroAsset = clearIntroAsset;
+    window.uploadCameraAsset = uploadCameraAsset; window.clearCameraAsset = clearCameraAsset;
 
-    window.clearCameraAsset = function() {
-        set(ref(db, `padel/court${courtId}/ui/cameraAssetSrc`), "");
-        set(ref(db, `padel/court${courtId}/ui/cameraVideoUrl`), "");
-        document.getElementById('s-camera-video-url').value = "";
-        renderCameraPreviewBox("");
-    };
-
-    function renderCameraPreviewBox(src) {
-        const img = document.getElementById('prev-img-cammedia');
-        const vid = document.getElementById('prev-vid-cammedia');
-        const empty = document.getElementById('prev-empty-cammedia');
-        img.style.display = 'none'; vid.style.display = 'none'; empty.style.display = 'block';
-
-        if(src) {
-            empty.style.display = 'none';
-            if(src.startsWith('data:video') || src.includes('.mp4')) {
-                vid.src = src; vid.style.display = 'block';
-            } else {
-                img.src = src; img.style.display = 'block';
-            }
-        }
-    }
-
-    window.uploadIntroAsset = function(e, dbField, prevKey) {
-        const file = e.target.files[0]; if(!file) return;
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-            let base64 = evt.target.result;
-            set(ref(db, `padel/court${courtId}/ui/${dbField}`), base64);
-            renderPreviewBox(prevKey, base64);
-        };
-        reader.readAsDataURL(file);
-    };
-
-    window.clearIntroAsset = function(dbField, prevKey) {
-        set(ref(db, `padel/court${courtId}/ui/${dbField}`), "");
-        renderPreviewBox(prevKey, "");
-    };
-
-    // СПОНСОРСЬКІ ЛОГОТИПИ
-    let localSponsors = [];
-    function renderSponsorList(logos) {
-        localSponsors = logos || [];
-        const container = document.getElementById('sponsor-logo-list');
-        if(!container) return;
-        if(localSponsors.length === 0) { container.innerHTML = `<div style="padding:16px;text-align:center;font-size:12px;opacity:0.3;">немає завантажених спонсорів</div>`; return; }
-        
-        let html = "";
-        localSponsors.forEach((l, i) => {
-            html += `<div class="settings-input-row" style="gap:10px; align-items:center;">
-                <div style="width:40px;height:30px;background:rgba(255,255,255,0.05);border-radius:4px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;">
-                    <img src="${l.src}" style="max-width:100%;max-height:100%;object-fit:contain;">
-                </div>
-                <label style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Спонсор #${i+1}</label>
-                <label class="switch" style="width:36px;height:20px;"><input type="checkbox" ${l.visible!==false?'checked':''} onchange="toggleSponsorVisible(${i},this.checked)"><span class="slider" style="border-radius:10px;"></span></label>
-                <button onclick="deleteSponsorSlot(${i})" style="background:none;border:none;color:#e74c3c;font-size:16px;cursor:pointer;padding:4px;">✕</button>
-            </div>`;
-        });
-        container.innerHTML = html;
-    }
-
-    window.addSponsorSlot = function() {
-        const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*';
-        input.onchange = function(e) {
-            const file = e.target.files[0]; if(!file) return;
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                localSponsors.push({ src: evt.target.result, visible: true });
-                set(ref(db, `padel/court${courtId}/ui/sponsorLogos`), localSponsors);
-                renderSponsorList(localSponsors);
-            };
-            reader.readAsDataURL(file);
-        };
-        input.click();
-    };
-
-    window.toggleSponsorVisible = function(index, checked) {
-        localSponsors[index].visible = checked;
-        set(ref(db, `padel/court${courtId}/ui/sponsorLogos`), localSponsors);
-    };
-
-    window.deleteSponsorSlot = function(index) {
-        localSponsors.splice(index, 1);
-        set(ref(db, `padel/court${courtId}/ui/sponsorLogos`), localSponsors);
-        renderSponsorList(localSponsors);
-    };
-
-    window.saveAllSettings = function() {
-        window.liveUpdateName();
-        window.liveUpdateUI();
-        window.sendMode();
-        window.liveUpdateQRData();
-        window.liveUpdateCameraLink();
-        closeSettings();
-    };
-
-    window.confirmReset = function() {
-        if(confirm("Ви дійсно хочете повністю скинути рахунок матчу?")) {
-            undoHistory = [];
-            resetDBInit();
-        }
-    };
+    buildCourtBar(); updateControlUI();
 </script>
 </body>
 </html>
