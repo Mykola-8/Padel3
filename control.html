@@ -22,7 +22,7 @@
             font-family: 'Inter', sans-serif; min-height: 100vh;
             display: flex; flex-direction: column;
         }
-
+ 
         /* COURT SELECTOR BAR */
         #court-bar {
             background: #111114; border-bottom: 1px solid var(--border);
@@ -39,7 +39,7 @@
         }
         .court-chip.active { background: var(--blue); color: white; border-color: var(--blue); box-shadow: 0 0 12px rgba(0,85,255,0.4); }
         .court-chip:active { transform: scale(0.93); }
-
+ 
         /* TOP BAR */
         #topbar {
             display: flex; align-items: center; justify-content: space-between;
@@ -56,10 +56,10 @@
             display: flex; align-items: center; justify-content: center; transition: 0.2s;
         }
         #gear-btn:active { background: rgba(255,255,255,0.1); }
-
+ 
         /* MAIN CONTENT */
         #main { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
-
+ 
         /* SCORE DISPLAY */
         .score-section { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
         .score-section-title { padding: 10px 16px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.3); border-bottom: 1px solid var(--border); }
@@ -81,7 +81,7 @@
         .score-badge.pts { background: rgba(0,85,255,0.25); color: #fff; }
         .score-badge.games { background: rgba(255,255,255,0.12); }
         .score-divider { border: none; border-top: 1px solid var(--border); margin: 0; }
-
+ 
         /* BIG BUTTONS */
         .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .big-btn {
@@ -110,7 +110,7 @@
         .btn-finish-s:active { transform: scale(0.97); }
         .btn-reset-s { background: transparent; border: 1px solid rgba(231,76,60,0.4); color: #e74c3c; border-radius: 12px; font-size: 13px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; padding: 11px; width: 100%; transition: transform 0.1s; }
         .btn-reset-s:active { transform: scale(0.97); background: rgba(231,76,60,0.05); }
-
+ 
         /* LIVE SCOREBOARD PREVIEW */
         #preview-wrap { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
         #preview-inner { padding: 12px 14px 14px; background: repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 8px); }
@@ -132,12 +132,12 @@
         #mini-tb-badge.active { opacity: 1; }
         #mini-notif-badge { position: absolute; bottom: -18px; left: 16px; background: #444; color: white; font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 0 0 4px 4px; letter-spacing: 1px; opacity: 0; transition: opacity 0.3s; }
         #mini-notif-badge.active { opacity: 1; }
-
+ 
         /* SERVE SWITCH */
         .serve-switch { display: flex; background: rgba(255,255,255,0.05); border-radius: 12px; padding: 4px; gap: 4px; }
         .serve-opt { flex: 1; padding: 10px; border: none; border-radius: 8px; font-weight: 900; font-size: 13px; font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; background: transparent; color: rgba(255,255,255,0.4); transition: 0.2s; }
         .serve-opt.active { background: var(--blue); color: white; }
-
+ 
         /* TOGGLE SWITCHES */
         .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border); }
         .toggle-row:last-child { border-bottom: none; }
@@ -149,7 +149,7 @@
         .slider:before { content:''; position: absolute; width: 18px; height: 18px; background: white; border-radius: 50%; top: 3px; left: 3px; transition: 0.3s; }
         input:checked + .slider { background: var(--blue); }
         input:checked + .slider:before { transform: translateX(20px); }
-
+ 
         /* SETTINGS PANEL */
         #settings-panel { position: fixed; inset: 0; background: var(--bg); z-index: 200; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1); overflow-y: auto; }
         #settings-panel.open { transform: translateX(0); }
@@ -173,9 +173,9 @@
     </style>
 </head>
 <body>
-
+ 
 <div id="court-bar"></div>
-
+ 
 <div id="topbar">
     <div style="display:flex; align-items:center; gap:10px;">
         <button id="gear-btn" onclick="window.openSettings()">⚙️</button>
@@ -183,7 +183,7 @@
     </div>
     <span id="conn-status" class="online">ОНЛАЙН</span>
 </div>
-
+ 
 <div id="main">
     <div class="score-section">
         <div class="score-section-title">Рахунок</div>
@@ -203,7 +203,7 @@
             </div>
         </div>
     </div>
-
+ 
     <div id="preview-wrap">
         <div class="score-section-title" style="border-bottom:1px solid var(--border);">📺 Превʼю табла (live)</div>
         <div id="preview-inner" style="padding: 26px 14px 26px;">
@@ -231,7 +231,7 @@
             </div>
         </div>
     </div>
-
+ 
     <div class="btn-row">
         <button class="big-btn btn-p1" onclick="sendAction('point',0,this)">
             <span id="disp-p1-short" style="font-size:16px; margin-bottom:2px;">КОМАНДА А</span>
@@ -252,9 +252,9 @@
             <small>СКАСУВАТИ</small>
         </button>
     </div>
-
+ 
     <div class="section-gap"></div>
-
+ 
     <div class="score-section">
         <div class="score-section-title">Подача</div>
         <div style="padding: 10px 12px;">
@@ -268,7 +268,7 @@
             </div>
         </div>
     </div>
-
+ 
     <div class="score-section">
         <div class="score-section-title">Ефір</div>
         <div class="toggle-row">
@@ -291,20 +291,20 @@
             </div>
             <label class="switch"><input type="checkbox" id="tog-camera-cover" onchange="sendToggle('showCameraCover', this.checked)"><span class="slider"></span></label>
         </div>
-
+ 
         <div style="padding: 14px 16px; background: rgba(255,255,255,0.02); display: flex; flex-direction: column; gap: 10px;">
             <button class="btn-finish-s" onclick="sendAction('finish')">🏆 КІНЕЦЬ МАТЧУ</button>
             <button class="btn-reset-s" onclick="confirmReset()">⚠️ СКИНУТИ МАТЧ</button>
         </div>
     </div>
 </div>
-
+ 
 <div id="settings-panel">
     <div id="settings-header">
         <h2>⚙️ Налаштування</h2>
         <button id="close-settings" onclick="closeSettings()">✕</button>
     </div>
-
+ 
     <div class="settings-section">
         <div class="settings-section-title" style="color:#5599ff">Медіа для заставки Камери (весь екран)</div>
         <div class="settings-card">
@@ -315,17 +315,13 @@
                         <video id="prev-vid-cammedia" style="width:100%;height:100%;object-fit:cover;display:none;" loop muted playsinline></video>
                         <span id="prev-empty-cammedia" style="font-size:12px;opacity:0.3;text-align:center;">немає<br>медіа</span>
                     </div>
-                    <label class="file-btn" style="flex:1;text-align:center;">Завантажити Фото / Логотип<input type="file" accept="image/*" style="display:none" onchange="uploadCameraAsset(event)"></label>
+                    <label class="file-btn" style="flex:1;text-align:center;">📁 Фото або Відео<input type="file" accept="image/*,video/*" style="display:none" onchange="uploadCameraAsset(event)"></label>
                     <button onclick="clearCameraAsset()" style="background:rgba(231,76,60,0.15);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;">✕</button>
-                </div>
-                <div style="display:flex; align-items:center; width:100%; gap:10px; margin-top:6px;">
-                    <label style="font-size:11px; color:rgba(255,255,255,0.5); flex:1;">YouTube лінк на відео:</label>
-                    <input type="text" id="s-camera-video-url" placeholder="https://youtube.com/..." style="width:180px; text-align:left;" oninput="window.liveUpdateCameraLink()">
                 </div>
             </div>
         </div>
     </div>
-
+ 
     <div class="settings-section">
         <div class="settings-section-title">Команди</div>
         <div class="settings-card">
@@ -351,7 +347,7 @@
             </div>
         </div>
     </div>
-
+ 
     <div class="settings-section">
         <div class="settings-section-title">Режими гри</div>
         <div class="settings-card">
@@ -401,7 +397,7 @@
             </div>
         </div>
     </div>
-
+ 
     <div class="settings-section">
         <div class="settings-section-title">Медіа для VS заставки</div>
         <div class="settings-card">
@@ -446,7 +442,7 @@
             </div>
         </div>
     </div>
-
+ 
     <div class="settings-section">
         <div class="settings-section-title">Кольори</div>
         <div class="settings-card">
@@ -486,7 +482,7 @@
             </div>
         </div>
     </div>
-
+ 
     <div class="settings-section">
         <div class="settings-section-title">Геометрія табла</div>
         <div class="settings-card">
@@ -527,7 +523,7 @@
             </div>
         </div>
     </div>
-
+ 
     <div class="settings-section">
         <div class="settings-section-title">Логотипи</div>
         <div class="settings-card">
@@ -574,23 +570,58 @@
             </div>
         </div>
     </div>
-
+ 
     <div class="settings-section">
         <div class="settings-section-title">Логотипи спонсорів (зверху-справа)</div>
         <div class="settings-card" id="sponsor-logo-list"></div>
+        <div class="settings-card" style="margin-top:8px;">
+            <div class="settings-input-row">
+                <label>Розмір лого (px)</label>
+                <input type="range" id="g-sponsor-size" min="40" max="300" step="5" value="80" oninput="liveUpdateUI(); gVal('g-sponsor-size','g-sponsor-size-val')">
+                <span class="range-val" id="g-sponsor-size-val">80</span>
+            </div>
+        </div>
         <button onclick="addSponsorSlot()" style="margin:10px 16px 0; padding:12px; background:rgba(255,255,255,0.06); border:1px dashed rgba(255,255,255,0.2); border-radius:12px; color:rgba(255,255,255,0.5); font-size:13px; font-weight:700; width:calc(100% - 32px); cursor:pointer; letter-spacing:1px;">
             + ДОДАТИ ЛОГОТИП
         </button>
     </div>
-
+ 
+    <div class="settings-section">
+        <div class="settings-section-title">Паралельний матч (інший корт)</div>
+        <div class="settings-card">
+            <div class="toggle-row">
+                <div><div class="toggle-label">Показати другий корт</div><div class="toggle-sublabel">Розділити екран на два табла</div></div>
+                <label class="switch"><input type="checkbox" id="s-split-screen" onchange="sendToggle('showSplitScreen', this.checked)"><span class="slider"></span></label>
+            </div>
+            <div class="settings-input-row">
+                <label>Посилання на оверлей 2</label>
+                <input type="text" id="s-split-url" placeholder="https://..." style="width:180px; text-align:left;" oninput="liveUpdateSplitUrl()">
+            </div>
+        </div>
+    </div>
+ 
+    <div class="settings-section">
+        <div class="settings-section-title">Тема табла</div>
+        <div class="settings-card">
+            <div class="settings-input-row" style="flex-direction:column; align-items:flex-start; gap:10px; padding:14px 16px;">
+                <div class="toggle-label" style="font-size:11px; color:rgba(255,255,255,0.5);">Вибери готову тему оформлення</div>
+                <div style="display:flex; gap:8px; width:100%;">
+                    <button onclick="applyTheme('blue')" style="flex:1; padding:12px 6px; border-radius:10px; border:2px solid #0055ff; background:rgba(0,85,255,0.15); color:white; font-size:11px; font-weight:900; cursor:pointer; letter-spacing:1px;">🔵 СИНЄ</button>
+                    <button onclick="applyTheme('grey')" style="flex:1; padding:12px 6px; border-radius:10px; border:2px solid #888; background:rgba(136,136,136,0.15); color:white; font-size:11px; font-weight:900; cursor:pointer; letter-spacing:1px;">⚪ СІРЕ</button>
+                    <button onclick="applyTheme('dark')" style="flex:1; padding:12px 6px; border-radius:10px; border:2px solid #333; background:rgba(30,30,30,0.4); color:white; font-size:11px; font-weight:900; cursor:pointer; letter-spacing:1px;">⚫ ТЕМНЕ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
     <button class="save-settings-btn" onclick="saveAllSettings()">💾 ЗБЕРЕГТИ ВСЕ</button>
     <div style="height:20px"></div>
 </div>
-
+ 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
+ 
     const firebaseConfig = {
         apiKey: "AIzaSyDf6PYBjF096FRE-fUUo5boS8jsieVS9xA",
         authDomain: "padel3-overley.firebaseapp.com",
@@ -601,30 +632,58 @@
         appId: "1:1003185317510:web:07be70f0d0354a1f0bd307",
         measurementId: "G-HFRXC32BE1"
     };
-
+ 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-
+ 
     const TOTAL_COURTS = 8;
-    let currentCourt = 1;
-    let gameRef = ref(db, 'padel/court1');
-
+ 
+    /* ── Читаємо номер корту з URL при старті ── */
+    const _urlParams = new URLSearchParams(window.location.search);
+    let currentCourt = parseInt(_urlParams.get('court')) || 1;
+    if (currentCourt < 1 || currentCourt > TOTAL_COURTS) currentCourt = 1;
+    let gameRef = ref(db, 'padel/court' + currentCourt);
+ 
     function buildCourtBar() {
         const bar = document.getElementById('court-bar');
         bar.innerHTML = '<span class="court-label">Корт:</span>';
         for (let i = 1; i <= TOTAL_COURTS; i++) {
             const btn = document.createElement('button');
-            btn.className = 'court-chip' + (i===1?' active':'');
+            btn.className = 'court-chip' + (i === currentCourt ? ' active' : '');
             btn.textContent = 'Court ' + i;
             btn.onclick = () => switchCourt(i);
             btn.id = 'court-chip-' + i;
             bar.appendChild(btn);
         }
+        /* Кнопка "🔗" — копіює посилання на поточний корт */
+        const linkBtn = document.createElement('button');
+        linkBtn.id = 'court-link-btn';
+        linkBtn.title = 'Копіювати посилання на цей корт';
+        linkBtn.style.cssText = 'flex-shrink:0;padding:6px 10px;border-radius:20px;border:1px solid rgba(255,255,255,0.15);background:transparent;color:rgba(255,255,255,0.45);font-size:13px;cursor:pointer;transition:0.2s;margin-left:4px;';
+        linkBtn.textContent = '🔗';
+        linkBtn.onclick = () => {
+            const url = getCourtUrl(currentCourt);
+            navigator.clipboard.writeText(url).then(() => {
+                linkBtn.textContent = '✓';
+                setTimeout(() => { linkBtn.textContent = '🔗'; }, 1500);
+            }).catch(() => { prompt('Посилання на корт:', url); });
+        };
+        bar.appendChild(linkBtn);
     }
-
+ 
+    function getCourtUrl(n) {
+        const u = new URL(window.location.href);
+        u.searchParams.set('court', n);
+        return u.toString();
+    }
+ 
     function switchCourt(n) {
         currentCourt = n;
         gameRef = ref(db, 'padel/court' + n);
+ 
+        /* Оновлюємо URL без перезавантаження */
+        history.replaceState({}, '', getCourtUrl(n));
+ 
         document.querySelectorAll('.court-chip').forEach(c => c.classList.remove('active'));
         document.getElementById('court-chip-' + n).classList.add('active');
         document.getElementById('topbar-court').textContent = 'COURT ' + n;
@@ -638,7 +697,7 @@
             updateControlUI();
         }, { onlyOnce: true });
     }
-
+ 
     const pts = [0, 15, 30, 40, "AD"];
     let state = {
         scores: [0,0], games: [0,0], setsHistory: [[],[]], server: 0,
@@ -647,7 +706,7 @@
         notifText: "", showFinish: false, showIntro: false, showLogo: false,
         showBoard: true, showStats: false, deuceMode: "golden", prosetLimit: 8,
         americanLimit: 15, p1name: "Команда А", p2name: "Команда Б",
-        courtName: "COURT 1", alertKey: "", alertText: "", alertMode: "", faultTeam: null, isGoldenActive: false, hideScoreOnly: false, goldenWinnerKey: "", qrUrl: "", qrText: "", showCameraCover: false
+        courtName: `COURT ${currentCourt}`, alertKey: "", alertText: "", alertMode: "", faultTeam: null, isGoldenActive: false, hideScoreOnly: false, goldenWinnerKey: "", qrUrl: "", qrText: "", showCameraCover: false
     };
     let ui = {
         accentBlue: '#0055ff', ballColor: '#ccff00', teamNameColor: '#ffffff',
@@ -660,7 +719,7 @@
     };
     let historyStack = [];
     let gamePointCountP1 = 0, gamePointCountP2 = 0;
-
+ 
     function vibTap(btnEl, pattern) {
         if (navigator.vibrate) navigator.vibrate(pattern || 40);
         if (btnEl) {
@@ -670,18 +729,18 @@
             setTimeout(() => btnEl.classList.remove('btn-tapped'), 300);
         }
     }
-
+ 
     function pushState() {
         set(gameRef, { state, ui }).catch(e => console.error(e));
     }
-
+ 
     const connRef = ref(db, '.info/connected');
     onValue(connRef, (snap) => {
         const el = document.getElementById('conn-status');
         if (snap.val()) { el.textContent = 'ОНЛАЙН'; el.className = 'online'; }
         else { el.textContent = 'ОФЛАЙН'; el.className = 'offline'; }
     });
-
+ 
     onValue(gameRef, (snap) => {
         const d = snap.val();
         if (d) {
@@ -690,7 +749,7 @@
         }
         updateControlUI();
     }, { onlyOnce: true });
-
+ 
     function addPoint(p) {
         historyStack.push(JSON.parse(JSON.stringify(state)));
         if (!state.isGameActive) {
@@ -698,11 +757,13 @@
             if (!state._setStartTime) state._setStartTime = Date.now();
         }
         const o = 1 - p;
-
+ 
         if (state.isAmerican) {
             state.scores[p]++;
             if (state.scores[p] >= state.americanLimit) winGame(p);
-            if ((state.scores[0]+state.scores[1])%2===0) state.server = 1-state.server;
+            const total = state.scores[0] + state.scores[1];
+            // Перша подача — 1 розіграш, далі кожні 2
+            if (total === 1 || (total > 1 && (total - 1) % 2 === 0)) state.server = 1 - state.server;
         } else if (state.isTiebreak) {
             state.scores[p]++;
             if (state.scores[p]>=7 && state.scores[p]-state.scores[o]>=2) winGame(p);
@@ -716,7 +777,7 @@
                 updateControlUI();
                 return;
             }
-
+ 
             if (state.scores[p] < 3) {
                 state.scores[p]++;
                 if (state.scores[0] === 3 && state.scores[1] === 3) {
@@ -765,17 +826,17 @@
         pushState();
         updateControlUI();
     }
-
+ 
     function winGame(p) {
         state.games[p]++;
         state.scores = [0,0]; state.deuceCycles = 0; state.isGoldenActive = false; state.isGameActive = false;
         state.server = 1-state.server;
         gamePointCountP1 = 0; gamePointCountP2 = 0;
-
+ 
         const totalGames = state.games[0]+state.games[1];
         const isOddGame = totalGames%2!==0;
         const lim = state.prosetLimit || 8;
-
+ 
         let isSetFinished = false;
         if (state.isProset) {
             if (state.isTiebreak || (state.games[p]>=lim && state.games[p]-state.games[1-p]>=2)) isSetFinished = true;
@@ -784,20 +845,20 @@
             if (state.isTiebreak || (state.games[p]>=6 && state.games[p]-state.games[1-p]>=2)) isSetFinished = true;
             else if (state.games[0]===6 && state.games[1]===6) state.isTiebreak = true;
         } else { isSetFinished = true; }
-
+ 
         if (isSetFinished) {
             const now = Date.now();
             const setStart = state._setStartTime || now;
             const elapsed = Math.max(1, Math.round((now - setStart) / 60000));
             if (!state.setTimes) state.setTimes = [0,0,0];
             state.setTimes[state.activeSetIndex||0] = elapsed;
-
+ 
             state.setsHistory[0].push(state.games[0]);
             state.setsHistory[1].push(state.games[1]);
             state.games = [0,0]; state.isTiebreak = false;
             state.activeSetIndex = Math.min((state.activeSetIndex||0)+1, 2);
             state._setStartTime = Date.now();
-
+ 
             state._lastStatsIsSetEnd = true;
             state.showStats = true;
             setTimeout(() => { state.showStats = false; state._lastStatsIsSetEnd = false; pushState(); }, 5100);
@@ -807,11 +868,11 @@
             setTimeout(() => { state.showStats = false; pushState(); }, 5100);
         }
     }
-
+ 
     function computeNotif() {
         const s = state.scores; const g = state.games;
         let txt = ""; let alertText = ""; let alertMode = "";
-
+ 
         if (state.isGoldenActive) {
             txt = "GOLDEN POINT";
         } else if (state.isGameActive && !state.isTiebreak && !state.isAmerican) {
@@ -848,7 +909,7 @@
             }
         }
     }
-
+ 
     function doFault(btnEl) {
         const kicker = state.server;
         state.faultTeam = kicker;
@@ -860,7 +921,7 @@
         updateControlUI();
         setTimeout(() => { state.faultTeam = null; pushState(); }, 1600);
     }
-
+ 
     function doUndo(btnEl) {
         if (historyStack.length > 0) {
             vibTap(btnEl, [30, 20, 30]);
@@ -869,7 +930,7 @@
             updateControlUI();
         }
     }
-
+ 
     function setServer(p) { state.server = p; pushState(); updateControlUI(); }
     function sendToggle(key, val) { state[key] = val; pushState(); }
     function sendMode() {
@@ -887,7 +948,7 @@
         clearTimeout(_dbTimer);
         _dbTimer = setTimeout(() => pushState(), delay || 400);
     }
-
+ 
     function liveUpdateName() {
         state.p1name = document.getElementById('s-p1').value || "Команда А";
         state.p2name = document.getElementById('s-p2').value || "Команда Б";
@@ -895,18 +956,44 @@
         updateControlUI();
         debouncedPush(400);
     }
-
+ 
     function liveUpdateQRData() {
         state.qrUrl = document.getElementById('s-qr-url').value || "";
         state.qrText = document.getElementById('s-qr-text').value || "";
         debouncedPush(500);
     }
-
-    function liveUpdateCameraLink() {
-        ui.cameraVideoUrl = document.getElementById('s-camera-video-url').value || "";
+ 
+    function liveUpdateSplitUrl() {
+        ui.splitScreenUrl = document.getElementById('s-split-url').value || "";
         debouncedPush(600);
     }
-
+ 
+    // ── ГОТОВІ ТЕМИ ──
+    function applyTheme(theme) {
+        const hexToRgba = (hex, a) => {
+            const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+            return `rgba(${r},${g},${b},${a})`;
+        };
+        if (theme === 'blue') {
+            ui.accentBlue = '#0055ff'; ui.ballColor = '#ccff00';
+            ui.teamNameColor = '#ffffff'; ui.scoreColor = '#ffffff';
+            ui.panelBg = 'rgba(30,30,50,0.82)'; ui.drawerBg = 'rgba(20,20,40,0.88)';
+            ui.popupBg = '#1a1a3e';
+        } else if (theme === 'grey') {
+            ui.accentBlue = '#888888'; ui.ballColor = '#cccccc';
+            ui.teamNameColor = '#ffffff'; ui.scoreColor = '#ffffff';
+            ui.panelBg = 'rgba(80,80,80,0.75)'; ui.drawerBg = 'rgba(60,60,60,0.80)';
+            ui.popupBg = '#555555';
+        } else if (theme === 'dark') {
+            ui.accentBlue = '#333333'; ui.ballColor = '#aaaaaa';
+            ui.teamNameColor = '#eeeeee'; ui.scoreColor = '#eeeeee';
+            ui.panelBg = 'rgba(18,18,18,0.90)'; ui.drawerBg = 'rgba(10,10,10,0.92)';
+            ui.popupBg = '#222222';
+        }
+        pushState();
+    }
+    window.applyTheme = applyTheme;
+ 
     function liveUpdateUI() {
         const hexToRgba = (hex, a) => {
             const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
@@ -916,7 +1003,7 @@
         const da = document.getElementById('c-drawer-alpha').value/100;
         document.getElementById('c-panel-alpha-val').textContent = document.getElementById('c-panel-alpha').value;
         document.getElementById('c-drawer-alpha-val').textContent = document.getElementById('c-drawer-alpha').value;
-
+ 
         ui.accentBlue = document.getElementById('c-accent').value;
         ui.ballColor = document.getElementById('c-ball').value;
         ui.teamNameColor = document.getElementById('c-names').value;
@@ -932,9 +1019,10 @@
         ui.sbTop    = parseInt(document.getElementById('g-y').value);
         ui.sbLeft   = parseInt(document.getElementById('g-x').value);
         ui.sbScale  = (document.getElementById('g-scale').value / 100).toFixed(2);
+        ui.sponsorLogoSize = parseInt(document.getElementById('g-sponsor-size').value) || 80;
         debouncedPush(300);
     }
-
+ 
     function gVal(inId, outId) { document.getElementById(outId).textContent = document.getElementById(inId).value; }
     function uploadLogoUI(event, key, slot) {
         const file = event.target.files[0]; if (!file) return;
@@ -947,7 +1035,7 @@
         if (src) { img.src = src; img.style.display = 'block'; empty.style.display = 'none'; }
         else { img.src = ''; img.style.display = 'none'; empty.style.display = 'block'; }
     }
-
+ 
     function uploadIntroAsset(event, key, slot) {
         const file = event.target.files[0]; if (!file) return;
         const r = new FileReader(); r.onload = () => { ui[key] = r.result; renderIntroAssetPreview(slot, r.result); pushState(); }; r.readAsDataURL(file);
@@ -959,7 +1047,7 @@
         if (src) { img.src = src; img.style.display = 'block'; empty.style.display = 'none'; }
         else { img.src = ''; img.style.display = 'none'; empty.style.display = 'block'; }
     }
-
+ 
     function uploadCameraAsset(event) {
         const file = event.target.files[0]; if (!file) return;
         const r = new FileReader();
@@ -972,30 +1060,20 @@
         r.readAsDataURL(file);
     }
     function clearCameraAsset() {
-        ui.cameraAssetSrc = '';
-        ui.cameraAssetType = '';
-        renderCameraAssetPreview('', '');
-        pushState();
+        ui.cameraAssetSrc = ''; ui.cameraAssetType = '';
+        renderCameraAssetPreview('', ''); pushState();
     }
     function renderCameraAssetPreview(src, type) {
-        const img   = document.getElementById('prev-img-cammedia');
-        const vid   = document.getElementById('prev-vid-cammedia');
+        const img = document.getElementById('prev-img-cammedia');
+        const vid = document.getElementById('prev-vid-cammedia');
         const empty = document.getElementById('prev-empty-cammedia');
-        img.style.display = 'none';
-        vid.style.display = 'none';
-        empty.style.display = 'none';
+        img.style.display = 'none'; vid.style.display = 'none'; empty.style.display = 'none';
         if (!src) { empty.style.display = 'block'; return; }
         const isVideo = type === 'video' || (typeof src === 'string' && src.startsWith('data:video'));
-        if (isVideo) {
-            if (vid.src !== src) vid.src = src;
-            vid.style.display = 'block';
-            vid.play().catch(() => {});
-        } else {
-            if (img.src !== src) img.src = src;
-            img.style.display = 'block';
-        }
+        if (isVideo) { if (vid.src !== src) vid.src = src; vid.style.display = 'block'; vid.play().catch(()=>{}); }
+        else { if (img.src !== src) img.src = src; img.style.display = 'block'; }
     }
-
+ 
     function refreshLogoPreviews() {
         if (ui.logoSrc)   renderLogoPreview('main',  ui.logoSrc);
         if (ui.statLogoT) renderLogoPreview('statT', ui.statLogoT);
@@ -1007,7 +1085,7 @@
         if (ui.cameraAssetSrc) renderCameraAssetPreview(ui.cameraAssetSrc, ui.cameraAssetType || '');
         if (document.getElementById('tog-logo-main')) document.getElementById('tog-logo-main').checked = !!state.showLogo;
     }
-
+ 
     function confirmReset() {
         if (confirm(`Скинути матч на Court ${currentCourt}?`)) {
             state = {
@@ -1018,31 +1096,34 @@
                 notifText: "", showFinish: false, showIntro: false,
                 showLogo: state.showLogo, showBoard: true, showStats: false,
                 prosetLimit: state.prosetLimit, americanLimit: state.americanLimit,
-                p1name: "Команда А", p2name: "Команда Б", courtName: `COURT ${currentCourt}`,
-                alertKey: "", alertText: "", alertMode: "", faultTeam: null, _setStartTime: null, _lastStatsIsSetEnd: false, hideScoreOnly: false, goldenWinnerKey: "", qrUrl: "", qrText: "", showCameraCover: false
+                p1name: "", p2name: "", courtName: `COURT ${currentCourt}`,
+                alertKey: "", alertText: "", alertMode: "", faultTeam: null,
+                _setStartTime: null, _lastStatsIsSetEnd: false,
+                hideScoreOnly: state.hideScoreOnly, goldenWinnerKey: "",
+                qrUrl: state.qrUrl, qrText: state.qrText,
+                showCameraCover: false, showSplitScreen: state.showSplitScreen
             };
             historyStack = []; gamePointCountP1 = 0; gamePointCountP2 = 0;
-            document.getElementById('s-p1').value = "Команда А";
-            document.getElementById('s-p2').value = "Команда Б";
-            document.getElementById('s-qr-url').value = "";
-            document.getElementById('s-qr-text').value = "";
+            document.getElementById('s-p1').value = "";
+            document.getElementById('s-p2').value = "";
             document.getElementById('tog-camera-cover').checked = false;
+            // ui (логотипи, кольори, геометрія) — залишаються без змін
             set(gameRef, { state, ui }).catch(e => console.error(e));
             updateControlUI();
         }
     }
-
+ 
     function updateControlUI() {
         const s = state.scores; const g = state.games;
         const p1 = state.p1name || "Команда А"; const p2 = state.p2name || "Команда Б";
-
+ 
         document.getElementById('disp-p1').textContent = p1;
         document.getElementById('disp-p2').textContent = p2;
         document.getElementById('disp-p1-short').textContent = p1.toUpperCase().substring(0,10);
         document.getElementById('disp-p2-short').textContent = p2.toUpperCase().substring(0,10);
         document.getElementById('serve-p1-lbl').textContent = p1.toUpperCase().substring(0,7);
         document.getElementById('serve-p2-lbl').textContent = p2.toUpperCase().substring(0,7);
-
+ 
         const getL = (i) => {
             if (state.isAmerican || state.isTiebreak) return s[i];
             return s[i]===4 ? "AD" : (s[1-i]===4 ? "" : pts[s[i]]);
@@ -1051,15 +1132,15 @@
         document.getElementById('disp-score-p2').textContent = getL(1);
         document.getElementById('disp-games-p1').textContent = g[0];
         document.getElementById('disp-games-p2').textContent = g[1];
-
+ 
         document.getElementById('serve-0').classList.toggle('active', state.server===0);
         document.getElementById('serve-1').classList.toggle('active', state.server===1);
-
+ 
         if (document.getElementById('tog-board')) document.getElementById('tog-board').checked = state.showBoard !== false;
         document.getElementById('tog-intro').checked = !!state.showIntro;
         document.getElementById('tog-logo').checked = !!state.showLogo;
         document.getElementById('tog-camera-cover').checked = !!state.showCameraCover;
-
+ 
         document.getElementById('mini-p1').textContent = p1.toUpperCase();
         document.getElementById('mini-p2').textContent = p2.toUpperCase();
         document.getElementById('mini-score-p1').textContent = getL(0);
@@ -1077,7 +1158,7 @@
         document.getElementById('btn-score-p1').textContent = getL(0);
         document.getElementById('btn-score-p2').textContent = getL(1);
     }
-
+ 
     window.openSettings = function() {
         document.getElementById('s-p1').value = state.p1name || "Команда А";
         document.getElementById('s-p2').value = state.p2name || "Команда Б";
@@ -1091,7 +1172,8 @@
         
         document.getElementById('s-qr-url').value = state.qrUrl || "";
         document.getElementById('s-qr-text').value = state.qrText || "";
-        document.getElementById('s-camera-video-url').value = ui.cameraVideoUrl || "";
+        document.getElementById('s-split-url').value = ui.splitScreenUrl || "";
+        if (document.getElementById('s-split-screen')) document.getElementById('s-split-screen').checked = !!state.showSplitScreen;
         
         if(ui.sbW) document.getElementById('g-w').value = parseInt(ui.sbW);
         if(ui.sbH) document.getElementById('g-h').value = parseInt(ui.sbH);
@@ -1100,7 +1182,8 @@
         if(ui.sbTop) document.getElementById('g-y').value = ui.sbTop;
         if(ui.sbLeft) document.getElementById('g-x').value = ui.sbLeft;
         if(ui.sbScale) document.getElementById('g-scale').value = Math.round(ui.sbScale * 100);
-
+        if(ui.sponsorLogoSize) { document.getElementById('g-sponsor-size').value = ui.sponsorLogoSize; document.getElementById('g-sponsor-size-val').textContent = ui.sponsorLogoSize; }
+ 
         const list = document.getElementById('sponsor-logo-list'); list.innerHTML = '';
         (ui.sponsorLogos || []).forEach((logo, i) => {
             const row = document.createElement('div'); row.className = 'settings-input-row';
@@ -1114,7 +1197,7 @@
         refreshLogoPreviews();
         document.getElementById('settings-panel').classList.add('open');
     };
-
+ 
     function toggleSponsor(i, val) { if (ui.sponsorLogos[i]) { ui.sponsorLogos[i].visible = val; pushState(); } }
     function removeSponsor(i) { ui.sponsorLogos.splice(i, 1); window.openSettings(); pushState(); }
     function uploadSponsor(event, i) {
@@ -1122,7 +1205,7 @@
         const r = new FileReader(); r.onload = () => { if (!ui.sponsorLogos[i]) ui.sponsorLogos[i] = { visible: true }; ui.sponsorLogos[i].src = r.result; window.openSettings(); pushState(); }; r.readAsDataURL(file);
     }
     function addSponsorSlot() { if (!ui.sponsorLogos) ui.sponsorLogos = []; ui.sponsorLogos.push({ src: '', visible: true }); window.openSettings(); }
-
+ 
     window.sendAction = (type, p, btnEl) => {
         if (type==='point') { vibTap(btnEl, 35); addPoint(p); }
         else if (type==='fault') doFault(btnEl);
@@ -1133,16 +1216,18 @@
     window.liveUpdateName = liveUpdateName; window.liveUpdateUI = liveUpdateUI; window.gVal = gVal;
     window.confirmReset = confirmReset; window.closeSettings = () => document.getElementById('settings-panel').classList.remove('open');
     
-    window.saveAllSettings = () => { liveUpdateName(); liveUpdateQRData(); liveUpdateCameraLink(); liveUpdateUI(); sendMode(); window.closeSettings(); };
+    window.saveAllSettings = () => { liveUpdateName(); liveUpdateQRData(); liveUpdateSplitUrl(); liveUpdateUI(); sendMode(); window.closeSettings(); };
     window.liveUpdateQRData = liveUpdateQRData;
-    window.liveUpdateCameraLink = liveUpdateCameraLink;
+    window.liveUpdateSplitUrl = liveUpdateSplitUrl;
     
     window.addSponsorSlot = addSponsorSlot; window.removeSponsor = removeSponsor; window.toggleSponsor = toggleSponsor; window.uploadSponsor = uploadSponsor;
     window.uploadLogoUI = uploadLogoUI; window.clearLogo = clearLogo;
     window.uploadIntroAsset = uploadIntroAsset; window.clearIntroAsset = clearIntroAsset;
     window.uploadCameraAsset = uploadCameraAsset; window.clearCameraAsset = clearCameraAsset;
-
-    buildCourtBar(); updateControlUI();
+ 
+    buildCourtBar(); 
+    document.getElementById('topbar-court').textContent = 'COURT ' + currentCourt;
+    updateControlUI();
 </script>
 </body>
 </html>
