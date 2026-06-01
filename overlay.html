@@ -69,29 +69,28 @@
         /* КВАДРАТНИЙ ЛОГОТИП ЗЛІВА, ВИРІВНЯНИЙ ТА ПРИЖАТИЙ ВПРИТУЛ ДО ТАБЛА */
         #logo-container {
             position: relative;
-            width: var(--sb-h); /* висота дорівнює ширині, утворюючи ідеальний квадрат */
+            width: var(--sb-h);
             height: 100%;
-            background: #ffffff;
+            background: transparent;
             border-radius: var(--sb-radius) 0 0 var(--sb-radius);
-            padding: 10px;
+            padding: 0;
             display: flex; align-items: center; justify-content: center;
             opacity: 0; z-index: 3;
-            margin-right: calc(var(--sb-h) * -1); /* Хітрість для безшовної склейки */
+            margin-right: calc(var(--sb-h) * -1);
             transform: translateX(-30px);
             transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.35s ease, margin-right 0.4s cubic-bezier(0.19, 1, 0.22, 1);
             box-sizing: border-box;
             flex-shrink: 0;
+            overflow: hidden;
         }
-        /* Коли ВКЛ — притискається до основного табла без відступів */
         #logo-container.active { 
             transform: translateX(0); 
             opacity: 1; 
             margin-right: 0; 
         }
-        /* Стиснення фотографії/логотипу, щоб був максимально легким і правильного розміру */
         #logo-container img { 
-            max-width: 100%; 
-            max-height: 100%; 
+            width: 100%; 
+            height: 100%; 
             object-fit: contain; 
             display: block;
         }
@@ -220,32 +219,48 @@
         .deuce-row-lbl.dr-txt-show { animation: deuce-row-txt 0.22s 0.22s ease forwards; }
 
         /* ── STATS OVERLAY ── */
-        @-webkit-keyframes stats-in  { 0%{opacity:0;transform:translateY(30px) scale(0.96)} 100%{opacity:1;transform:translateY(0) scale(1)} }
-        @-webkit-keyframes stats-out { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-20px) scale(0.97)} }
-        @keyframes stats-in  { 0%{opacity:0;transform:translateY(30px) scale(0.96)} 100%{opacity:1;transform:translateY(0) scale(1)} }
-        @keyframes stats-out { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-20px) scale(0.97)} }
+        @-webkit-keyframes stats-in  {
+            0%  { opacity:0; transform:translateY(40px) scale(0.93); filter:blur(4px); }
+            60% { opacity:1; filter:blur(0px); }
+            100%{ opacity:1; transform:translateY(0) scale(1); filter:blur(0px); }
+        }
+        @-webkit-keyframes stats-out {
+            0%  { opacity:1; transform:translateY(0) scale(1); filter:blur(0px); }
+            100%{ opacity:0; transform:translateY(-30px) scale(0.95); filter:blur(3px); }
+        }
+        @keyframes stats-in  {
+            0%  { opacity:0; transform:translateY(40px) scale(0.93); filter:blur(4px); }
+            60% { opacity:1; filter:blur(0px); }
+            100%{ opacity:1; transform:translateY(0) scale(1); filter:blur(0px); }
+        }
+        @keyframes stats-out {
+            0%  { opacity:1; transform:translateY(0) scale(1); filter:blur(0px); }
+            100%{ opacity:0; transform:translateY(-30px) scale(0.95); filter:blur(3px); }
+        }
         #tv-stats-overlay {
             position: fixed; inset: 0; width: 100vw; height: 100vh;
             background: transparent; display: flex; align-items: center; justify-content: center;
             opacity: 0; pointer-events: none; z-index: 15000;
         }
-        #tv-stats-overlay.active   { animation: stats-in  0.55s cubic-bezier(0.25,1,0.5,1) forwards; }
-        #tv-stats-overlay.closing  { animation: stats-out 0.4s  ease forwards; }
+        #tv-stats-overlay.active   { animation: stats-in  0.65s cubic-bezier(0.25,1,0.5,1) forwards; }
+        #tv-stats-overlay.closing  { animation: stats-out 0.45s ease forwards; }
         .stats-card {
-            background: rgba(20, 20, 26, 0.75);
-            border: 1px solid rgba(255,255,255,0.15); 
-            box-shadow: 0 30px 70px rgba(0,0,0,0.85);
+            background: rgba(20, 20, 26, 0.55);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid rgba(255,255,255,0.18); 
+            box-shadow: 0 30px 80px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.08);
             width: fit-content; min-width: 480px; border-radius: 22px; padding: 38px 54px; position: relative; display: flex; flex-direction: column; gap: 16px;
         }
         .stats-logo-left  { position: absolute; top: 15px; left: 20px;  height: 45px; max-width: 120px; object-fit: contain; }
         .stats-logo-right { position: absolute; top: 15px; right: 20px; height: 45px; max-width: 120px; object-fit: contain; }
-        .stats-card-title { font-size: 13px; font-weight: 900; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 6px; text-align: center; }
+        .stats-card-title { font-size: 13px; font-weight: 900; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 6px; text-align: center; }
         .stats-table { min-width: 350px; border-collapse: collapse; }
         .stats-row { height: 86px; border-bottom: 1px solid rgba(255,255,255,0.06); }
         .stats-team-name { text-align: left; font-size: 36px; font-weight: bold; font-family: var(--team-font-family); padding-right: 40px; color: white; white-space: nowrap; text-transform: uppercase; }
         .stats-set-column { width: 95px; text-align: center; }
         .stats-games-num  { font-size: 46px; font-weight: 900; font-family: var(--team-font-family); color: white; }
-        .stats-time-label { font-size: 20px; font-weight: 900; color: #7eb8ff; font-family: 'Inter', sans-serif; margin-top: 1px; letter-spacing: 0.5px; }
+        .stats-time-label { font-size: 26px; font-weight: 900; color: #7eb8ff; font-family: 'Inter', sans-serif; margin-top: 2px; letter-spacing: 0.5px; }
         
         /* ── ТАБЛО РЕЗУЛЬТАТУ / КІНЕЦЬ МАТЧУ ── */
         #match-finish-overlay {
@@ -487,6 +502,7 @@
         #tv-camera-cover-overlay.active { opacity: 1; pointer-events: auto; }
         #camera-cover-media-box { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
         #camera-cover-img { max-width: 80%; max-height: 80vh; object-fit: contain; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+        #camera-cover-video { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
         #camera-cover-iframe { width: 100%; height: 100%; border: none; position: absolute; inset: 0; }
 
         @-webkit-keyframes intro-bg-in { 0% { opacity: 0; } 100% { opacity: 1; } }
@@ -564,7 +580,27 @@
 <div id="tv-camera-cover-overlay">
     <div id="camera-cover-media-box">
         <img id="camera-cover-img" src="" style="display:none;" alt="">
-        <iframe id="camera-cover-iframe" style="display:none;" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <video id="camera-cover-video" style="display:none;" autoplay loop playsinline></video>
+    </div>
+    <div id="camera-cover-download-btns" style="
+        position:absolute; bottom:40px; right:40px;
+        display:flex; gap:12px; z-index:10;
+        opacity:0; transition:opacity 0.3s;
+    ">
+        <a id="camera-dl-photo" download="photo.jpg" style="
+            background:rgba(255,255,255,0.15); backdrop-filter:blur(10px);
+            border:1px solid rgba(255,255,255,0.3); border-radius:10px;
+            color:#fff; font-family:'Inter',sans-serif; font-size:13px; font-weight:700;
+            padding:10px 18px; text-decoration:none; letter-spacing:1px;
+            display:none; align-items:center; gap:6px;
+        ">⬇ ФОТО</a>
+        <a id="camera-dl-video" download="video.mp4" style="
+            background:rgba(255,255,255,0.15); backdrop-filter:blur(10px);
+            border:1px solid rgba(255,255,255,0.3); border-radius:10px;
+            color:#fff; font-family:'Inter',sans-serif; font-size:13px; font-weight:700;
+            padding:10px 18px; text-decoration:none; letter-spacing:1px;
+            display:none; align-items:center; gap:6px;
+        ">⬇ ВІДЕО</a>
     </div>
 </div>
 
@@ -618,7 +654,7 @@
     <div class="stats-card">
         <img id="stat-logo-t" class="stats-logo-left" src="" alt="">
         <img id="stat-logo-f" class="stats-logo-right" src="" alt="">
-        <div class="stats-card-title">Статистика матчу</div>
+        <div class="stats-card-title" id="stats-card-title">Статистика матчу</div>
         <table class="stats-table">
             <thead id="stats-table-head"></thead>
             <tbody id="stats-table-body"></tbody>
@@ -740,13 +776,23 @@
         }, 1200);
     }
 
+    function getThemeWipeColor(ui) {
+        if (!ui) return null;
+        const a = (ui.accentBlue || '').toLowerCase();
+        if (a === '#888888' || a === '#888') return 'linear-gradient(135deg,#666 0%,#888 60%,#aaa 100%)';
+        if (a === '#333333' || a === '#333') return 'linear-gradient(135deg,#222 0%,#333 60%,#444 100%)';
+        return null; // використати стандартний фіолетовий
+    }
+
     function playDeuceWipe(text, color) {
         const bg  = document.getElementById('deuce-wipe-bg');
         const lbl = document.getElementById('deuce-wipe-label');
         const txt = document.getElementById('deuce-wipe-text');
         if (!bg || !lbl) return;
 
-        if (color) bg.style.background = color;
+        const themeColor = getThemeWipeColor(window._lastUI);
+        if (themeColor) bg.style.background = themeColor;
+        else if (color) bg.style.background = color;
         else bg.style.background = 'linear-gradient(135deg,#4a235a 0%,#6c3483 60%,#7d3c98 100%)';
 
         txt.textContent = text || 'DEUCE';
@@ -766,12 +812,31 @@
         }, 1300);
     }
 
-    function updateStyle(p, v) { document.documentElement.style.setProperty(p, v); }
+    /* ── кеш попередніх значень: оновлюємо DOM тільки якщо щось змінилось ── */
+    let _cache = {};
+    function _set(id, prop, val) {
+        const key = id + '.' + prop;
+        if (_cache[key] === val) return;
+        _cache[key] = val;
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (prop === 'text')      el.innerText = val;
+        else if (prop === 'cls')  { /* handled inline */ }
+        else if (prop === 'html') el.innerHTML = val;
+    }
+    function _css(prop, val) {
+        if (_cache['css.' + prop] === val) return;
+        _cache['css.' + prop] = val;
+        document.documentElement.style.setProperty(prop, val);
+    }
+
+    function updateStyle(p, v) { _css(p, v); }
 
     function renderOverlay(d) {
         if (!d) return;
         const state = d.state || {};
         const ui = d.ui || {};
+        window._lastUI = ui; // для доступу в анімаціях
         const scores = state.scores || [0,0];
         const games = state.games || [0,0];
         const setsHistory = state.setsHistory || [[],[]];
@@ -816,11 +881,12 @@
         if (ui.sbTop  !== undefined) document.documentElement.style.setProperty('--sb-top',  ui.sbTop   + 'px');
         if (ui.sbLeft !== undefined) document.documentElement.style.setProperty('--sb-left', ui.sbLeft + 'px');
 
-        document.getElementById('p1-display').innerText = p1name;
-        document.getElementById('p2-display').innerText = p2name;
-        document.getElementById('intro-p1-display').innerText = p1name;
-        document.getElementById('intro-p2-display').innerText = p2name;
-        document.getElementById('intro-court-display').innerText = courtName;
+        /* імена та корт — тільки при зміні */
+        _set('p1-display', 'text', p1name);
+        _set('p2-display', 'text', p2name);
+        _set('intro-p1-display', 'text', p1name);
+        _set('intro-p2-display', 'text', p2name);
+        _set('intro-court-display', 'text', courtName);
 
         /* ЛОГІКА АВТОМАТИЧНОГО ПЕРЕМИКАННЯ ФОТО / ВІДЕО ЗІ ЗВУКОМ ДЛЯ КОМАНДИ 1 */
         const t1PhotoImg = document.getElementById('intro-t1-photo');
@@ -882,14 +948,29 @@
             if (isAmerican || isTiebreak) return scores[i];
             return scores[i] === 4 ? "AD" : (scores[1-i] === 4 ? "" : pts[scores[i]]);
         };
-        document.getElementById('p1-score').innerText = getL(0);
-        document.getElementById('p2-score').innerText = getL(1);
+        const l0 = String(getL(0)), l1 = String(getL(1));
+        _set('p1-score', 'text', l0);
+        _set('p2-score', 'text', l1);
         
         const drawerEl = document.getElementById('drawer');
-        drawerEl.classList.toggle('points-active', isGameActive);
+        const wantActive = isGameActive;
+        if (drawerEl && _cache['drawer.active'] !== wantActive) {
+            _cache['drawer.active'] = wantActive;
+            drawerEl.classList.toggle('points-active', wantActive);
+        }
 
-        if (ui.logoSrc) document.getElementById('logo-img').src = ui.logoSrc;
-        document.getElementById('logo-container').classList.toggle('active', showLogo && !!ui.logoSrc);
+        // М'яч (serve dot) — для сірої теми дуже прозорий щоб не заважати тексту
+        const ballEl0 = document.getElementById('serve-0');
+        const ballEl1 = document.getElementById('serve-1');
+        const isGreyTheme = ui.accentBlue && (ui.accentBlue === '#888888' || ui.accentBlue === '#888' || ui.accentBlue.toLowerCase() === '#888888');
+        const isDarkTheme = ui.accentBlue && (ui.accentBlue === '#333333');
+        if (ballEl0) ballEl0.style.opacity = server === 0 ? (isGreyTheme || isDarkTheme ? '0.35' : '1') : '0';
+        if (ballEl1) ballEl1.style.opacity = server === 1 ? (isGreyTheme || isDarkTheme ? '0.35' : '1') : '0';
+
+        const logoSrcVal = ui.logoSrc || '';
+        if (_cache['logo-img.src'] !== logoSrcVal) { _cache['logo-img.src'] = logoSrcVal; if (logoSrcVal) document.getElementById('logo-img').src = logoSrcVal; }
+        const logoActive = !!(showLogo && logoSrcVal);
+        if (_cache['logo-container.active'] !== logoActive) { _cache['logo-container.active'] = logoActive; document.getElementById('logo-container').classList.toggle('active', logoActive); }
 
         /* СИНХРОНІЗАЦІЯ І ВИСУВАННЯ НИЖНЬОЇ ПЛАШКИ ЗНИЗУ */
         const bnEl   = document.getElementById('bottom-notif');
@@ -926,8 +1007,16 @@
             let h = ""; const historyArr = setsHistory[p] || [];
             historyArr.forEach(g => h += `<div class="set-box-wrapper"><div class="set-box">${g}</div></div>`);
             h += `<div class="set-box-wrapper"><div class="set-box active">${games[p]}</div></div>`;
-            document.getElementById(`p${p+1}-sets`).innerHTML = h;
-            document.getElementById(`serve-${p}`).classList.toggle('active', server === p);
+            const setsId = `p${p+1}-sets`;
+            if (_cache[setsId + '.html'] !== h) {
+                _cache[setsId + '.html'] = h;
+                document.getElementById(setsId).innerHTML = h;
+            }
+            const serveActive = server === p;
+            if (_cache[`serve-${p}.active`] !== serveActive) {
+                _cache[`serve-${p}.active`] = serveActive;
+                document.getElementById(`serve-${p}`).classList.toggle('active', serveActive);
+            }
         });
 
         const alertKey = state.alertKey || "";
@@ -1035,6 +1124,17 @@
             }, 7000);
         }
 
+        /* ПРОSET ІНДИКАТОР */
+        const prosetIndicator = document.getElementById('proset-indicator');
+        if (prosetIndicator) {
+            if (isProset) {
+                prosetIndicator.textContent = `ПРО-СЕТ ${prosetLimit}`;
+                prosetIndicator.classList.add('active');
+            } else {
+                prosetIndicator.classList.remove('active');
+            }
+        }
+
         document.getElementById('scoreboard-anchor').classList.toggle('hidden-board', showBoard === false || showFinish || showIntro);
 
         const finishOverlay = document.getElementById('match-finish-overlay');
@@ -1066,13 +1166,15 @@
             }
         }
 
-        /* АНІМАЦІЯ ТАЙ-БРЕЙК WIPE ОДИН РАЗ ЗА СЕТ */
+        /* АНІМАЦІЯ ТАЙ-БРЕЙК WIPE ОДИН РАЗ ЗА СЕТ — блокуємо повтор */
         const tbBg = document.getElementById('tb-wipe-bg');
         const tbTxt = document.getElementById('tb-wipe-text');
         const tbMatchKey = "SET_" + activeSetIndex + "_TB";
 
-        if (isTiebreak && state._lastTBKey !== tbMatchKey) {
-            state._lastTBKey = tbMatchKey;
+        if (isTiebreak && tbBg.dataset.shownKey !== tbMatchKey) {
+            tbBg.dataset.shownKey = tbMatchKey;
+            const themeColor = getThemeWipeColor(ui);
+            tbBg.style.background = themeColor || '#666666';
             tbBg.classList.add('tb-wipe-active');
             tbTxt.style.animation = "tb-wipe-anim 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards";
             setTimeout(() => {
@@ -1080,8 +1182,8 @@
                 tbTxt.style.animation = "";
             }, 1500);
         } else if (!isTiebreak) {
-            if(state.games && state.games[0]===0 && state.games[1]===0 && setsHistory[0].length===0) {
-                state._lastTBKey = "";
+            if (state.games && state.games[0]===0 && state.games[1]===0 && setsHistory[0].length===0) {
+                tbBg.dataset.shownKey = "";
             }
         }
 
@@ -1099,55 +1201,56 @@
             qrContainer.classList.remove('active');
         }
 
-        /* ПЛЕЄР YOUTUBE ЗАПУСКАЄТЬСЯ ВІДРАЗУ ЗІ ЗВУКОМ ПРИ ВКЛ ЗАСТАВКИ КАМЕРИ */
+        /* ЗАСТАВКА КАМЕРИ — підтримка фото та відео (зі звуком), без YouTube */
         const camOverlay = document.getElementById('tv-camera-cover-overlay');
-        const camImg = document.getElementById('camera-cover-img');
-        const camFrame = document.getElementById('camera-cover-iframe');
+        const camImg     = document.getElementById('camera-cover-img');
+        const camVideo   = document.getElementById('camera-cover-video');
+        const camDlBtns  = document.getElementById('camera-cover-download-btns');
+        const camDlPhoto = document.getElementById('camera-dl-photo');
+        const camDlVideo = document.getElementById('camera-dl-video');
+        const camWasActive = camOverlay.classList.contains('active');
 
         if (state.showCameraCover) {
-            if (!camOverlay.classList.contains('active')) {
-                camImg.style.display = 'none'; camFrame.style.display = 'none';
-                
-                if (ui.cameraVideoUrl) {
-                    let videoLink = ui.cameraVideoUrl;
-                    let videoId = "";
-                    
-                    if (videoLink.includes('v=')) {
-                        videoId = videoLink.split('v=')[1].split('&')[0];
-                    } else if (videoLink.includes('youtu.be/')) {
-                        videoId = videoLink.split('youtu.be/')[1].split('?')[0];
-                    } else if (videoLink.includes('embed/')) {
-                        videoId = videoLink.split('embed/')[1].split('?')[0];
-                    }
-                    
-                    if (videoId) {
-                        videoLink = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=1&playlist=${videoId}&controls=0&modestbranding=1&rel=0`;
-                        camFrame.src = videoLink;
-                        camFrame.style.display = 'block';
-                    } else {
-                        camFrame.src = videoLink;
-                        camFrame.style.display = 'block';
-                    }
+            if (!camWasActive) {
+                camImg.style.display = 'none';
+                camVideo.style.display = 'none';
+                camDlPhoto.style.display = 'none';
+                camDlVideo.style.display = 'none';
+
+                if (ui.cameraAssetSrc && (ui.cameraAssetType === 'video' || ui.cameraAssetSrc.startsWith('data:video'))) {
+                    camVideo.src = ui.cameraAssetSrc;
+                    camVideo.muted = false;
+                    camVideo.style.display = 'block';
+                    camVideo.play().catch(() => { camVideo.muted = true; camVideo.play(); });
+                    camDlVideo.href = ui.cameraAssetSrc;
+                    camDlVideo.style.display = 'flex';
                 } else if (ui.cameraAssetSrc) {
                     camImg.src = ui.cameraAssetSrc;
                     camImg.style.display = 'block';
+                    camDlPhoto.href = ui.cameraAssetSrc;
+                    camDlPhoto.style.display = 'flex';
                 }
                 camOverlay.classList.add('active');
+                setTimeout(() => { if (camDlBtns) camDlBtns.style.opacity = '1'; }, 600);
             }
         } else {
-            if (camOverlay.classList.contains('active')) {
+            if (camWasActive) {
                 camOverlay.classList.remove('active');
-                camFrame.src = '';
+                if (camDlBtns) camDlBtns.style.opacity = '0';
+                camVideo.pause();
+                camVideo.src = '';
             }
         }
 
-        if (ui.statLogoT) document.getElementById('stat-logo-t').src = ui.statLogoT;
-        if (ui.statLogoF) document.getElementById('stat-logo-f').src = ui.statLogoF;
-        renderSponsorLogos(ui.sponsorLogos || []);
+        if (ui.statLogoT && _cache['stat-logo-t'] !== ui.statLogoT) { _cache['stat-logo-t'] = ui.statLogoT; document.getElementById('stat-logo-t').src = ui.statLogoT; }
+        if (ui.statLogoF && _cache['stat-logo-f'] !== ui.statLogoF) { _cache['stat-logo-f'] = ui.statLogoF; document.getElementById('stat-logo-f').src = ui.statLogoF; }
+        renderSponsorLogos(ui.sponsorLogos || [], ui.sponsorLogoSize || 80);
     }
 
     function updateStatsPanel(state) {
         const n1 = state.p1name || "Команда А"; const n2 = state.p2name || "Команда Б";
+        const titleEl = document.getElementById('stats-card-title');
+        if (titleEl) titleEl.textContent = "Статистика матчу";
         const setsHistory = state.setsHistory || [[],[]]; const games = state.games || [0,0];
         const activeSetIndex = state.activeSetIndex || 0; const setTimes = state.setTimes || [];
         const setStartTime = state._setStartTime;
@@ -1217,16 +1320,21 @@
     }
 
     let _lastSponsorKeys = "";
-    function renderSponsorLogos(logos) {
+    function renderSponsorLogos(logos, logoSize) {
         const bar = document.getElementById('sponsor-logos-bar'); if (!bar) return;
-        const key = logos.map(l => l.src + l.visible).join('|'); if (key === _lastSponsorKeys) return;
+        const sz = logoSize || 80;
+        const key = logos.map(l => l.src + l.visible).join('|') + '_' + sz;
+        if (key === _lastSponsorKeys) return;
         _lastSponsorKeys = key;
         const visibleLogos = logos.filter(l => l.src && l.visible !== false);
         [...bar.children].forEach(el => { el.classList.remove('slw-show'); el.classList.add('slw-hide'); });
         setTimeout(() => {
             bar.innerHTML = '';
             visibleLogos.forEach((l, i) => {
-                const wrap = document.createElement('div'); wrap.className = 'sponsor-logo-wrap';
+                const wrap = document.createElement('div');
+                wrap.className = 'sponsor-logo-wrap';
+                wrap.style.width = sz + 'px';
+                wrap.style.height = Math.round(sz * 0.65) + 'px';
                 const img = document.createElement('img'); img.src = l.src; img.alt = '';
                 wrap.appendChild(img); bar.appendChild(wrap);
                 setTimeout(() => wrap.classList.add('slw-show'), i * 80);
@@ -1238,8 +1346,105 @@
     const courtId = urlParams.get('court') || '1';
     document.title = `Padel Overlay — Court ${courtId}`;
 
-    const gameRef = ref(db, `padel/court${courtId}`);
-    onValue(gameRef, (snapshot) => { renderOverlay(snapshot.val()); });
+    /* ── ПАРАЛЕЛЬНИЙ КОРТ: SPLIT-SCREEN ── */
+    const parallelCourtUrl = urlParams.get('parallel');
+    if (parallelCourtUrl) {
+        const splitWrap = document.createElement('div');
+        splitWrap.id = 'split-screen-wrap';
+        splitWrap.style.cssText = `
+            position:fixed; inset:0; width:100vw; height:100vh;
+            display:flex; flex-direction:row; z-index:29500;
+            pointer-events:none; opacity:0;
+            transition: opacity 0.5s ease;
+        `;
+
+        // Ліва рамка — поточний корт
+        const frameL = document.createElement('div');
+        frameL.id = 'split-frame-left';
+        frameL.style.cssText = `
+            flex:1; position:relative; border-right:2px solid rgba(255,255,255,0.2);
+            box-sizing:border-box; overflow:hidden;
+        `;
+        const labelL = document.createElement('div');
+        labelL.style.cssText = `
+            position:absolute; top:12px; left:50%; transform:translateX(-50%);
+            background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);
+            color:rgba(255,255,255,0.6); font-family:'Inter',sans-serif;
+            font-size:11px; font-weight:900; letter-spacing:2px; text-transform:uppercase;
+            padding:4px 14px; border-radius:20px; z-index:1;
+        `;
+        labelL.textContent = `COURT ${courtId}`;
+        frameL.appendChild(labelL);
+
+        // Права рамка — паралельний корт (iframe)
+        const frameR = document.createElement('div');
+        frameR.id = 'split-frame-right';
+        frameR.style.cssText = `
+            flex:1; position:relative; overflow:hidden;
+            transform-origin:top left;
+        `;
+        const labelR = document.createElement('div');
+        labelR.style.cssText = `
+            position:absolute; top:12px; left:50%; transform:translateX(-50%);
+            background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);
+            color:rgba(255,255,255,0.6); font-family:'Inter',sans-serif;
+            font-size:11px; font-weight:900; letter-spacing:2px; text-transform:uppercase;
+            padding:4px 14px; border-radius:20px; z-index:2;
+        `;
+
+        const parallelUrlObj = new URL(parallelCourtUrl, window.location.href);
+        const pCourtId = parallelUrlObj.searchParams.get('court') || parallelCourtUrl;
+        labelR.textContent = `COURT ${pCourtId}`;
+
+        const iframe = document.createElement('iframe');
+        iframe.src = parallelCourtUrl;
+        iframe.style.cssText = `
+            position:absolute; top:0; left:0;
+            width:200%; height:200%;
+            transform:scale(0.5); transform-origin:top left;
+            border:none; pointer-events:none;
+            background:transparent;
+        `;
+        iframe.setAttribute('allowtransparency','true');
+        frameR.appendChild(labelR);
+        frameR.appendChild(iframe);
+
+        splitWrap.appendChild(frameL);
+        splitWrap.appendChild(frameR);
+        document.body.appendChild(splitWrap);
+
+        // Показувати split-screen тільки якщо state.showSplitScreen
+        const _origRenderOverlay = renderOverlay;
+        window._splitScreenActive = false;
+        function applySplitScreen(show) {
+            if (show === window._splitScreenActive) return;
+            window._splitScreenActive = show;
+            if (show) {
+                splitWrap.style.pointerEvents = 'auto';
+                splitWrap.style.opacity = '1';
+                // Зсуваємо основний контент у ліву половину
+                document.getElementById('scoreboard-anchor').style.transformOrigin = 'top left';
+                const anchor = document.getElementById('scoreboard-anchor');
+                const curScale = parseFloat(anchor.style.transform?.replace(/scale\((.+)\)/,'$1')) || 1;
+                anchor.style.transform = `scale(${curScale * 0.5}) translateX(0)`;
+            } else {
+                splitWrap.style.opacity = '0';
+                splitWrap.style.pointerEvents = 'none';
+                const anchor = document.getElementById('scoreboard-anchor');
+                anchor.style.transform = '';
+            }
+        }
+        // patch renderOverlay to detect showSplitScreen
+        const _patchedRenderOverlay = (d) => {
+            _origRenderOverlay(d);
+            if (d && d.state) applySplitScreen(!!d.state.showSplitScreen);
+        };
+        const gameRef2 = ref(db, `padel/court${courtId}`);
+        onValue(gameRef2, (snapshot) => { _patchedRenderOverlay(snapshot.val()); });
+    } else {
+        const gameRef = ref(db, `padel/court${courtId}`);
+        onValue(gameRef, (snapshot) => { renderOverlay(snapshot.val()); });
+    }
 </script>
 </body>
 </html>
