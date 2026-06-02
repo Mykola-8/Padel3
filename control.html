@@ -114,77 +114,23 @@
         /* LIVE SCOREBOARD PREVIEW */
         #preview-wrap { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
         #preview-inner { padding: 12px 14px 14px; background: repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 8px); }
-        /* ── MINI SCOREBOARD — точна копія оверлея ── */
-        #mini-sb {
-            position: relative; display: flex; align-items: stretch;
-            border-radius: 8px; overflow: visible;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-            width: 100%; height: 76px;
-            border: 1px solid rgba(255,255,255,0.15);
-        }
-        /* Drawer — рахунок очок (справа, як в оверлеї) */
-        #mini-drawer {
-            position: absolute; right: 0; top: 0; width: 18%; height: 100%;
-            background: rgba(40,40,40,0.85); display: flex; flex-direction: column;
-            border-left: 2px solid rgba(255,255,255,0.1);
-            border-radius: 0 8px 8px 0; overflow: hidden; z-index: 1;
-            transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
-        }
+        #mini-sb { position: relative; display: flex; align-items: stretch; border-radius: 8px; overflow: visible; box-shadow: 0 8px 30px rgba(0,0,0,0.6); width: 100%; height: 80px; }
+        #mini-drawer { position: absolute; right: 0; top: 0; width: 18%; height: 100%; display: flex; flex-direction: column; border-left: 1px solid rgba(255,255,255,0.1); border-radius: 0 8px 8px 0; overflow: hidden; z-index: 1; transition: transform 0.6s; }
         #mini-drawer.points-active { transform: translateX(100%); }
-        .mini-pt {
-            flex: 1; display: flex; align-items: center; justify-content: center;
-            font-size: 22px; font-weight: 900; color: white;
-            border-bottom: 2px solid rgba(255,255,255,0.1);
-            font-family: 'Inter', sans-serif;
-        }
+        .mini-pt { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 900; color: white; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .mini-pt:last-child { border-bottom: none; }
-        /* Головна панель (ліворуч) */
-        #mini-main {
-            flex: 1; display: flex; flex-direction: column;
-            background: rgba(60,60,60,0.75);
-            border-left: 7px solid #0055ff;
-            border-radius: 8px 0 0 8px; overflow: hidden;
-        }
-        .mini-row {
-            display: flex; align-items: center; flex: 1;
-            padding: 0 6px 0 8px;
-            border-bottom: 2px solid rgba(255,255,255,0.08); overflow: hidden;
-        }
+        #mini-main { flex: 1; display: flex; flex-direction: column; border-left: 8px solid #0055ff; border-radius: 8px 0 0 8px; overflow: hidden; }
+        .mini-row { display: flex; align-items: center; flex: 1; padding: 0 8px; border-bottom: 1px solid rgba(255,255,255,0.08); overflow: hidden; }
         .mini-row:last-child { border-bottom: none; }
-        .mini-name {
-            flex: 1; font-family: 'Oswald', sans-serif; font-weight: 700;
-            font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;
-            color: white; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-        }
-        /* Serve dot — точно як в оверлеї */
-        .mini-dot {
-            width: 9px; height: 9px; border-radius: 50%;
-            background: #ccff00; box-shadow: 0 0 8px #ccff00;
-            margin: 0 5px; opacity: 0; flex-shrink: 0; transition: opacity 0.25s;
-        }
+        .mini-name { flex: 1; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: white; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .mini-dot { width: 10px; height: 10px; border-radius: 50%; margin: 0 6px; opacity: 0; flex-shrink: 0; transition: opacity 0.3s; }
         .mini-dot.active { opacity: 1; }
-        /* Sets history — точно як в оверлеї */
-        .mini-sets {
-            display: flex; align-items: center; height: 100%;
-            border-left: 2px solid rgba(255,255,255,0.1);
-        }
-        .mini-set-wrap {
-            display: flex; flex-direction: column; align-items: center;
-            padding: 0 7px; justify-content: center;
-            border-right: 1px solid rgba(255,255,255,0.08); height: 100%;
-        }
-        .mini-set {
-            min-width: 20px; height: 24px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px; font-weight: 900; color: white;
-            background: rgba(255,255,255,0.1); border-radius: 4px;
-            font-family: 'Oswald', sans-serif;
-        }
-        .mini-set.cur { background: rgba(255,255,255,0.22); border: 1px solid rgba(255,255,255,0.15); }
-        /* TIE-BREAK / NOTIF badges */
-        #mini-tb-badge { position: absolute; top: -18px; right: 20px; background: #555; color: white; font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 4px 4px 0 0; letter-spacing: 1px; opacity: 0; transition: opacity 0.3s; }
+        .mini-sets { display: flex; align-items: center; height: 100%; border-left: 1px solid rgba(255,255,255,0.08); }
+        .mini-set { min-width: 22px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; color: white; margin: 0 3px; background: rgba(255,255,255,0.08); border-radius: 4px; }
+        .mini-set.cur { background: rgba(255,255,255,0.2); }
+        #mini-tb-badge { position: absolute; top: -18px; right: 20px; background: #444; color: white; font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 4px 4px 0 0; letter-spacing: 1px; opacity: 0; transition: opacity 0.3s; }
         #mini-tb-badge.active { opacity: 1; }
-        #mini-notif-badge { position: absolute; bottom: -18px; left: 14px; background: #0055ff; color: white; font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 0 0 4px 4px; letter-spacing: 1px; opacity: 0; transition: opacity 0.3s; }
+        #mini-notif-badge { position: absolute; bottom: -18px; left: 16px; background: #444; color: white; font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 0 0 4px 4px; letter-spacing: 1px; opacity: 0; transition: opacity 0.3s; }
         #mini-notif-badge.active { opacity: 1; }
 
         /* SERVE SWITCH */
@@ -239,9 +185,28 @@
 </div>
 
 <div id="main">
+    <div class="score-section">
+        <div class="score-section-title">Рахунок</div>
+        <div class="score-display">
+            <div class="team-label" id="disp-p1">Команда А</div>
+            <div class="score-nums">
+                <div class="score-badge pts" id="disp-score-p1">0</div>
+                <div class="score-badge games" id="disp-games-p1">0</div>
+            </div>
+        </div>
+        <hr class="score-divider">
+        <div class="score-display">
+            <div class="team-label" id="disp-p2">Команда Б</div>
+            <div class="score-nums">
+                <div class="score-badge pts" id="disp-score-p2">0</div>
+                <div class="score-badge games" id="disp-games-p2">0</div>
+            </div>
+        </div>
+    </div>
+
     <div id="preview-wrap">
         <div class="score-section-title" style="border-bottom:1px solid var(--border);">📺 Превʼю табла (live)</div>
-        <div id="preview-inner" style="padding: 22px 14px 26px;">
+        <div id="preview-inner" style="padding: 26px 14px 26px;">
             <div style="position:relative; display:inline-block; width:100%;">
                 <div id="mini-tb-badge">TIE-BREAK</div>
                 <div id="mini-sb">
@@ -622,6 +587,20 @@
     </div>
 
     <div class="settings-section">
+        <div class="settings-section-title">Паралельний матч (інший корт)</div>
+        <div class="settings-card">
+            <div class="toggle-row">
+                <div><div class="toggle-label">Показати другий корт</div><div class="toggle-sublabel">Розділити екран на два табла</div></div>
+                <label class="switch"><input type="checkbox" id="s-split-screen" onchange="sendToggle('showSplitScreen', this.checked)"><span class="slider"></span></label>
+            </div>
+            <div class="settings-input-row">
+                <label>Посилання на оверлей 2</label>
+                <input type="text" id="s-split-url" placeholder="https://..." style="width:180px; text-align:left;" oninput="liveUpdateSplitUrl()">
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-section">
         <div class="settings-section-title">Тема табла</div>
         <div class="settings-card">
             <div class="settings-input-row" style="flex-direction:column; align-items:flex-start; gap:10px; padding:14px 16px;">
@@ -630,6 +609,7 @@
                     <button onclick="applyTheme('blue')" style="flex:1; padding:12px 6px; border-radius:10px; border:2px solid #0055ff; background:rgba(0,85,255,0.15); color:white; font-size:11px; font-weight:900; cursor:pointer; letter-spacing:1px;">🔵 СИНЄ</button>
                     <button onclick="applyTheme('grey')" style="flex:1; padding:12px 6px; border-radius:10px; border:2px solid #888; background:rgba(136,136,136,0.15); color:white; font-size:11px; font-weight:900; cursor:pointer; letter-spacing:1px;">⚪ СІРЕ</button>
                     <button onclick="applyTheme('dark')" style="flex:1; padding:12px 6px; border-radius:10px; border:2px solid #333; background:rgba(30,30,30,0.4); color:white; font-size:11px; font-weight:900; cursor:pointer; letter-spacing:1px;">⚫ ТЕМНЕ</button>
+                    <button onclick="applyTheme('premier')" style="flex:1; padding:12px 6px; border-radius:10px; border:2px solid #1a6fbf; background:rgba(26,111,191,0.2); color:white; font-size:11px; font-weight:900; cursor:pointer; letter-spacing:1px;">🎾 PREMIER</button>
                 </div>
             </div>
         </div>
@@ -985,8 +965,7 @@
     }
 
     function liveUpdateSplitUrl() {
-        const el = document.getElementById('s-split-url');
-        ui.splitScreenUrl = el ? (el.value || "") : "";
+        ui.splitScreenUrl = document.getElementById('s-split-url').value || "";
         debouncedPush(600);
     }
 
@@ -1011,6 +990,12 @@
             ui.teamNameColor = '#eeeeee'; ui.scoreColor = '#eeeeee';
             ui.panelBg = 'rgba(18,18,18,0.90)'; ui.drawerBg = 'rgba(10,10,10,0.92)';
             ui.popupBg = '#222222';
+        } else if (theme === 'premier') {
+            // Premier Padel: темно-синій фон, яскраво-синій акцент, жовтий м'яч
+            ui.accentBlue = '#1a6fbf'; ui.ballColor = '#f5e642';
+            ui.teamNameColor = '#ffffff'; ui.scoreColor = '#ffffff';
+            ui.panelBg = 'rgba(10,22,50,0.92)'; ui.drawerBg = 'rgba(15,40,90,0.95)';
+            ui.popupBg = '#0d1f4a';
         }
         pushState();
     }
@@ -1139,6 +1124,8 @@
         const s = state.scores; const g = state.games;
         const p1 = state.p1name || "Команда А"; const p2 = state.p2name || "Команда Б";
 
+        document.getElementById('disp-p1').textContent = p1;
+        document.getElementById('disp-p2').textContent = p2;
         document.getElementById('disp-p1-short').textContent = p1.toUpperCase().substring(0,10);
         document.getElementById('disp-p2-short').textContent = p2.toUpperCase().substring(0,10);
         document.getElementById('serve-p1-lbl').textContent = p1.toUpperCase().substring(0,7);
@@ -1148,6 +1135,10 @@
             if (state.isAmerican || state.isTiebreak) return s[i];
             return s[i]===4 ? "AD" : (s[1-i]===4 ? "" : pts[s[i]]);
         };
+        document.getElementById('disp-score-p1').textContent = getL(0);
+        document.getElementById('disp-score-p2').textContent = getL(1);
+        document.getElementById('disp-games-p1').textContent = g[0];
+        document.getElementById('disp-games-p2').textContent = g[1];
 
         document.getElementById('serve-0').classList.toggle('active', state.server===0);
         document.getElementById('serve-1').classList.toggle('active', state.server===1);
@@ -1165,20 +1156,9 @@
         document.getElementById('mini-dot-0').classList.toggle('active', state.server===0);
         document.getElementById('mini-dot-1').classList.toggle('active', state.server===1);
         [0,1].forEach(p => {
-            let h = ""; Object.values(state.setsHistory[p] || []).forEach(gv => h += `<div class="mini-set-wrap"><div class="mini-set">${gv}</div></div>`);
-            h += `<div class="mini-set-wrap"><div class="mini-set cur">${g[p]}</div></div>`; document.getElementById(`mini-sets-p${p+1}`).innerHTML = h;
+            let h = ""; Object.values(state.setsHistory[p] || []).forEach(gv => h += `<div class="mini-set">${gv}</div>`);
+            h += `<div class="mini-set cur">${g[p]}</div>`; document.getElementById(`mini-sets-p${p+1}`).innerHTML = h;
         });
-        // Акцент-колір лівої смужки — як в оверлеї
-        const accentColor = ui.accentBlue || '#0055ff';
-        document.getElementById('mini-main').style.borderLeftColor = accentColor;
-        // Serve dot color — як в оверлеї
-        const ballColor = ui.ballColor || '#ccff00';
-        document.querySelectorAll('.mini-dot').forEach(d => { d.style.background = ballColor; d.style.boxShadow = `0 0 8px ${ballColor}`; });
-        // Panel bg — як в оверлеї
-        const panelBg = ui.panelBg || 'rgba(60,60,60,0.75)';
-        document.getElementById('mini-main').style.background = panelBg;
-        const drawerBg = ui.drawerBg || 'rgba(40,40,40,0.85)';
-        document.getElementById('mini-drawer').style.background = drawerBg;
         document.getElementById('mini-tb-badge').classList.toggle('active', state.isTiebreak);
         document.getElementById('mini-notif-badge').textContent = state.notifText || '';
         document.getElementById('mini-notif-badge').classList.toggle('active', !!state.notifText);
@@ -1199,6 +1179,8 @@
         
         document.getElementById('s-qr-url').value = state.qrUrl || "";
         document.getElementById('s-qr-text').value = state.qrText || "";
+        document.getElementById('s-split-url').value = ui.splitScreenUrl || "";
+        if (document.getElementById('s-split-screen')) document.getElementById('s-split-screen').checked = !!state.showSplitScreen;
         
         if(ui.sbW) document.getElementById('g-w').value = parseInt(ui.sbW);
         if(ui.sbH) document.getElementById('g-h').value = parseInt(ui.sbH);
