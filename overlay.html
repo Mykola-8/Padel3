@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght=600;700&family=Rubik+Mono+One&family=Inter:wght=700;900&family=Teko:wght=600&display=swap" rel="stylesheet">
-    <title>Padel Overlay</title>
+    <title>Padel Overlay Professional</title>
     <style>
         :root {
             --accent-blue: #0055ff;
@@ -29,6 +29,7 @@
             --popup-bg: #444444;
             --popup-text: #ffffff;
             --finish-bg: rgba(20, 20, 26, 0.75);
+            --sponsor-size: 52px;
         }
         html, body {
             margin: 0; padding: 0;
@@ -39,7 +40,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        @webkit-keyframes board-hide-left {
+        @-webkit-keyframes board-hide-left {
             0% { opacity: 1; transform: scale(var(--actual-scale, 1)) translateX(0); }
             100% { opacity: 0; transform: scale(var(--actual-scale, 1)) translateX(-250px); filter: blur(4px); }
         }
@@ -48,7 +49,6 @@
             100% { opacity: 0; transform: scale(var(--actual-scale, 1)) translateX(-250px); filter: blur(4px); }
         }
 
-        /* КОМПЛЕКС ТАБЛА З ТОНЕНЬКОЮ СІРОЮ ЛІНІЄЮ КОНТУРУ */
         #scoreboard-anchor {
             position: absolute;
             top: var(--sb-top, 40px);
@@ -66,41 +66,40 @@
             pointer-events: none;
         }
         
-        /* КВАДРАТНИЙ ЛОГОТИП ЗЛІВА, ВИРІВНЯНИЙ ТА ПРИЖАТИЙ ВПРИТУЛ ДО ТАБЛА */
+        /* ЛОГОТИП СТРОГО ПРИТИСНУТИЙ БЕЗ ВІДСТУПІВ ТА З ПРОЗОРИМ ФОНОМ */
         #logo-container {
             position: relative;
-            width: var(--sb-h); /* висота дорівнює ширині, утворюючи ідеальний квадрат */
+            width: var(--sb-h);
             height: 100%;
-            background: #ffffff;
+            background: transparent;
             border-radius: var(--sb-radius) 0 0 var(--sb-radius);
-            padding: 10px;
+            padding: 0;
+            margin: 0;
             display: flex; align-items: center; justify-content: center;
             opacity: 0; z-index: 3;
-            margin-right: calc(var(--sb-h) * -1); /* Хітрість для безшовної склейки */
-            transform: translateX(-30px);
+            margin-right: calc(var(--sb-h) * -1);
+            transform: translateX(-20px);
             transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.35s ease, margin-right 0.4s cubic-bezier(0.19, 1, 0.22, 1);
             box-sizing: border-box;
             flex-shrink: 0;
         }
-        /* Коли ВКЛ — притискається до основного табла без відступів */
         #logo-container.active { 
             transform: translateX(0); 
             opacity: 1; 
             margin-right: 0; 
         }
-        /* Стиснення фотографії/логотипу, щоб був максимально легким і правильного розміру */
         #logo-container img { 
-            max-width: 100%; 
-            max-height: 100%; 
+            width: 100%; 
+            height: 100%; 
             object-fit: contain; 
             display: block;
         }
-        
-        .popup-label {
+.popup-label {
             position: absolute; background: var(--popup-bg); color: var(--popup-text); padding: 5px 25px;
             font-size: 13px; font-weight: 900; text-transform: uppercase;
             letter-spacing: 1px; transition: 0.4s; opacity: 0; z-index: 1;
         }
+        /* ДИНАМІЧНИЙ ПОКАЗНИК РЕЖИМУ PRO-SET НА ТАБЛІ */
         #proset-indicator { top: -35px; left: 40%; border-radius: 6px 6px 0 0; }
         #proset-indicator.active { opacity: 1; transform: translateY(-10px); }
         
@@ -109,7 +108,6 @@
             display: flex; flex-direction: column; position: relative; z-index: 2;
             border-radius: 0 var(--sb-radius) var(--sb-radius) 0; transform: skewX(var(--sb-skew)); overflow: hidden;
         }
-        /* Якщо логотип вимкнено, лівий край стає закругленим */
         #logo-container:not(.active) + #scoreboard-main {
             border-radius: var(--sb-radius) var(--sb-radius) var(--sb-radius) var(--sb-radius) !important;
         }
@@ -175,9 +173,6 @@
             animation: txt-appear 0.28s 0.26s cubic-bezier(0.175,0.885,0.32,1.275) forwards,
                        txt-gone   0.28s 2.3s ease forwards;
         }
-        .alert-golden-theme   { color: #ffffff !important; text-shadow: 0 2px 15px rgba(0,0,0,0.6) !important; }
-        .alert-tiebreak-theme { color: #ffffff !important; }
-        .alert-deuce-theme    { color: #ffffff !important; }
         
         .points-drawer {
             position: absolute; right: 0; top: 0; width: 18%; height: 100%;
@@ -219,39 +214,45 @@
         .deuce-row-bg.dr-out { animation: deuce-row-out 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         .deuce-row-lbl.dr-txt-show { animation: deuce-row-txt 0.22s 0.22s ease forwards; }
 
-        /* ── STATS OVERLAY ── */
-        @-webkit-keyframes stats-in  { 0%{opacity:0;transform:translateY(30px) scale(0.96)} 100%{opacity:1;transform:translateY(0) scale(1)} }
-        @-webkit-keyframes stats-out { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-20px) scale(0.97)} }
-        @keyframes stats-in  { 0%{opacity:0;transform:translateY(30px) scale(0.96)} 100%{opacity:1;transform:translateY(0) scale(1)} }
-        @keyframes stats-out { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-20px) scale(0.97)} }
+        /* ── ТАБЛО СТАТИСТИКИ З ПРОЗОРІСТЮ ТА АНІМАЦІЄЮ ВХОДУ/ВИХОДУ ── */
+        @keyframes stats-entry {
+            0% { opacity: 0; transform: scale(0.92) translateY(40px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes stats-exit {
+            0% { opacity: 1; transform: scale(1) translateY(0); }
+            100% { opacity: 0; transform: scale(0.95) translateY(-30px); }
+        }
+
         #tv-stats-overlay {
             position: fixed; inset: 0; width: 100vw; height: 100vh;
             background: transparent; display: flex; align-items: center; justify-content: center;
             opacity: 0; pointer-events: none; z-index: 15000;
         }
-        #tv-stats-overlay.active   { animation: stats-in  0.55s cubic-bezier(0.25,1,0.5,1) forwards; }
-        #tv-stats-overlay.closing  { animation: stats-out 0.4s  ease forwards; }
+        #tv-stats-overlay.active { opacity: 1; pointer-events: auto; }
+        #tv-stats-overlay.active .stats-card { animation: stats-entry 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        #tv-stats-overlay.closing .stats-card { animation: stats-exit 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
         .stats-card {
-            background: rgba(20, 20, 26, 0.75);
+            background: rgba(20, 20, 26, 0.65); /* Додано витончену прозорість */
+            backdrop-filter: blur(14px); /* Розмиття заднього фону */
             border: 1px solid rgba(255,255,255,0.15); 
             box-shadow: 0 30px 70px rgba(0,0,0,0.85);
-            width: fit-content; min-width: 480px; border-radius: 22px; padding: 38px 54px; position: relative; display: flex; flex-direction: column; gap: 16px;
+            width: fit-content; min-width: 500px; border-radius: 22px; padding: 38px 54px; position: relative; display: flex; flex-direction: column; gap: 16px;
         }
-        .stats-logo-left  { position: absolute; top: 15px; left: 20px;  height: 45px; max-width: 120px; object-fit: contain; }
-        .stats-logo-right { position: absolute; top: 15px; right: 20px; height: 45px; max-width: 120px; object-fit: contain; }
-        .stats-card-title { font-size: 13px; font-weight: 900; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 6px; text-align: center; }
+        .stats-card-title { font-size: 14px; font-weight: 900; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 6px; text-align: center; }
         .stats-table { min-width: 350px; border-collapse: collapse; }
         .stats-row { height: 86px; border-bottom: 1px solid rgba(255,255,255,0.06); }
         .stats-team-name { text-align: left; font-size: 36px; font-weight: bold; font-family: var(--team-font-family); padding-right: 40px; color: white; white-space: nowrap; text-transform: uppercase; }
         .stats-set-column { width: 95px; text-align: center; }
         .stats-games-num  { font-size: 46px; font-weight: 900; font-family: var(--team-font-family); color: white; }
-        .stats-time-label { font-size: 20px; font-weight: 900; color: #7eb8ff; font-family: 'Inter', sans-serif; margin-top: 1px; letter-spacing: 0.5px; }
         
-        /* ── ТАБЛО РЕЗУЛЬТАТУ / КІНЕЦЬ МАТЧУ ── */
+        /* ЗБІЛЬШЕНІ ХВИЛИНИ ЗІГРАНИХ ГЕЙМІВ */
+        .stats-time-label { font-size: 28px; font-weight: 900; color: #7eb8ff; font-family: 'Inter', sans-serif; margin-top: 2px; letter-spacing: 0.5px; }
+        
         #match-finish-overlay {
             position: fixed; inset: 0; width: 100vw; height: 100vh;
-            background: transparent;
-            display: flex; align-items: center; justify-content: center;
+            background: transparent; display: flex; align-items: center; justify-content: center;
             opacity: 0; pointer-events: none; z-index: 20000;
         }
         #match-finish-overlay.active { animation: finish-bg-in 0.5s ease forwards; pointer-events: auto; }
@@ -272,12 +273,10 @@
         .finish-table { min-width: 530px; border-collapse: collapse; margin-top: 5px; }
         .finish-row { border-bottom: 1px solid rgba(255,255,255,0.1); height: 75px; }
         .finish-team { text-align: left; font-size: 28px; font-weight: 800; font-family: var(--team-font-family); padding-left: 10px; color: #ffffff; padding-right: 40px; white-space: nowrap; text-shadow: 0 2px 8px rgba(0,0,0,0.9); }
-        .finish-winner { color: var(--gold) !important; text-shadow: 0 0 15px rgba(255,215,0,0.6), 0 2px 4px rgba(0,0,0,0.8); }
         .finish-cell-set { width: 85px; text-align: center; }
         .finish-box-score { display: inline-block; min-width: 52px; height: 52px; line-height: 52px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; font-size: 28px; font-weight: 900; font-family: var(--team-font-family); color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .finish-box-score.winner-box { background: linear-gradient(135deg, #0066ff, #0033cc); border: 1px solid #0077ff; color: #ffffff; box-shadow: 0 0 20px rgba(0,85,255,0.7); text-shadow: 0 0 8px #ffffff, 0 2px 4px rgba(0,0,0,0.6); }
         
-        /* ── DEUCE WIPE ── */
         #deuce-wipe-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 30; }
         #deuce-wipe-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #4a235a 0%, #6c3483 60%, #7d3c98 100%); transform: translateX(100%); box-shadow: inset 0 0 60px rgba(0,0,0,0.3); }
         #deuce-wipe-bg.dw-in  { animation: deuce-wipe-in  0.32s cubic-bezier(0.4,0,0.2,1) forwards; }
@@ -285,7 +284,6 @@
         #deuce-wipe-label { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; gap: 18px; font-family: var(--team-font-family); font-size: calc(var(--sb-h) * 0.46); font-weight: 900; text-transform: uppercase; letter-spacing: 5px; color: #ffffff; white-space: nowrap; opacity: 0; text-shadow: 0 3px 20px rgba(0,0,0,0.5); pointer-events: none; }
         #deuce-wipe-label.dl-show { animation: deuce-txt-in  0.22s 0.26s ease forwards, deuce-txt-out 0.20s 0.9s  ease forwards; }
 
-        /* ── FAULT WIPE ── */
         .fault-row-wipe { position: absolute; inset: 0; overflow: hidden; z-index: 26; pointer-events: none; display: flex; align-items: center; justify-content: center; }
         .fault-row-bg { position: absolute; inset: 0; background: linear-gradient(135deg, #c0392b, #962d22); transform: translateX(100%); }
         .fault-row-lbl { position: relative; z-index: 2; font-family: var(--team-font-family); font-size: calc(var(--sb-h) * 0.26); font-weight: 900; letter-spacing: 3px; color: #ffffff; text-transform: uppercase; opacity: 0; }
@@ -293,23 +291,11 @@
         .fault-row-bg.fr-out { animation: fault-row-out 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         .fault-row-lbl.fr-txt-show { animation: fault-row-txt 0.18s 0.18s ease forwards; }
 
-        /* ── BOTTOM NOTIF PLANK ── */
         #bottom-notif { 
-            position: absolute; 
-            top: 100%; 
-            left: 50%; 
-            width: fit-content; 
-            min-width: 260px;
-            padding: 0 38px; 
-            height: 44px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            pointer-events: none; 
-            z-index: 50; 
-            transform: translateX(-50%) translateY(-22px); 
-            opacity: 0; 
-            box-sizing: border-box;
+            position: absolute; top: 100%; left: 50%; width: fit-content; min-width: 260px;
+            padding: 0 38px; height: 44px; display: flex; align-items: center; justify-content: center; 
+            pointer-events: none; z-index: 50; transform: translateX(-50%) translateY(-22px); 
+            opacity: 0; box-sizing: border-box;
         }
         .bn-bg { position: absolute; inset: 0; background: rgba(30,30,35,0.85); border-left: 5px solid var(--bn-color, var(--accent-blue)); border-radius: 6px; backdrop-filter: blur(10px); box-shadow: 0 5px 22px rgba(0,0,0,0.55); }
         .bn-bg::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: var(--bn-color, var(--accent-blue)); opacity: 0.5; }
@@ -321,109 +307,27 @@
         #bottom-notif.bn-show .bn-text { animation: bn-txt-in 0.22s 0.28s ease forwards; }
         #bottom-notif.bn-show .bn-dot  { animation: bn-txt-in 0.18s 0.26s ease forwards; }
 
-        #sponsor-logos-bar { 
-            position: fixed; 
-            top: 28px; 
-            left: 50%; 
-            display: flex; 
-            flex-direction: row; 
-            align-items: center; 
-            gap: 14px; 
-            z-index: 9000; 
-        }
-        .sponsor-logo-wrap { 
-            width: 80px; 
-            height: 52px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            box-sizing: border-box; 
-            opacity: 0; 
-            background: transparent; 
-            border: none; 
-            box-shadow: none; 
-            backdrop-filter: none; 
-            padding: 0; 
-        }
+        #sponsor-logos-bar { position: fixed; top: 28px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: row; align-items: center; gap: 14px; z-index: 9000; }
+        
+        /* ДИНАМІЧНИЙ РОЗМІР СПОНСОРІВ З НАЛАШТУВАНЬ */
+        .sponsor-logo-wrap { width: var(--sponsor-size); height: calc(var(--sponsor-size) * 0.7); display: flex; align-items: center; justify-content: center; box-sizing: border-box; opacity: 0; background: transparent; border: none; padding: 0; }
         .sponsor-logo-wrap.slw-show { animation: logo-pop-in  0.42s cubic-bezier(0.175,0.885,0.32,1.275) forwards; }
         .sponsor-logo-wrap.slw-hide { animation: logo-pop-out 0.28s ease forwards; }
         .sponsor-logo-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }
 
-        /* ── QR-КОД ── */
         #tv-qr-container {
-            position: absolute;
-            bottom: 40px;
-            right: 40px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            opacity: 0;
-            transform: scale(0.85) translateY(15px);
-            transition: opacity 0.45s cubic-bezier(0.25, 1, 0.5, 1), transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
-            pointer-events: none;
-            z-index: 9500;
+            position: absolute; bottom: 40px; right: 40px; display: flex; flex-direction: column; align-items: center;
+            opacity: 0; transform: scale(0.85) translateY(15px); transition: opacity 0.45s cubic-bezier(0.25, 1, 0.5, 1), transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+            pointer-events: none; z-index: 9500;
         }
-        #tv-qr-container.active {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-        }
-        .qr-card-box {
-            background: #ffffff;
-            padding: 10px;
-            border-radius: 12px;
-            box-shadow: 0 12px 35px rgba(0,0,0,0.55);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        #tv-qr-img {
-            width: 115px;
-            height: 115px;
-            display: block;
-        }
-        .qr-text-lbl {
-            margin-bottom: 8px;
-            font-family: var(--team-font-family);
-            font-size: 15px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #ffffff;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.85);
-            text-align: center;
-        }
+        #tv-qr-container.active { opacity: 1; transform: scale(1) translateY(0); }
+        .qr-card-box { background: #ffffff; padding: 10px; border-radius: 12px; box-shadow: 0 12px 35px rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center; }
+        #tv-qr-img { width: 115px; height: 115px; display: block; }
+        .qr-text-lbl { margin-bottom: 8px; font-family: var(--team-font-family); font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #ffffff; text-shadow: 0 2px 6px rgba(0,0,0,0.85); text-align: center; }
 
-        /* ── TIE-BREAK OVERLAY ── */
-        #tb-overlay-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 500;
-            overflow: hidden;
-            pointer-events: none;
-            border-radius: var(--sb-radius);
-        }
-        #tb-wipe-bg {
-            position: absolute;
-            inset: 0;
-            background: #666666;
-            transform: translateX(-100%);
-        }
-        #tb-wipe-text {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--team-font-family);
-            font-size: calc(var(--sb-h) * 0.45);
-            font-weight: 900;
-            color: #ffffff;
-            letter-spacing: 5px;
-            opacity: 0;
-        }
+        #tb-overlay-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 500; overflow: hidden; pointer-events: none; border-radius: var(--sb-radius); }
+        #tb-wipe-bg { position: absolute; inset: 0; background: #666666; transform: translateX(-100%); }
+        #tb-wipe-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--team-font-family); font-size: calc(var(--sb-h) * 0.45); font-weight: 900; color: #ffffff; letter-spacing: 5px; opacity: 0; }
         .tb-wipe-active { animation: tb-wipe-anim 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
 
         @keyframes tb-wipe-anim {
@@ -433,62 +337,37 @@
             100% { transform: translateX(100%); opacity: 0; }
         }
 
-        /* ── PREMIUM MATCH INTRO OVERLAY ── */
         #match-intro-overlay { 
-            position: fixed; inset: 0; width: 100vw; height: 100vh;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            opacity: 0; pointer-events: none;
-            z-index: 19000; background: rgba(5, 5, 8, 0.45);
+            position: fixed; inset: 0; width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            opacity: 0; pointer-events: none; z-index: 19000; background: rgba(5, 5, 8, 0.45);
         }
         #match-intro-overlay.active { animation: intro-bg-in 0.5s ease forwards; pointer-events: auto; }
         #match-intro-overlay.closing { animation: intro-bg-out 0.5s ease forwards; pointer-events: none; }
-        
         .intro-container { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; position: relative; }
-        
         .intro-card { 
-            display: flex; align-items: center; justify-content: center; 
-            gap: 40px; 
-            position: relative;
-            background: rgba(15, 15, 20, 0.85); 
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 28px;
-            padding: 40px 60px;
-            box-shadow: 0 30px 85px rgba(0, 0, 0, 0.9); 
-            opacity: 0;
+            display: flex; align-items: center; justify-content: center; gap: 40px; position: relative;
+            background: rgba(15, 15, 20, 0.85); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 28px; padding: 40px 60px; box-shadow: 0 30px 85px rgba(0, 0, 0, 0.9); opacity: 0;
         }
         #match-intro-overlay.active .intro-card { animation: finish-card-in 0.55s 0.2s cubic-bezier(0.18,0.89,0.32,1.18) forwards; }
         #match-intro-overlay.closing .intro-card { animation: finish-card-out 0.45s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
-        
         .intro-team-block { display: flex; flex-direction: column; align-items: center; width: 380px; text-align: center; }
-        
         .intro-photo-wrap { 
-            width: 240px; height: 240px; 
-            border-radius: 20px; 
-            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
-            border: 1px solid rgba(255,255,255,0.12); overflow: hidden; 
-            box-shadow: 0 20px 45px rgba(0,0,0,0.65); 
-            margin-bottom: 20px; display: none; opacity: 0;
+            width: 240px; height: 240px; border-radius: 20px; background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+            border: 1px solid rgba(255,255,255,0.12); overflow: hidden; box-shadow: 0 20px 45px rgba(0,0,0,0.65); margin-bottom: 20px; display: none; opacity: 0;
         }
         .intro-photo-wrap img, .intro-photo-wrap video { width: 100%; height: 100%; object-fit: cover; }
         .intro-team-logo { height: 50px; max-width: 140px; object-fit: contain; margin-bottom: 12px; display: none; opacity: 0; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5)); }
-        
         .intro-team { font-family: var(--team-font-family); font-size: 42px; font-weight: 800; text-transform: uppercase; color: #ffffff; text-shadow: 0 4px 15px rgba(0,0,0,0.95); opacity: 0; letter-spacing: 1.5px; }
         .intro-vs-box { display: flex; align-items: center; justify-content: center; position: relative; width: 100px; height: 100px; }
         .intro-vs { font-family: 'Inter', sans-serif; font-size: 36px; font-weight: 900; color: var(--accent-blue); text-shadow: 0 0 25px var(--accent-blue), 0 2px 8px rgba(0,0,0,0.6); opacity: 0; transform: scale(0.5); }
         .intro-court { font-size: 15px; font-weight: 900; color: #ffffff; text-transform: uppercase; letter-spacing: 5px; text-align: center; margin-bottom: 25px; opacity: 0; transform: translateY(-20px); transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); text-shadow: 0 3px 10px rgba(0,0,0,0.9); }
 
-        /* ── СТИЛІ ЦЕНТРУВАННЯ І МАСШТАБУ ЗАСТАВКИ КАМЕРИ ── */
-        #tv-camera-cover-overlay {
-            position: fixed; inset: 0; width: 100vw; height: 100vh;
-            background: #111113; z-index: 28000; display: flex;
-            align-items: center; justify-content: center; opacity: 0;
-            pointer-events: none; transition: opacity 0.4s ease;
-        }
+        /* ЧИСТА ЗАСТАВКА КАМЕРИ ДЛЯ ЛОКАЛЬНИХ ФОТО/ВІДЕО MP4 */
+        #tv-camera-cover-overlay { position: fixed; inset: 0; width: 100vw; height: 100vh; background: #0c0c0e; z-index: 28000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
         #tv-camera-cover-overlay.active { opacity: 1; pointer-events: auto; }
         #camera-cover-media-box { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
-        #camera-cover-img { max-width: 80%; max-height: 80vh; object-fit: contain; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
-        #camera-cover-video { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
-        #camera-cover-iframe { width: 100%; height: 100%; border: none; position: absolute; inset: 0; }
+        #camera-cover-video { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; display: none; }
+        #camera-cover-img { max-width: 90%; max-height: 90vh; object-fit: contain; border-radius: 16px; box-shadow: 0 25px 65px rgba(0,0,0,0.75); position: relative; z-index: 2; display: none; }
 
         @-webkit-keyframes intro-bg-in { 0% { opacity: 0; } 100% { opacity: 1; } }
         @-webkit-keyframes intro-bg-out { 0% { opacity: 1; } 100% { opacity: 0; } }
@@ -549,14 +428,8 @@
         @keyframes bn-slide-out { 0% { opacity: 1; transform: translateX(-50%) translateY(4px); } 100% { opacity: 0; transform: translateX(-50%) translateY(-22px); } }
         @keyframes bn-txt-in { 0% { opacity: 0; } 100% { opacity: 1; } }
 
-        @-webkit-keyframes gp-shimmer {
-            0%, 100% { opacity: 1; background-color: transparent; }
-            50% { opacity: 0.4; background-color: rgba(255, 215, 0, 0.15); }
-        }
-        @keyframes gp-shimmer {
-            0%, 100% { opacity: 1; background-color: transparent; }
-            50% { opacity: 0.4; background-color: rgba(255, 215, 0, 0.15); }
-        }
+        @-webkit-keyframes gp-shimmer { 0%, 100% { opacity: 1; background-color: transparent; } 50% { opacity: 0.4; background-color: rgba(255, 215, 0, 0.15); } }
+        @keyframes gp-shimmer { 0%, 100% { opacity: 1; background-color: transparent; } 50% { opacity: 0.4; background-color: rgba(255, 215, 0, 0.15); } }
         .gp-winner-shimmer { animation: gp-shimmer 0.6s ease-in-out 5; }
     </style>
 </head>
@@ -564,28 +437,23 @@
 
 <div id="tv-camera-cover-overlay">
     <div id="camera-cover-media-box">
-        <img id="camera-cover-img" src="" style="display:none;" alt="">
-        <video id="camera-cover-video" style="display:none;" autoplay loop playsinline></video>
-        <iframe id="camera-cover-iframe" style="display:none;" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <video id="camera-cover-video" loop autoplay playsinline muted></video>
+        <img id="camera-cover-img" src="" alt="">
     </div>
 </div>
 
 <div id="scoreboard-anchor">
     <div id="logo-container"><img id="logo-img" src="" alt=""></div>
-
     <div id="tb-overlay-container">
         <div id="tb-wipe-bg"></div>
         <div id="tb-wipe-text">TIE-BREAK</div>
     </div>
-
     <div id="proset-indicator" class="popup-label">PRO-SET 8</div>
-    
     <div id="bottom-notif">
         <div class="bn-bg"></div>
         <div class="bn-dot"></div>
         <div class="bn-text" id="bn-text-el"></div>
     </div>
-    
     <div id="drawer" class="points-drawer">
         <div class="point-box" id="p1-score">0</div>
         <div class="point-box" id="p2-score">0</div>
@@ -595,9 +463,7 @@
         <div class="inner-content">
             <div id="deuce-wipe-overlay">
                 <div id="deuce-wipe-bg"></div>
-                <div id="deuce-wipe-label">
-                    <span id="deuce-wipe-text">DEUCE</span>
-                </div>
+                <div id="deuce-wipe-label"><span id="deuce-wipe-text">DEUCE</span></div>
             </div>
             <div id="scoreboard-fullscreen-alert">
                 <div id="fullscreen-alert-text" class="alert-text-content">GAME POINT</div>
@@ -618,9 +484,7 @@
 
 <div id="tv-stats-overlay">
     <div class="stats-card">
-        <img id="stat-logo-t" class="stats-logo-left" src="" alt="">
-        <img id="stat-logo-f" class="stats-logo-right" src="" alt="">
-        <div class="stats-card-title" id="stats-card-title">Статистика матчу</div>
+        <div class="stats-card-title">СТАТИСТИКА МАТЧУ</div>
         <table class="stats-table">
             <thead id="stats-table-head"></thead>
             <tbody id="stats-table-body"></tbody>
@@ -644,9 +508,7 @@
 
 <div id="tv-qr-container">
     <div id="tv-qr-text" class="qr-text-lbl">SCAN TO WATCH</div>
-    <div class="qr-card-box">
-        <img id="tv-qr-img" src="" alt="QR">
-    </div>
+    <div class="qr-card-box"><img id="tv-qr-img" src="" alt="QR"></div>
 </div>
 
 <div id="match-intro-overlay">
@@ -661,9 +523,7 @@
                 </div>
                 <div class="intro-team" id="intro-p1-display">Команда А</div>
             </div>
-            <div class="intro-vs-box">
-                <div class="intro-vs">VS</div>
-            </div>
+            <div class="intro-vs-box"><div class="intro-vs">VS</div></div>
             <div class="intro-team-block t-right">
                 <img id="intro-t2-logo" class="intro-team-logo" src="" alt="">
                 <div id="intro-t2-photo-wrap" class="intro-photo-wrap">
@@ -675,7 +535,6 @@
         </div>
     </div>
 </div>
-
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -687,8 +546,7 @@
         projectId: "padel3-overley",
         storageBucket: "padel3-overley.firebasestorage.app",
         messagingSenderId: "1003185317510",
-        appId: "1:1003185317510:web:07be70f0d0354a1f0bd307",
-        measurementId: "G-HFRXC32BE1"
+        appId: "1:1003185317510:web:07be70f0d0354a1f0bd307"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -699,6 +557,9 @@
     let lastGoldenWinnerKey = "";
     let forceShowStats = false;
     let statsTimeout = null;
+    
+    // Локальний маркер для блокування повторної анімації тайбрейку в межах одного сету
+    let currentTiebreakAnimationKey = "";
 
     let animQueue = [];
     let animBusy  = false;
@@ -768,27 +629,8 @@
         }, 1300);
     }
 
-    /* ── кеш попередніх значень: оновлюємо DOM тільки якщо щось змінилось ── */
-    let _cache = {};
-    function _set(id, prop, val) {
-        const key = id + '.' + prop;
-        if (_cache[key] === val) return;
-        _cache[key] = val;
-        const el = document.getElementById(id);
-        if (!el) return;
-        if (prop === 'text')      el.innerText = val;
-        else if (prop === 'cls')  { /* handled inline */ }
-        else if (prop === 'html') el.innerHTML = val;
-    }
-    function _css(prop, val) {
-        if (_cache['css.' + prop] === val) return;
-        _cache['css.' + prop] = val;
-        document.documentElement.style.setProperty(prop, val);
-    }
-
-    function updateStyle(p, v) { _css(p, v); }
-
-    function renderOverlay(d) {
+    function updateStyle(p, v) { document.documentElement.style.setProperty(p, v); }
+function renderOverlay(d) {
         if (!d) return;
         const state = d.state || {};
         const ui = d.ui || {};
@@ -799,16 +641,18 @@
         const isGameActive = state.isGameActive || false;
         const isTiebreak = state.isTiebreak || false;
         const isAmerican = state.isAmerican || false;
+        const isSoloAmerican = state.isSoloAmerican || false;
         const activeSetIndex = state.activeSetIndex || 0;
         const showFinish = state.showFinish || false;
         const showIntro = state.showIntro || false;
         const showLogo = state.showLogo || false;
         const showBoard = state.showBoard !== false;
-        const isProset = state.isProset || false;
-        const prosetLimit = state.prosetLimit || 8;
-        const p1name = state.p1name || "Команда А";
-        const p2name = state.p2name || "Команда Б";
-        const courtName = state.courtName || "COURT 1";
+        const p1name = state.p1name || ui.p1name || "Команда А";
+        const p2name = state.p2name || ui.p2name || "Команда Б";
+        const courtName = state.courtName || ui.courtName || "COURT 1";
+
+        // ── ОНОВЛЕННЯ РОЗМІРУ ЛОГОТИПІВ СПОНСОРІВ ІЗ НАЛАШТУВАНЬ ──
+        if (ui.sponsorSize) updateStyle('--sponsor-size', ui.sponsorSize + 'px');
 
         if (ui.accentBlue) updateStyle('--accent-blue', ui.accentBlue);
         if (ui.ballColor) updateStyle('--ball-color', ui.ballColor);
@@ -830,20 +674,22 @@
             anchor.style.transform = `scale(${ui.sbScale})`;
             anchor.style.transformOrigin = 'top left';
         }
-        if (ui.logoW) updateStyle('--logo-w', ui.logoW);
-        if (ui.logoH) updateStyle('--logo-h', ui.logoH);
 
         if (ui.sbTop  !== undefined) document.documentElement.style.setProperty('--sb-top',  ui.sbTop   + 'px');
         if (ui.sbLeft !== undefined) document.documentElement.style.setProperty('--sb-left', ui.sbLeft + 'px');
 
-        /* імена та корт — тільки при зміні */
-        _set('p1-display', 'text', p1name);
-        _set('p2-display', 'text', p2name);
-        _set('intro-p1-display', 'text', p1name);
-        _set('intro-p2-display', 'text', p2name);
-        _set('intro-court-display', 'text', courtName);
+        document.getElementById('p1-display').innerText = p1name;
+        document.getElementById('p2-display').innerText = p2name;
+        document.getElementById('intro-p1-display').innerText = p1name;
+        document.getElementById('intro-p2-display').innerText = p2name;
+        document.getElementById('intro-court-display').innerText = courtName;
 
-        /* ЛОГІКА АВТОМАТИЧНОГО ПЕРЕМИКАННЯ ФОТО / ВІДЕО ЗІ ЗВУКОМ ДЛЯ КОМАНДИ 1 */
+        // ── ДИНАМІЧНИЙ НАПИС ДЛЯ РЕЖИМУ PRO-SET З ЧИТАННЯМ ЛІМІТУ ──
+        const prosetLimit = state.prosetLimit || 8;
+        const prosetIndicator = document.getElementById('proset-indicator');
+        prosetIndicator.innerText = `PRO-SET ${prosetLimit}`;
+        prosetIndicator.classList.toggle('active', !!state.isProset);
+
         const t1PhotoImg = document.getElementById('intro-t1-photo');
         const t1VideoEl = document.getElementById('intro-t1-video');
         const t1PhotoWrap = document.getElementById('intro-t1-photo-wrap');
@@ -867,7 +713,6 @@
             t1VideoEl.src = '';
         }
 
-        /* ЛОГІКА АВТОМАТИЧНОГО ПЕРЕМИКАННЯ ФОТО / ВІДЕО ЗІ ЗВУКОМ ДЛЯ КОМАНДИ 2 */
         const t2PhotoImg = document.getElementById('intro-t2-photo');
         const t2VideoEl = document.getElementById('intro-t2-video');
         const t2PhotoWrap = document.getElementById('intro-t2-photo-wrap');
@@ -900,27 +745,18 @@
         else { t2LogoImg.src = ''; t2LogoImg.style.display = 'none'; }
 
         const getL = (i) => {
-            if (isAmerican || isTiebreak) return scores[i];
+            if (isAmerican || isSoloAmerican || isTiebreak) return scores[i];
             return scores[i] === 4 ? "AD" : (scores[1-i] === 4 ? "" : pts[scores[i]]);
         };
-        const l0 = String(getL(0)), l1 = String(getL(1));
-        _set('p1-score', 'text', l0);
-        _set('p2-score', 'text', l1);
+        document.getElementById('p1-score').innerText = getL(0);
+        document.getElementById('p2-score').innerText = getL(1);
         
         const drawerEl = document.getElementById('drawer');
-        const wantActive = isGameActive;
-        if (drawerEl && _cache['drawer.active'] !== wantActive) {
-            _cache['drawer.active'] = wantActive;
-            drawerEl.classList.toggle('points-active', wantActive);
-        }
+        drawerEl.classList.toggle('points-active', isGameActive);
 
-        const logoSrcVal = ui.logoSrc || '';
-        if (_cache['logo-img.src'] !== logoSrcVal) { _cache['logo-img.src'] = logoSrcVal; if (logoSrcVal) document.getElementById('logo-img').src = logoSrcVal; }
-        const logoActive = !!(showLogo && logoSrcVal);
-        if (_cache['logo-container.active'] !== logoActive) { _cache['logo-container.active'] = logoActive; document.getElementById('logo-container').classList.toggle('active', logoActive); }
-
-        /* СИНХРОНІЗАЦІЯ І ВИСУВАННЯ НИЖНЬОЇ ПЛАШКИ ЗНИЗУ */
-        const bnEl   = document.getElementById('bottom-notif');
+        if (ui.logoSrc) document.getElementById('logo-img').src = ui.logoSrc;
+        document.getElementById('logo-container').classList.toggle('active', showLogo && !!ui.logoSrc);
+const bnEl   = document.getElementById('bottom-notif');
         const bnText = document.getElementById('bn-text-el');
         let notif  = state.notifText || "";
         
@@ -954,16 +790,8 @@
             let h = ""; const historyArr = setsHistory[p] || [];
             historyArr.forEach(g => h += `<div class="set-box-wrapper"><div class="set-box">${g}</div></div>`);
             h += `<div class="set-box-wrapper"><div class="set-box active">${games[p]}</div></div>`;
-            const setsId = `p${p+1}-sets`;
-            if (_cache[setsId + '.html'] !== h) {
-                _cache[setsId + '.html'] = h;
-                document.getElementById(setsId).innerHTML = h;
-            }
-            const serveActive = server === p;
-            if (_cache[`serve-${p}.active`] !== serveActive) {
-                _cache[`serve-${p}.active`] = serveActive;
-                document.getElementById(`serve-${p}`).classList.toggle('active', serveActive);
-            }
+            document.getElementById(`p${p+1}-sets`).innerHTML = h;
+            document.getElementById(`serve-${p}`).classList.toggle('active', server === p);
         });
 
         const alertKey = state.alertKey || "";
@@ -1054,6 +882,7 @@
             }
         }
 
+        // Керування показом та закриттям вікна статистики
         if (state.showStats && !forceShowStats) {
             forceShowStats = true;
             updateStatsPanel(state);
@@ -1069,6 +898,15 @@
                     forceShowStats = false;
                 }, 400);
             }, 7000);
+        } else if (!state.showStats && forceShowStats) {
+            const statsEl = document.getElementById('tv-stats-overlay');
+            if (statsEl.classList.contains('active') && !statsEl.classList.contains('closing')) {
+                statsEl.classList.add('closing');
+                setTimeout(() => {
+                    statsEl.classList.remove('active', 'closing');
+                    forceShowStats = false;
+                }, 400);
+            }
         }
 
         document.getElementById('scoreboard-anchor').classList.toggle('hidden-board', showBoard === false || showFinish || showIntro);
@@ -1096,32 +934,33 @@
                 introOverlay.classList.add('closing');
                 setTimeout(() => {
                     introOverlay.classList.remove('active', 'closing');
+                    const t1VideoEl = document.getElementById('intro-t1-video');
+                    const t2VideoEl = document.getElementById('intro-t2-video');
                     if (t1VideoEl) t1VideoEl.pause();
                     if (t2VideoEl) t2VideoEl.pause();
                 }, 500);
             }
         }
 
-        /* АНІМАЦІЯ ТАЙ-БРЕЙК WIPE ОДИН РАЗ ЗА СЕТ */
+        // ── ОПТИМІЗОВАНА ЛОГІКА ТАЙ-БРЕЙКУ (ЗАПУСК АНІМАЦІЇ ТІЛЬКИ ОДИН РАЗ ЗА СЕТ) ──
         const tbBg = document.getElementById('tb-wipe-bg');
         const tbTxt = document.getElementById('tb-wipe-text');
         const tbMatchKey = "SET_" + activeSetIndex + "_TB";
 
-        if (isTiebreak && state._lastTBKey !== tbMatchKey) {
-            state._lastTBKey = tbMatchKey;
-            tbBg.classList.add('tb-wipe-active');
-            tbTxt.style.animation = "tb-wipe-anim 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards";
-            setTimeout(() => {
-                tbBg.classList.remove('tb-wipe-active');
-                tbTxt.style.animation = "";
-            }, 1500);
-        } else if (!isTiebreak) {
-            if(state.games && state.games[0]===0 && state.games[1]===0 && setsHistory[0].length===0) {
-                state._lastTBKey = "";
+        if (isTiebreak) {
+            if (currentTiebreakAnimationKey !== tbMatchKey) {
+                currentTiebreakAnimationKey = tbMatchKey;
+                tbBg.classList.add('tb-wipe-active');
+                tbTxt.style.animation = "tb-wipe-anim 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards";
+                setTimeout(() => {
+                    tbBg.classList.remove('tb-wipe-active');
+                    tbTxt.style.animation = "";
+                }, 1500);
             }
+        } else {
+            currentTiebreakAnimationKey = "";
         }
 
-        /* ГЕНЕРАЦІЯ ТА ВІДОБРАЖЕННЯ ТЕКСТУ ПІДПИСУ ВГОРІ */
         const showQR = state.showQR || state.hideScoreOnly || false;
         const qrUrl = state.qrUrl || state.qrLink || ui.qrUrl || "";
         const qrContainer = document.getElementById('tv-qr-container');
@@ -1135,57 +974,39 @@
             qrContainer.classList.remove('active');
         }
 
-        /* ЗАСТАВКА КАМЕРИ — підтримка фото, відео (зі звуком), YouTube */
         const camOverlay = document.getElementById('tv-camera-cover-overlay');
-        const camImg     = document.getElementById('camera-cover-img');
-        const camVideo   = document.getElementById('camera-cover-video');
-        const camFrame   = document.getElementById('camera-cover-iframe');
-        const camWasActive = camOverlay.classList.contains('active');
+        const camImg = document.getElementById('camera-cover-img');
+        const camVideo = document.getElementById('camera-cover-video');
 
         if (state.showCameraCover) {
-            if (!camWasActive) {
-                camImg.style.display = 'none';
-                camVideo.style.display = 'none';
-                camFrame.style.display = 'none';
-
-                if (ui.cameraVideoUrl) {
-                    let videoLink = ui.cameraVideoUrl;
-                    let videoId = '';
-                    if (videoLink.includes('v=')) videoId = videoLink.split('v=')[1].split('&')[0];
-                    else if (videoLink.includes('youtu.be/')) videoId = videoLink.split('youtu.be/')[1].split('?')[0];
-                    else if (videoLink.includes('embed/')) videoId = videoLink.split('embed/')[1].split('?')[0];
-                    if (videoId) videoLink = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=1&playlist=${videoId}&controls=0&modestbranding=1&rel=0`;
-                    camFrame.src = videoLink;
-                    camFrame.style.display = 'block';
-                } else if (ui.cameraAssetSrc && (ui.cameraAssetType === 'video' || ui.cameraAssetSrc.startsWith('data:video'))) {
-                    camVideo.src = ui.cameraAssetSrc;
-                    camVideo.muted = false;
-                    camVideo.style.display = 'block';
-                    camVideo.play().catch(() => { camVideo.muted = true; camVideo.play(); });
-                } else if (ui.cameraAssetSrc) {
-                    camImg.src = ui.cameraAssetSrc;
-                    camImg.style.display = 'block';
+            if (!camOverlay.classList.contains('active')) {
+                camImg.style.display = 'none'; 
+                camVideo.style.display = 'none'; 
+                
+                if (ui.cameraAssetSrc) {
+                    if (ui.cameraAssetSrc.startsWith('data:video') || ui.cameraAssetSrc.includes('.mp4')) {
+                        camVideo.src = ui.cameraAssetSrc;
+                        camVideo.style.display = 'block';
+                        camVideo.play().catch(e => console.log(e));
+                    } else {
+                        camImg.src = ui.cameraAssetSrc;
+                        camImg.style.display = 'block';
+                    }
                 }
                 camOverlay.classList.add('active');
             }
         } else {
-            if (camWasActive) {
+            if (camOverlay.classList.contains('active')) {
                 camOverlay.classList.remove('active');
-                camFrame.src = '';
-                camVideo.pause();
                 camVideo.src = '';
             }
         }
 
-        if (ui.statLogoT && _cache['stat-logo-t'] !== ui.statLogoT) { _cache['stat-logo-t'] = ui.statLogoT; document.getElementById('stat-logo-t').src = ui.statLogoT; }
-        if (ui.statLogoF && _cache['stat-logo-f'] !== ui.statLogoF) { _cache['stat-logo-f'] = ui.statLogoF; document.getElementById('stat-logo-f').src = ui.statLogoF; }
         renderSponsorLogos(ui.sponsorLogos || []);
     }
 
     function updateStatsPanel(state) {
         const n1 = state.p1name || "Команда А"; const n2 = state.p2name || "Команда Б";
-        const titleEl = document.getElementById('stats-card-title');
-        if (titleEl) titleEl.textContent = state.courtName || "Статистика матчу";
         const setsHistory = state.setsHistory || [[],[]]; const games = state.games || [0,0];
         const activeSetIndex = state.activeSetIndex || 0; const setTimes = state.setTimes || [];
         const setStartTime = state._setStartTime;
