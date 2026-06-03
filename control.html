@@ -1111,6 +1111,21 @@
         document.getElementById('btn-score-p2').textContent = getL(1);
     }
  
+    function rgbaToHex(rgba) {
+        // Convert "rgba(r,g,b,a)" or "#rrggbb" to "#rrggbb"
+        if (!rgba) return '#000000';
+        if (rgba.trim().startsWith('#')) return rgba.trim().substring(0,7);
+        const m = rgba.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+        if (!m) return '#000000';
+        return '#' + [m[1],m[2],m[3]].map(x => parseInt(x).toString(16).padStart(2,'0')).join('');
+    }
+    function rgbaAlpha(rgba) {
+        if (!rgba) return 70;
+        const m = rgba.match(/rgba?\(\d+,\s*\d+,\s*\d+,?\s*([\d.]+)?\)/);
+        if (!m || m[1] === undefined) return 100;
+        return Math.round(parseFloat(m[1]) * 100);
+    }
+ 
     window.openSettings = function() {
         document.getElementById('s-p1').value = state.p1name || "Команда А";
         document.getElementById('s-p2').value = state.p2name || "Команда Б";
@@ -1129,6 +1144,17 @@
         const splitScEl = document.getElementById('s-split-screen');
         if (splitScEl) splitScEl.checked = !!state.showSplitScreen;
         
+        // Fill color pickers from current ui so manual changes respect active theme
+        if (ui.accentBlue) document.getElementById('c-accent').value = rgbaToHex(ui.accentBlue);
+        if (ui.ballColor)  document.getElementById('c-ball').value   = rgbaToHex(ui.ballColor);
+        if (ui.teamNameColor) document.getElementById('c-names').value = rgbaToHex(ui.teamNameColor);
+        if (ui.scoreColor) document.getElementById('c-score').value  = rgbaToHex(ui.scoreColor);
+        if (ui.panelBg)    document.getElementById('c-panel').value  = rgbaToHex(ui.panelBg);
+        if (ui.popupBg)    document.getElementById('c-popup').value  = rgbaToHex(ui.popupBg);
+        if (ui.panelBg) { const a = rgbaAlpha(ui.panelBg); document.getElementById('c-panel-alpha').value = a; document.getElementById('c-panel-alpha-val').textContent = a; }
+        if (ui.drawerBg) { const a = rgbaAlpha(ui.drawerBg); document.getElementById('c-drawer-alpha').value = a; document.getElementById('c-drawer-alpha-val').textContent = a; }
+        if (ui.fontFamily) document.getElementById('s-font').value = ui.fontFamily;
+ 
         if(ui.sbW) document.getElementById('g-w').value = parseInt(ui.sbW);
         if(ui.sbH) document.getElementById('g-h').value = parseInt(ui.sbH);
         if(ui.sbSkew) document.getElementById('g-skew').value = parseInt(ui.sbSkew);
@@ -1195,3 +1221,4 @@
 </script>
 </body>
 </html>
+ 
