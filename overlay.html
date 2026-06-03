@@ -1012,15 +1012,17 @@
         if (ui.team2Logo) { t2LogoImg.src = ui.team2Logo; t2LogoImg.style.display = 'block'; }
         else { t2LogoImg.src = ''; t2LogoImg.style.display = 'none'; }
  
-        const isWTA = document.getElementById('scoreboard-anchor').classList.contains('theme-wta');
+        const isWTA = (ui.accentBlue === '#29a9e0');
+        // При зміні режиму відображення рахунку — скидаємо кеш
+        const scoreMode = isAmerican ? 'american' : isTiebreak ? 'tb' : isWTA ? 'wta' : 'std';
+        if (_cache['scoreMode'] !== scoreMode) {
+            _cache['scoreMode'] = scoreMode;
+            delete _cache['p1-score.text'];
+            delete _cache['p2-score.text'];
+        }
         const getL = (i) => {
             if (isAmerican || isTiebreak) return String(scores[i]);
-            if (isWTA) {
-                // WTA: завжди показувати тенісні позначки 15/30/40/AD
-                if (scores[i] === 4) return "AD";
-                if (scores[1-i] === 4) return "";
-                return String(pts[scores[i]]);
-            }
+            // WTA і стандарт — однакова логіка тенісного рахунку (0→0, 1→15, 2→30, 3→40, 4→AD)
             if (scores[i] === 4) return "AD";
             if (scores[1-i] === 4) return "";
             return String(pts[scores[i]]);
@@ -1460,4 +1462,3 @@
 </script>
 </body>
 </html>
- 
