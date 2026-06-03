@@ -901,7 +901,8 @@
     }
  
     function liveUpdateSplitUrl() {
-        ui.splitScreenUrl = document.getElementById('s-split-url').value || "";
+        const el = document.getElementById('s-split-url');
+        if (el) ui.splitScreenUrl = el.value || "";
         debouncedPush(600);
     }
  
@@ -1106,8 +1107,10 @@
         
         document.getElementById('s-qr-url').value = state.qrUrl || "";
         document.getElementById('s-qr-text').value = state.qrText || "";
-        document.getElementById('s-split-url').value = ui.splitScreenUrl || "";
-        if (document.getElementById('s-split-screen')) document.getElementById('s-split-screen').checked = !!state.showSplitScreen;
+        const splitUrlEl = document.getElementById('s-split-url');
+        if (splitUrlEl) splitUrlEl.value = ui.splitScreenUrl || "";
+        const splitScEl = document.getElementById('s-split-screen');
+        if (splitScEl) splitScEl.checked = !!state.showSplitScreen;
         
         if(ui.sbW) document.getElementById('g-w').value = parseInt(ui.sbW);
         if(ui.sbH) document.getElementById('g-h').value = parseInt(ui.sbH);
@@ -1150,7 +1153,7 @@
     window.liveUpdateName = liveUpdateName; window.liveUpdateUI = liveUpdateUI; window.gVal = gVal;
     window.confirmReset = confirmReset; window.closeSettings = () => document.getElementById('settings-panel').classList.remove('open');
     
-    window.saveAllSettings = () => { liveUpdateName(); liveUpdateQRData(); liveUpdateSplitUrl(); liveUpdateUI(); sendMode(); window.closeSettings(); };
+    window.saveAllSettings = () => { liveUpdateName(); liveUpdateQRData(); liveUpdateUI(); sendMode(); window.closeSettings(); };
     window.liveUpdateQRData = liveUpdateQRData;
     window.liveUpdateSplitUrl = liveUpdateSplitUrl;
     
