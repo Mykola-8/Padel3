@@ -80,6 +80,7 @@
         }
         .score-badge.pts { background: rgba(0,85,255,0.25); color: #fff; }
         .score-badge.games { background: rgba(255,255,255,0.12); }
+        .set-badge { background: rgba(255,255,255,0.07); border-radius: 6px; min-width: 26px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; color: rgba(255,255,255,0.55); }
         .score-divider { border: none; border-top: 1px solid var(--border); margin: 0; }
  
         /* BIG BUTTONS */
@@ -168,16 +169,18 @@
         <div class="score-display">
             <div class="team-label" id="disp-p1">Команда А</div>
             <div class="score-nums">
-                <div class="score-badge pts" id="disp-score-p1">0</div>
+                <div id="disp-sets-p1" style="display:flex;gap:4px;align-items:center;"></div>
                 <div class="score-badge games" id="disp-games-p1">0</div>
+                <div class="score-badge pts" id="disp-score-p1">0</div>
             </div>
         </div>
         <hr class="score-divider">
         <div class="score-display">
             <div class="team-label" id="disp-p2">Команда Б</div>
             <div class="score-nums">
-                <div class="score-badge pts" id="disp-score-p2">0</div>
+                <div id="disp-sets-p2" style="display:flex;gap:4px;align-items:center;"></div>
                 <div class="score-badge games" id="disp-games-p2">0</div>
+                <div class="score-badge pts" id="disp-score-p2">0</div>
             </div>
         </div>
     </div>
@@ -244,7 +247,11 @@
  
         <div style="padding: 14px 16px; background: rgba(255,255,255,0.02); display: flex; flex-direction: column; gap: 10px;">
             <button class="btn-finish-s" onclick="sendAction('finish')">🏆 КІНЕЦЬ МАТЧУ</button>
-            <button class="btn-reset-s" onclick="confirmReset()">⚠️ СКИНУТИ МАТЧ</button>
+            <button class="btn-reset-s" id="reset-btn-step1" onclick="showResetConfirm()">⚠️ СКИНУТИ МАТЧ</button>
+            <div id="reset-confirm-row" style="display:none; gap:8px; display:none;">
+                <button onclick="confirmReset()" style="flex:1; padding:13px; background:#e74c3c; border:none; border-radius:12px; color:white; font-size:13px; font-weight:900; cursor:pointer; letter-spacing:1px;">✓ ТАК, СКИНУТИ</button>
+                <button onclick="hideResetConfirm()" style="flex:1; padding:13px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:12px; color:white; font-size:13px; font-weight:900; cursor:pointer;">✕ НІ</button>
+            </div>
         </div>
     </div>
 </div>
@@ -1036,30 +1043,32 @@
     }
  
     function confirmReset() {
-        if (confirm(`Скинути матч на Court ${currentCourt}?`)) {
-            state = {
-                scores: [0,0], games: [0,0], setsHistory: [[],[]], server: 0,
-                isGameActive: false, isTiebreak: false, isAmerican: state.isAmerican,
-                isProset: state.isProset, deuceMode: state.deuceMode || "golden",
-                deuceCycles: 0, isGoldenActive: false, setTimes: [0,0,0], activeSetIndex: 0,
-                notifText: "", showFinish: false, showIntro: false,
-                showLogo: state.showLogo, showBoard: true, showStats: false,
-                prosetLimit: state.prosetLimit, americanLimit: state.americanLimit,
-                p1name: "", p2name: "", courtName: `COURT ${currentCourt}`,
-                alertKey: "", alertText: "", alertMode: "", faultTeam: null,
-                _setStartTime: null, _lastStatsIsSetEnd: false,
-                hideScoreOnly: state.hideScoreOnly, goldenWinnerKey: "",
-                qrUrl: state.qrUrl, qrText: state.qrText,
-                showCameraCover: false, showSplitScreen: state.showSplitScreen
-            };
-            historyStack = []; gamePointCountP1 = 0; gamePointCountP2 = 0;
-            document.getElementById('s-p1').value = "";
-            document.getElementById('s-p2').value = "";
-            document.getElementById('tog-camera-cover').checked = false;
-            // ui (логотипи, кольори, геометрія) — залишаються без змін
-            set(gameRef, { state, ui }).catch(e => console.error(e));
-            updateControlUI();
-        }
+        historyStack = []; gamePointCountP1 = 0; gamePointCountP2 = 0;
+        state = {
+            scores: [0,0], games: [0,0], setsHistory: [[],[]], server: 0,
+            isGameActive: false, isTiebreak: false,
+            isAmerican: state.isAmerican, isProset: state.isProset,
+            deuceMode: state.deuceMode || "golden",
+            deuceCycles: 0, isGoldenActive: false,
+            setTimes: [0,0,0], activeSetIndex: 0,
+            notifText: "", showFinish: false, showIntro: false,
+            showLogo: state.showLogo, showBoard: true, showStats: false,
+            prosetLimit: state.prosetLimit, americanLimit: state.americanLimit,
+            p1name: "", p2name: "", courtName: `COURT ${currentCourt}`,
+            alertKey: "", alertText: "", alertMode: "",
+            faultTeam: null, _setStartTime: null, _lastStatsIsSetEnd: false,
+            hideScoreOnly: state.hideScoreOnly, goldenWinnerKey: "",
+            qrUrl: state.qrUrl, qrText: state.qrText,
+            showCameraCover: false
+        };
+        const p1El = document.getElementById('s-p1'); if (p1El) p1El.value = "";
+        const p2El = document.getElementById('s-p2'); if (p2El) p2El.value = "";
+        const camEl = document.getElementById('tog-camera-cover'); if (camEl) camEl.checked = false;
+        set(gameRef, { state, ui }).catch(e => console.error(e));
+        updateControlUI();
+        // ховаємо підтвердження
+        const step1 = document.getElementById('reset-btn-step1'); if (step1) step1.style.display = '';
+        const row = document.getElementById('reset-confirm-row'); if (row) row.style.display = 'none';
     }
  
     function updateControlUI() {
@@ -1081,6 +1090,14 @@
         document.getElementById('disp-score-p2').textContent = getL(1);
         document.getElementById('disp-games-p1').textContent = g[0];
         document.getElementById('disp-games-p2').textContent = g[1];
+ 
+        // Сети
+        [0,1].forEach(p => {
+            const el = document.getElementById(`disp-sets-p${p+1}`);
+            if (!el) return;
+            const sh = state.setsHistory[p] || [];
+            el.innerHTML = sh.map(v => `<div class="set-badge">${v}</div>`).join('');
+        });
  
         document.getElementById('serve-0').classList.toggle('active', state.server===0);
         document.getElementById('serve-1').classList.toggle('active', state.server===1);
@@ -1151,7 +1168,17 @@
     };
     window.setServer = setServer; window.sendToggle = sendToggle; window.sendMode = sendMode;
     window.liveUpdateName = liveUpdateName; window.liveUpdateUI = liveUpdateUI; window.gVal = gVal;
-    window.confirmReset = confirmReset; window.closeSettings = () => document.getElementById('settings-panel').classList.remove('open');
+    window.confirmReset = confirmReset;
+    window.showResetConfirm = function() {
+        document.getElementById('reset-btn-step1').style.display = 'none';
+        const row = document.getElementById('reset-confirm-row');
+        row.style.display = 'flex';
+    };
+    window.hideResetConfirm = function() {
+        document.getElementById('reset-btn-step1').style.display = '';
+        document.getElementById('reset-confirm-row').style.display = 'none';
+    };
+    window.closeSettings = () => document.getElementById('settings-panel').classList.remove('open');
     
     window.saveAllSettings = () => { liveUpdateName(); liveUpdateQRData(); liveUpdateUI(); sendMode(); window.closeSettings(); };
     window.liveUpdateQRData = liveUpdateQRData;
