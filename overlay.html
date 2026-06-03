@@ -823,8 +823,7 @@
         _cache[key] = val;
         const el = document.getElementById(id);
         if (!el) return;
-        if (prop === 'text')      el.innerText = val;
-        else if (prop === 'cls')  { /* handled inline */ }
+        if (prop === 'text') el.innerText = String(val);
         else if (prop === 'html') el.innerHTML = val;
     }
     function _css(prop, val) {
@@ -951,8 +950,10 @@
         else { t2LogoImg.src = ''; t2LogoImg.style.display = 'none'; }
  
         const getL = (i) => {
-            if (isAmerican || isTiebreak) return scores[i];
-            return scores[i] === 4 ? "AD" : (scores[1-i] === 4 ? "" : pts[scores[i]]);
+            if (isAmerican || isTiebreak) return String(scores[i]);
+            if (scores[i] === 4) return "AD";
+            if (scores[1-i] === 4) return "";
+            return String(pts[scores[i]]);
         };
         const l0 = String(getL(0)), l1 = String(getL(1));
         _set('p1-score', 'text', l0);
@@ -1389,3 +1390,4 @@
 </script>
 </body>
 </html>
+ 
