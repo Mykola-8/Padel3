@@ -639,6 +639,24 @@
             <tbody id="stats-table-body"></tbody>
         </table>
     </div>
+ 
+<div id="break-stats-overlay">
+    <div class="bso-card">
+        <div class="bso-logo-col" id="bso-logo-col">
+            <div class="bso-logo-placeholder" id="bso-logo-placeholder"></div>
+            <img id="bso-logo-img" src="" alt="" style="display:none;">
+        </div>
+        <div class="bso-teams-col">
+            <div class="bso-team-row">
+                <div class="bso-team-name" id="bso-p1-name">Команда А</div>
+                <div class="bso-sets-row" id="bso-p1-sets"></div>
+            </div>
+            <div class="bso-team-row">
+                <div class="bso-team-name" id="bso-p2-name">Команда Б</div>
+                <div class="bso-sets-row" id="bso-p2-sets"></div>
+            </div>
+        </div>
+    </div>
 </div>
  
 <div id="match-finish-overlay">
@@ -1145,6 +1163,26 @@
             }, 7000);
         }
  
+        /* BREAK STATS OVERLAY — persistent toggle */
+        const bsoEl = document.getElementById('break-stats-overlay');
+        if (bsoEl) {
+            const wantBso = !!(state.showBreakStats);
+            const hasBso  = bsoEl.classList.contains('bso-show') || bsoEl.classList.contains('bso-hide');
+            const isShown = bsoEl.classList.contains('bso-show');
+            if (wantBso && !isShown) {
+                updateBreakStatsPanel(state);
+                bsoEl.classList.remove('bso-hide');
+                void bsoEl.offsetWidth;
+                bsoEl.classList.add('bso-show');
+            } else if (!wantBso && isShown) {
+                bsoEl.classList.remove('bso-show');
+                bsoEl.classList.add('bso-hide');
+                setTimeout(() => bsoEl.classList.remove('bso-hide'), 400);
+            } else if (wantBso && isShown) {
+                updateBreakStatsPanel(state);
+            }
+        }
+ 
         document.getElementById('scoreboard-anchor').classList.toggle('hidden-board', showBoard === false || showFinish || showIntro);
  
         const finishOverlay = document.getElementById('match-finish-overlay');
@@ -1271,6 +1309,7 @@
             }
         }
  
+        window._currentUi = ui;
         if (ui.statLogoT && _cache['stat-logo-t'] !== ui.statLogoT) { _cache['stat-logo-t'] = ui.statLogoT; document.getElementById('stat-logo-t').src = ui.statLogoT; }
         if (ui.statLogoF && _cache['stat-logo-f'] !== ui.statLogoF) { _cache['stat-logo-f'] = ui.statLogoF; document.getElementById('stat-logo-f').src = ui.statLogoF; }
         renderSponsorLogos(ui.sponsorLogos || [], ui.sponsorLogoSize || 80);
@@ -1376,7 +1415,61 @@
  
     const gameRef = ref(db, `padel/court${courtId}`);
     onValue(gameRef, (snapshot) => { renderOverlay(snapshot.val()); });
+    function updateBreakStatsPanel(state) {
+        const n1 = state.p1name || "Команда А";
+        const n2 = state.p2name || "Команда Б";
+        const sh = state.setsHistory || [[],[]];
+        const games = state.games || [0,0];
+        const activeSetIndex = state.activeSetIndex || 0;
+ 
+        // Names
+        const p1El = document.getElementById('bso-p1-name');
+        const p2El = document.getElementById('bso-p2-name');
+        if (p1El) p1El.textContent = n1;
+        if (p2El) p2El.textContent = n2;
+ 
+        // Logo
+        const logoImg = document.getElementById('bso-logo-img');
+        const logoPlaceholder = document.getElementById('bso-logo-placeholder');
+        const logoSrc = (window._currentUi && window._currentUi.logoSrc) || '';
+        if (logoImg && logoPlaceholder) {
+            if (logoSrc) {
+                logoImg.src = logoSrc;
+                logoImg.style.display = 'block';
+                logoPlaceholder.style.display = 'none';
+            } else {
+                logoImg.style.display = 'none';
+                logoPlaceholder.style.display = 'block';
+            }
+        }
+ 
+        // Sets: show completed sets + current active
+        const totalSets = Math.max(activeSetIndex + 1, (sh[0] || []).length, 1);
+        let s1 = [], s2 = [];
+        for (let i = 0; i < totalSets; i++) {
+            s1.push((sh[0] && sh[0][i] !== undefined) ? sh[0][i] : (activeSetIndex === i ? games[0] : '-'));
+            s2.push((sh[1] && sh[1][i] !== undefined) ? sh[1][i] : (activeSetIndex === i ? games[1] : '-'));
+        }
+ 
+        function buildSetCells(scores, oppScores) {
+            let html = '';
+            for (let i = 0; i < totalSets; i++) {
+                const isCurrent = (sh[0] && sh[0][i] === undefined) && i === activeSetIndex;
+                const isWon = !isCurrent && scores[i] !== '-' && oppScores[i] !== '-' && Number(scores[i]) > Number(oppScores[i]);
+                let cls = 'bso-set-cell';
+                if (isCurrent) cls += ' bso-current';
+                else if (isWon) cls += ' bso-winner';
+                html += `<div class="${cls}">${scores[i]}</div>`;
+            }
+            return html;
+        }
+ 
+        const p1Sets = document.getElementById('bso-p1-sets');
+        const p2Sets = document.getElementById('bso-p2-sets');
+        if (p1Sets) p1Sets.innerHTML = buildSetCells(s1, s2);
+        if (p2Sets) p2Sets.innerHTML = buildSetCells(s2, s1);
+    }
+ 
 </script>
 </body>
 </html>
- 
