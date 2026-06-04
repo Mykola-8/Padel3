@@ -29,17 +29,6 @@
             --popup-bg: #444444;
             --popup-text: #ffffff;
             --finish-bg: rgba(20, 20, 26, 0.75);
-            /* theme-derived variables (updated by JS) */
-            --theme-card-bg: rgba(14, 14, 18, 0.52);
-            --theme-card-border: rgba(255,255,255,0.12);
-            --theme-card-title: rgba(255,255,255,0.35);
-            --theme-winner-box-bg: linear-gradient(135deg, #0066ff, #0033cc);
-            --theme-winner-box-border: #0077ff;
-            --theme-winner-box-glow: rgba(0,85,255,0.7);
-            --theme-finish-title-shadow: rgba(0,85,255,0.6);
-            --theme-vs-color: var(--accent-blue);
-            --theme-vs-shadow: var(--accent-blue);
-            --theme-time-label-color: #7eb8ff;
         }
         html, body {
             margin: 0; padding: 0;
@@ -118,34 +107,38 @@
         #scoreboard-anchor.theme-wta #logo-container.active + #scoreboard-main {
             border-radius: 0 var(--sb-radius) var(--sb-radius) 0;
         }
-        /* WTA — роздільник між рядками команд */
         #scoreboard-anchor.theme-wta .player-row {
             border-bottom: 1px solid rgba(255,255,255,0.35);
         }
-        /* WTA — set-box з рискою між цифрами (через псевдоелемент) */
-        #scoreboard-anchor.theme-wta .set-box-wrapper {
-            position: relative;
-        }
+        #scoreboard-anchor.theme-wta .set-box-wrapper { position: relative; }
         #scoreboard-anchor.theme-wta .set-box-wrapper::after {
-            content: '';
-            position: absolute;
-            left: 20%;
-            right: 20%;
-            top: 50%;
-            height: 1.5px;
-            background: rgba(255,255,255,0.55);
-            pointer-events: none;
+            content: ''; position: absolute;
+            left: 20%; right: 20%; top: 50%;
+            height: 1.5px; background: rgba(255,255,255,0.55); pointer-events: none;
         }
-        /* WTA — drawer (поточний рахунок) — білий блок зі заокругленнями */
         #scoreboard-anchor.theme-wta .points-drawer {
             background: rgba(255,255,255,0.22);
             border-left: 2px solid rgba(255,255,255,0.4);
-            border-radius: 10px;
-            margin: 6px 6px 6px 0;
-            height: calc(100% - 12px);
-            top: 6px;
+            border-radius: 10px; margin: 6px 6px 6px 0;
+            height: calc(100% - 12px); top: 6px;
         }
-        /* Якщо логотип вимкнено, лівий край стає закругленим */
+ 
+        /* PREMIER PADEL тема */
+        #scoreboard-anchor.theme-premier #scoreboard-main {
+            border-left: 6px solid #3a7bd5;
+            background: rgba(255,255,255,0.97);
+            border-radius: 0 var(--sb-radius) var(--sb-radius) 0;
+        }
+        #scoreboard-anchor.theme-premier .player-name { color: #1a2744 !important; }
+        #scoreboard-anchor.theme-premier .player-row { border-bottom: 1px solid rgba(26,39,68,0.15); }
+        #scoreboard-anchor.theme-premier .sets-history { border-left: 1px solid rgba(26,39,68,0.12); }
+        #scoreboard-anchor.theme-premier .set-box { background: rgba(26,39,68,0.10); color: #1a2744; }
+        #scoreboard-anchor.theme-premier .set-box.active { background: #1a2744; color: #fff; border: 1px solid #3a7bd5; }
+        #scoreboard-anchor.theme-premier .points-drawer { background: #1a2744; border-left: 2px solid #3a7bd5; }
+        #scoreboard-anchor.theme-premier .point-box { color: #ffffff; }
+        #scoreboard-anchor.theme-premier .serve-dot { background-color: #ffffff; box-shadow: 0 0 8px rgba(255,255,255,0.5); }
+ 
+        /* якщо логотип вимкнено — лівий край закруглений */
         #logo-container:not(.active) + #scoreboard-main {
             border-radius: var(--sb-radius) var(--sb-radius) var(--sb-radius) var(--sb-radius) !important;
         }
@@ -267,23 +260,90 @@
         }
         #tv-stats-overlay.active   { animation: stats-in  0.65s cubic-bezier(0.25,1,0.5,1) forwards; }
         #tv-stats-overlay.closing  { animation: stats-out 0.45s cubic-bezier(0.4,0,0.2,1) forwards; }
+        /* ── CSS ЗМІННІ ДЛЯ ТЕМ ОВЕРЛЕЮ ── */
+        :root {
+            --card-bg:        rgba(14, 14, 18, 0.52);
+            --card-border:    rgba(255,255,255,0.12);
+            --card-text:      #ffffff;
+            --card-subtext:   rgba(255,255,255,0.35);
+            --card-row-line:  rgba(255,255,255,0.06);
+            --card-time-col:  #7eb8ff;
+            --finish-title-shadow: rgba(0,85,255,0.6);
+            --winner-box-bg:  linear-gradient(135deg,#0066ff,#0033cc);
+            --winner-box-border: #0077ff;
+            --winner-box-glow: rgba(0,85,255,0.7);
+            --intro-card-bg:  rgba(15,15,20,0.70);
+            --intro-vs-color: var(--accent-blue);
+        }
+        /* ── ТЕМА: GREY ── */
+        body.theme-grey {
+            --card-bg:       rgba(70,70,70,0.60);
+            --card-border:   rgba(255,255,255,0.10);
+            --card-time-col: #cccccc;
+            --finish-title-shadow: rgba(136,136,136,0.5);
+            --winner-box-bg: linear-gradient(135deg,#777,#555);
+            --winner-box-border: #888;
+            --winner-box-glow: rgba(136,136,136,0.5);
+            --intro-card-bg: rgba(70,70,70,0.65);
+            --intro-vs-color: #cccccc;
+        }
+        /* ── ТЕМА: DARK ── */
+        body.theme-dark {
+            --card-bg:       rgba(12,12,12,0.82);
+            --card-border:   rgba(255,255,255,0.06);
+            --card-time-col: #aaaaaa;
+            --finish-title-shadow: rgba(80,80,80,0.5);
+            --winner-box-bg: linear-gradient(135deg,#333,#222);
+            --winner-box-border: #444;
+            --winner-box-glow: rgba(80,80,80,0.5);
+            --intro-card-bg: rgba(12,12,12,0.85);
+            --intro-vs-color: #aaaaaa;
+        }
+        /* ── ТЕМА: WTA ── */
+        body.theme-wta {
+            --card-bg:       rgba(41,169,224,0.72);
+            --card-border:   rgba(255,255,255,0.30);
+            --card-time-col: #e8f8ff;
+            --finish-title-shadow: rgba(41,169,224,0.7);
+            --winner-box-bg: linear-gradient(135deg,#1a8fc0,#1070a0);
+            --winner-box-border: #29a9e0;
+            --winner-box-glow: rgba(41,169,224,0.7);
+            --intro-card-bg: rgba(41,169,224,0.70);
+            --intro-vs-color: #ffffff;
+        }
+        /* ── ТЕМА: PREMIER PADEL ── */
+        body.theme-premier {
+            --card-bg:       rgba(26,39,68,0.90);
+            --card-border:   rgba(58,123,213,0.50);
+            --card-text:     #ffffff;
+            --card-subtext:  rgba(180,200,255,0.60);
+            --card-row-line: rgba(58,123,213,0.20);
+            --card-time-col: #7eb8ff;
+            --finish-title-shadow: rgba(58,123,213,0.7);
+            --winner-box-bg: linear-gradient(135deg,#3a7bd5,#1a4fa0);
+            --winner-box-border: #3a7bd5;
+            --winner-box-glow: rgba(58,123,213,0.7);
+            --intro-card-bg: rgba(26,39,68,0.88);
+            --intro-vs-color: #3a7bd5;
+        }
+ 
         .stats-card {
-            background: var(--theme-card-bg);
-            border: 1px solid var(--theme-card-border);
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
             box-shadow: 0 30px 70px rgba(0,0,0,0.75);
             width: fit-content; min-width: 480px; border-radius: 22px; padding: 38px 54px; position: relative; display: flex; flex-direction: column; gap: 16px;
         }
         .stats-logo-left  { position: absolute; top: 15px; left: 20px;  height: 45px; max-width: 120px; object-fit: contain; }
         .stats-logo-right { position: absolute; top: 15px; right: 20px; height: 45px; max-width: 120px; object-fit: contain; }
-        .stats-card-title { font-size: 13px; font-weight: 900; color: var(--theme-card-title); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 6px; text-align: center; }
+        .stats-card-title { font-size: 13px; font-weight: 900; color: var(--card-subtext); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 6px; text-align: center; }
         .stats-table { min-width: 350px; border-collapse: collapse; }
-        .stats-row { height: 86px; border-bottom: 1px solid rgba(255,255,255,0.06); }
-        .stats-team-name { text-align: left; font-size: 36px; font-weight: bold; font-family: var(--team-font-family); padding-right: 40px; color: white; white-space: nowrap; text-transform: uppercase; }
+        .stats-row { height: 86px; border-bottom: 1px solid var(--card-row-line); }
+        .stats-team-name { text-align: left; font-size: 36px; font-weight: bold; font-family: var(--team-font-family); padding-right: 40px; color: var(--card-text); white-space: nowrap; text-transform: uppercase; }
         .stats-set-column { width: 95px; text-align: center; }
-        .stats-games-num  { font-size: 46px; font-weight: 900; font-family: var(--team-font-family); color: white; }
-        .stats-time-label { font-size: 30px; font-weight: 900; color: var(--theme-time-label-color); font-family: 'Inter', sans-serif; margin-top: 2px; letter-spacing: 0.5px; }
+        .stats-games-num  { font-size: 46px; font-weight: 900; font-family: var(--team-font-family); color: var(--card-text); }
+        .stats-time-label { font-size: 30px; font-weight: 900; color: var(--card-time-col); font-family: 'Inter', sans-serif; margin-top: 2px; letter-spacing: 0.5px; }
         
-        /* ── ТАБЛО РЕЗУЛЬТАТУ / КІНЕЦЬ МАТЧУ ── */
+        /* ── КІНЕЦЬ МАТЧУ ── */
         #match-finish-overlay {
             position: fixed; inset: 0; width: 100vw; height: 100vh;
             background: transparent;
@@ -292,26 +352,24 @@
         }
         #match-finish-overlay.active { animation: finish-bg-in 0.5s ease forwards; pointer-events: auto; }
         #match-finish-overlay.closing { animation: finish-bg-out 0.5s ease forwards; pointer-events: none; }
-        
         .finish-card {
-            background: var(--theme-card-bg);
-            width: fit-content; min-width: 620px; 
-            border: 1px solid var(--theme-card-border);
-            border-radius: 20px; padding: 25px 45px; 
+            background: var(--card-bg);
+            width: fit-content; min-width: 620px;
+            border: 1px solid var(--card-border);
+            border-radius: 20px; padding: 25px 45px;
             box-shadow: 0 35px 85px rgba(0,0,0,0.95);
             display: flex; flex-direction: column; gap: 18px; text-align: center; opacity: 0;
         }
         #match-finish-overlay.active .finish-card { animation: finish-card-in 0.55s 0.2s cubic-bezier(0.18,0.89,0.32,1.18) forwards; }
         #match-finish-overlay.closing .finish-card { animation: finish-card-out 0.45s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
-        
-        .finish-title { font-size: 28px; font-weight: 900; letter-spacing: 3px; color: #ffffff; text-transform: uppercase; margin: 0; text-shadow: 0 0 15px var(--theme-finish-title-shadow), 0 2px 4px rgba(0,0,0,0.6); }
+        .finish-title { font-size: 28px; font-weight: 900; letter-spacing: 3px; color: var(--card-text); text-transform: uppercase; margin: 0; text-shadow: 0 0 15px var(--finish-title-shadow), 0 2px 4px rgba(0,0,0,0.6); }
         .finish-table { min-width: 530px; border-collapse: collapse; margin-top: 5px; }
-        .finish-row { border-bottom: 1px solid rgba(255,255,255,0.1); height: 75px; }
-        .finish-team { text-align: left; font-size: 28px; font-weight: 800; font-family: var(--team-font-family); padding-left: 10px; color: #ffffff; padding-right: 40px; white-space: nowrap; text-shadow: 0 2px 8px rgba(0,0,0,0.9); }
+        .finish-row { border-bottom: 1px solid var(--card-row-line); height: 75px; }
+        .finish-team { text-align: left; font-size: 28px; font-weight: 800; font-family: var(--team-font-family); padding-left: 10px; color: var(--card-text); padding-right: 40px; white-space: nowrap; text-shadow: 0 2px 8px rgba(0,0,0,0.5); }
         .finish-winner { color: var(--gold) !important; text-shadow: 0 0 15px rgba(255,215,0,0.6), 0 2px 4px rgba(0,0,0,0.8); }
         .finish-cell-set { width: 85px; text-align: center; }
-        .finish-box-score { display: inline-block; min-width: 52px; height: 52px; line-height: 52px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; font-size: 28px; font-weight: 900; font-family: var(--team-font-family); color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .finish-box-score.winner-box { background: var(--theme-winner-box-bg); border: 1px solid var(--theme-winner-box-border); color: #ffffff; box-shadow: 0 0 20px var(--theme-winner-box-glow); text-shadow: 0 0 8px #ffffff, 0 2px 4px rgba(0,0,0,0.6); }
+        .finish-box-score { display: inline-block; min-width: 52px; height: 52px; line-height: 52px; background: rgba(255,255,255,0.08); border: 1px solid var(--card-border); border-radius: 10px; font-size: 28px; font-weight: 900; font-family: var(--team-font-family); color: var(--card-text); }
+        .finish-box-score.winner-box { background: var(--winner-box-bg); border: 1px solid var(--winner-box-border); color: #ffffff; box-shadow: 0 0 20px var(--winner-box-glow); }
         
         /* ── DEUCE WIPE ── */
         #deuce-wipe-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 30; }
@@ -492,8 +550,8 @@
             display: flex; align-items: center; justify-content: center; 
             gap: 40px; 
             position: relative;
-            background: var(--theme-card-bg); 
-            border: 1px solid var(--theme-card-border);
+            background: var(--intro-card-bg);
+            border: 1px solid var(--card-border);
             border-radius: 28px;
             padding: 40px 60px;
             box-shadow: 0 30px 85px rgba(0, 0, 0, 0.9); 
@@ -517,7 +575,7 @@
         
         .intro-team { font-family: var(--team-font-family); font-size: 42px; font-weight: 800; text-transform: uppercase; color: #ffffff; text-shadow: 0 4px 15px rgba(0,0,0,0.95); opacity: 0; letter-spacing: 1.5px; }
         .intro-vs-box { display: flex; align-items: center; justify-content: center; position: relative; width: 100px; height: 100px; }
-        .intro-vs { font-family: 'Inter', sans-serif; font-size: 36px; font-weight: 900; color: var(--theme-vs-color); text-shadow: 0 0 25px var(--theme-vs-shadow), 0 2px 8px rgba(0,0,0,0.6); opacity: 0; transform: scale(0.5); }
+        .intro-vs { font-family: 'Inter', sans-serif; font-size: 36px; font-weight: 900; color: var(--intro-vs-color); text-shadow: 0 0 25px var(--intro-vs-color), 0 2px 8px rgba(0,0,0,0.6); opacity: 0; transform: scale(0.5); }
         .intro-court { font-size: 15px; font-weight: 900; color: #ffffff; text-transform: uppercase; letter-spacing: 5px; text-align: center; margin-bottom: 25px; opacity: 0; transform: translateY(-20px); transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); text-shadow: 0 3px 10px rgba(0,0,0,0.9); }
  
         /* ── СТИЛІ ЦЕНТРУВАННЯ І МАСШТАБУ ЗАСТАВКИ КАМЕРИ ── */
@@ -870,58 +928,14 @@
         if (ui.accentBlue) {
             updateStyle('--accent-blue', ui.accentBlue);
             const anchor = document.getElementById('scoreboard-anchor');
-            const isWta = ui.accentBlue === '#29a9e0';
-            if (anchor) anchor.classList.toggle('theme-wta', isWta);
- 
-            // Оновлюємо тематичні змінні карток залежно від теми
-            if (isWta) {
-                // WTA — блакитна тема
-                updateStyle('--theme-card-bg', 'rgba(8, 30, 60, 0.82)');
-                updateStyle('--theme-card-border', 'rgba(41,169,224,0.35)');
-                updateStyle('--theme-card-title', 'rgba(41,169,224,0.8)');
-                updateStyle('--theme-winner-box-bg', 'linear-gradient(135deg, #1a8fc0, #0d6a99)');
-                updateStyle('--theme-winner-box-border', '#29a9e0');
-                updateStyle('--theme-winner-box-glow', 'rgba(41,169,224,0.7)');
-                updateStyle('--theme-finish-title-shadow', 'rgba(41,169,224,0.7)');
-                updateStyle('--theme-vs-color', '#29a9e0');
-                updateStyle('--theme-vs-shadow', '#29a9e0');
-                updateStyle('--theme-time-label-color', '#29a9e0');
-            } else if (ui.accentBlue === '#888888') {
-                // Grey
-                updateStyle('--theme-card-bg', 'rgba(20, 20, 20, 0.75)');
-                updateStyle('--theme-card-border', 'rgba(180,180,180,0.2)');
-                updateStyle('--theme-card-title', 'rgba(200,200,200,0.5)');
-                updateStyle('--theme-winner-box-bg', 'linear-gradient(135deg, #666, #444)');
-                updateStyle('--theme-winner-box-border', '#999');
-                updateStyle('--theme-winner-box-glow', 'rgba(150,150,150,0.6)');
-                updateStyle('--theme-finish-title-shadow', 'rgba(150,150,150,0.5)');
-                updateStyle('--theme-vs-color', '#bbbbbb');
-                updateStyle('--theme-vs-shadow', '#aaaaaa');
-                updateStyle('--theme-time-label-color', '#aaaaaa');
-            } else if (ui.accentBlue === '#333333') {
-                // Dark
-                updateStyle('--theme-card-bg', 'rgba(8, 8, 8, 0.90)');
-                updateStyle('--theme-card-border', 'rgba(255,255,255,0.06)');
-                updateStyle('--theme-card-title', 'rgba(255,255,255,0.25)');
-                updateStyle('--theme-winner-box-bg', 'linear-gradient(135deg, #2a2a2a, #111)');
-                updateStyle('--theme-winner-box-border', '#555');
-                updateStyle('--theme-winner-box-glow', 'rgba(100,100,100,0.4)');
-                updateStyle('--theme-finish-title-shadow', 'rgba(255,255,255,0.2)');
-                updateStyle('--theme-vs-color', '#bbbbbb');
-                updateStyle('--theme-vs-shadow', '#888888');
-                updateStyle('--theme-time-label-color', '#888888');
-            } else {
-                // Blue (default)
-                updateStyle('--theme-card-bg', 'rgba(14, 14, 18, 0.52)');
-                updateStyle('--theme-card-border', 'rgba(255,255,255,0.12)');
-                updateStyle('--theme-card-title', 'rgba(255,255,255,0.35)');
-                updateStyle('--theme-winner-box-bg', 'linear-gradient(135deg, #0066ff, #0033cc)');
-                updateStyle('--theme-winner-box-border', '#0077ff');
-                updateStyle('--theme-winner-box-glow', 'rgba(0,85,255,0.7)');
-                updateStyle('--theme-finish-title-shadow', 'rgba(0,85,255,0.6)');
-                updateStyle('--theme-vs-color', '#0055ff');
-                updateStyle('--theme-vs-shadow', '#0055ff');
-                updateStyle('--theme-time-label-color', '#7eb8ff');
+            const themeId = ui.themeId || 'blue';
+            // Клас на body для тем карток
+            document.body.className = document.body.className.replace(/theme-\w+/g, '').trim();
+            document.body.classList.add('theme-' + themeId);
+            // WTA і Premier — без смужки зліва
+            if (anchor) {
+                anchor.classList.toggle('theme-wta',     themeId === 'wta');
+                anchor.classList.toggle('theme-premier', themeId === 'premier');
             }
         }
         if (ui.ballColor) updateStyle('--ball-color', ui.ballColor);
@@ -1012,17 +1026,8 @@
         if (ui.team2Logo) { t2LogoImg.src = ui.team2Logo; t2LogoImg.style.display = 'block'; }
         else { t2LogoImg.src = ''; t2LogoImg.style.display = 'none'; }
  
-        const isWTA = (ui.accentBlue === '#29a9e0');
-        // При зміні режиму відображення рахунку — скидаємо кеш
-        const scoreMode = isAmerican ? 'american' : isTiebreak ? 'tb' : isWTA ? 'wta' : 'std';
-        if (_cache['scoreMode'] !== scoreMode) {
-            _cache['scoreMode'] = scoreMode;
-            delete _cache['p1-score.text'];
-            delete _cache['p2-score.text'];
-        }
         const getL = (i) => {
             if (isAmerican || isTiebreak) return String(scores[i]);
-            // WTA і стандарт — однакова логіка тенісного рахунку (0→0, 1→15, 2→30, 3→40, 4→AD)
             if (scores[i] === 4) return "AD";
             if (scores[1-i] === 4) return "";
             return String(pts[scores[i]]);
@@ -1416,7 +1421,7 @@
             const v = (sh[0] && sh[0][i]!==undefined)?sh[0][i]:'-';
             const won = (sh[0] && sh[1] && sh[0][i]!==undefined && sh[1][i]!==undefined && sh[0][i]>sh[1][i]);
             html += `<td class="finish-cell-set"><span class="finish-box-score${won?' winner-box':''}">${v}</span>`;
-            if(st && st[i] && i===0) html += `<div style="font-size:16px;color:var(--theme-time-label-color);margin-top:3px;font-weight:900;">${st[i]}'</div>`;
+            if(st && st[i] && i===0) html += `<div style="font-size:16px;color:#7eb8ff;margin-top:3px;font-weight:900;">${st[i]}'</div>`;
             html += `</td>`;
         }
         html += `</tr><tr class="finish-row" style="border:none;"><td class="finish-team">${n2}</td>`;
@@ -1424,7 +1429,7 @@
             const v = (sh[1] && sh[1][i]!==undefined)?sh[1][i]:'-';
             const won = (sh[0] && sh[1] && sh[0][i]!==undefined && sh[1][i]!==undefined && sh[1][i]>sh[0][i]);
             html += `<td class="finish-cell-set"><span class="finish-box-score${won?' winner-box':''}">${v}</span>`;
-            if(st && st[i] && i>0) html += `<div style="font-size:16px;color:var(--theme-time-label-color);margin-top:3px;font-weight:900;">${st[i]}'</div>`;
+            if(st && st[i] && i>0) html += `<div style="font-size:16px;color:#7eb8ff;margin-top:3px;font-weight:900;">${st[i]}'</div>`;
             html += `</td>`;
         }
         html += `</tr>`;
@@ -1462,3 +1467,4 @@
 </script>
 </body>
 </html>
+ 
