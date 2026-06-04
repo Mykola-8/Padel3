@@ -550,10 +550,7 @@
                 <div class="toggle-label" style="font-size:11px; color:rgba(255,255,255,0.5);">Вибери готову тему оформлення</div>
                 <div style="display:flex; gap:8px; width:100%;">
                     <button onclick="applyTheme('blue')" style="flex:1; padding:12px 6px; border-radius:10px; border:2px solid #0055ff; background:rgba(0,85,255,0.15); color:white; font-size:11px; font-weight:900; cursor:pointer; letter-spacing:1px;">🔵 СИНЄ</button>
-                    <button onclick="applyTheme('grey')" style="flex:1; padding:12px 6px; border-radius:10px; border:2px solid #888; background:rgba(136,136,136,0.15); color:white; font-size:11px; font-weight:900; cursor:pointer; letter-spacing:1px;">⚪ СІРЕ</button>
-                    <button onclick="applyTheme('dark')" style="flex:1; padding:12px 6px; border-radius:10px; border:2px solid #333; background:rgba(30,30,30,0.4); color:white; font-size:11px; font-weight:900; cursor:pointer; letter-spacing:1px;">⚫ ТЕМНЕ</button>
-                    <button onclick="applyTheme('wta')" style="flex:1; padding:12px 6px; border-radius:10px; border:2px solid #29a9e0; background:rgba(41,169,224,0.2); color:white; font-size:11px; font-weight:900; cursor:pointer; letter-spacing:1px;">🩵 WTA</button>
-                </div>
+                                    </div>
             </div>
         </div>
     </div>
@@ -924,27 +921,6 @@
             ui.teamNameColor = '#ffffff'; ui.scoreColor = '#ffffff';
             ui.panelBg = 'rgba(30,30,50,0.82)'; ui.drawerBg = 'rgba(20,20,40,0.88)';
             ui.popupBg = '#1a1a3e';
-        } else if (theme === 'grey') {
-            ui.accentBlue = '#888888'; ui.ballColor = '#cccccc';
-            ui.teamNameColor = '#ffffff'; ui.scoreColor = '#ffffff';
-            ui.panelBg = 'rgba(80,80,80,0.75)'; ui.drawerBg = 'rgba(60,60,60,0.80)';
-            ui.popupBg = '#555555';
-        } else if (theme === 'dark') {
-            ui.accentBlue = '#333333'; ui.ballColor = '#aaaaaa';
-            ui.teamNameColor = '#eeeeee'; ui.scoreColor = '#eeeeee';
-            ui.panelBg = 'rgba(18,18,18,0.90)'; ui.drawerBg = 'rgba(10,10,10,0.92)';
-            ui.popupBg = '#222222';
-        } else if (theme === 'wta') {
-            // WTA/ATP стиль — яскравий блакитний фон, без смужки зліва
-            ui.accentBlue = '#29a9e0';
-            ui.ballColor = '#29a9e0';
-            ui.teamNameColor = '#ffffff';
-            ui.scoreColor = '#ffffff';
-            ui.panelBg = 'rgba(41,169,224,0.92)';
-            ui.drawerBg = 'rgba(255,255,255,0.18)';
-            ui.popupBg = '#1a8fc0';
-            ui.sbRadius = '14px';
-            ui.fontFamily = "'Oswald', sans-serif";
         }
         pushState();
     }
@@ -1221,4 +1197,3 @@
 </script>
 </body>
 </html>
- 
