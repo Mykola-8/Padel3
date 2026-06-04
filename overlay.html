@@ -234,13 +234,13 @@
         #tv-stats-overlay.active   { animation: stats-in  0.65s cubic-bezier(0.25,1,0.5,1) forwards; }
         #tv-stats-overlay.closing  { animation: stats-out 0.45s cubic-bezier(0.4,0,0.2,1) forwards; }
         .stats-card {
-            background: var(--theme-card-bg);
-            border: 1px solid var(--theme-card-border);
-            box-shadow: 0 30px 70px rgba(0,0,0,0.75);
-            width: fit-content; min-width: 480px; border-radius: 22px; padding: 38px 54px; position: relative; display: flex; flex-direction: column; gap: 16px;
+            background: rgba(0,0,0,0.52);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,0.10);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+            width: fit-content; min-width: 480px; border-radius: 18px; padding: 28px 48px; position: relative; display: flex; flex-direction: column; gap: 12px;
         }
-        .stats-logo-left  { position: absolute; top: 15px; left: 20px;  height: 45px; max-width: 120px; object-fit: contain; }
-        .stats-logo-right { position: absolute; top: 15px; right: 20px; height: 45px; max-width: 120px; object-fit: contain; }
         .stats-card-title { font-size: 13px; font-weight: 900; color: var(--theme-card-title); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 6px; text-align: center; }
         .stats-table { min-width: 350px; border-collapse: collapse; }
         .stats-row { height: 86px; border-bottom: 1px solid rgba(255,255,255,0.06); }
@@ -473,10 +473,14 @@
         .intro-photo-wrap { 
             width: 240px; height: 240px; 
             border-radius: 20px; 
-            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+            background: linear-gradient(145deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));
             border: 1px solid rgba(255,255,255,0.12); overflow: hidden; 
             box-shadow: 0 20px 45px rgba(0,0,0,0.65); 
-            margin-bottom: 20px; display: none; opacity: 0;
+            margin-bottom: 20px; display: flex; opacity: 0;
+            align-items: center; justify-content: center;
+        }
+        .intro-photo-placeholder {
+            font-size: 64px; opacity: 0.18;
         }
         .intro-photo-wrap img, .intro-photo-wrap video { width: 100%; height: 100%; object-fit: cover; }
         .intro-team-logo { height: 50px; max-width: 140px; object-fit: contain; margin-bottom: 12px; display: none; opacity: 0; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5)); }
@@ -567,6 +571,84 @@
             50% { opacity: 0.4; background-color: rgba(255, 215, 0, 0.15); }
         }
         .gp-winner-shimmer { animation: gp-shimmer 0.6s ease-in-out 5; }
+        /* ── BREAK STATS OVERLAY (перерва) ── */
+        @keyframes bso-in  { 0%{opacity:0;transform:translateX(-50%) translateY(24px) scale(0.95)} 70%{transform:translateX(-50%) translateY(-3px) scale(1.01)} 100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)} }
+        @keyframes bso-out { 0%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)} 100%{opacity:0;transform:translateX(-50%) translateY(16px) scale(0.96)} }
+        #break-stats-overlay {
+            position: fixed;
+            left: 50%;
+            top: 55%;
+            transform: translateX(-50%) translateY(0);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 14000;
+        }
+        #break-stats-overlay.bso-show { animation: bso-in  0.55s cubic-bezier(0.25,1,0.5,1) forwards; }
+        #break-stats-overlay.bso-hide { animation: bso-out 0.35s cubic-bezier(0.4,0,0.2,1) forwards; }
+        .bso-card {
+            background: rgba(8,8,14,0.62);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid rgba(255,255,255,0.13);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 18px 52px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            min-width: 560px;
+        }
+        .bso-header {
+            padding: 9px 22px 7px;
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: rgba(255,255,255,0.32);
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+        .bso-teams-col { display: flex; flex-direction: column; }
+        .bso-team-row {
+            display: flex;
+            align-items: stretch;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            min-height: 64px;
+        }
+        .bso-team-row:last-child { border-bottom: none; }
+        .bso-team-name {
+            flex: 1;
+            font-family: var(--team-font-family);
+            font-size: 24px;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: #ffffff;
+            padding: 0 22px;
+            display: flex;
+            align-items: center;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        }
+        .bso-sets-row { display: flex; align-items: stretch; }
+        .bso-set-cell {
+            width: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--team-font-family);
+            font-size: 28px;
+            font-weight: 900;
+            color: rgba(255,255,255,0.65);
+            border-left: 1px solid rgba(255,255,255,0.08);
+        }
+        .bso-set-cell.bso-current {
+            color: #ffffff;
+            background: rgba(255,255,255,0.09);
+        }
+        .bso-set-cell.bso-winner { color: var(--gold, #ffd700); }
+ 
     </style>
 </head>
 <body>
@@ -631,21 +713,17 @@
  
 <div id="tv-stats-overlay">
     <div class="stats-card">
-        <img id="stat-logo-t" class="stats-logo-left" src="" alt="">
-        <img id="stat-logo-f" class="stats-logo-right" src="" alt="">
         <div class="stats-card-title" id="stats-card-title">СТАТИСТИКА МАТЧУ</div>
         <table class="stats-table">
             <thead id="stats-table-head"></thead>
             <tbody id="stats-table-body"></tbody>
         </table>
     </div>
+</div>
  
 <div id="break-stats-overlay">
     <div class="bso-card">
-        <div class="bso-logo-col" id="bso-logo-col">
-            <div class="bso-logo-placeholder" id="bso-logo-placeholder"></div>
-            <img id="bso-logo-img" src="" alt="" style="display:none;">
-        </div>
+        <div class="bso-header">Рахунок матчу</div>
         <div class="bso-teams-col">
             <div class="bso-team-row">
                 <div class="bso-team-name" id="bso-p1-name">Команда А</div>
@@ -687,6 +765,7 @@
             <div class="intro-team-block t-left">
                 <img id="intro-t1-logo" class="intro-team-logo" src="" alt="">
                 <div id="intro-t1-photo-wrap" class="intro-photo-wrap">
+                    <div class="intro-photo-placeholder" id="intro-t1-placeholder">👤</div>
                     <img id="intro-t1-photo" src="" style="display:none;" alt="">
                     <video id="intro-t1-video" style="display:none;" loop autoplay playsinline></video>
                 </div>
@@ -698,6 +777,7 @@
             <div class="intro-team-block t-right">
                 <img id="intro-t2-logo" class="intro-team-logo" src="" alt="">
                 <div id="intro-t2-photo-wrap" class="intro-photo-wrap">
+                    <div class="intro-photo-placeholder" id="intro-t2-placeholder">👤</div>
                     <img id="intro-t2-photo" src="" style="display:none;" alt="">
                     <video id="intro-t2-video" style="display:none;" loop autoplay playsinline></video>
                 </div>
@@ -904,8 +984,11 @@
         const t1VideoEl = document.getElementById('intro-t1-video');
         const t1PhotoWrap = document.getElementById('intro-t1-photo-wrap');
         
+        // photo-wrap завжди видима, placeholder схований якщо є фото
+        t1PhotoWrap.style.display = 'flex';
+        const t1Placeholder = document.getElementById('intro-t1-placeholder');
         if (ui.team1Photo) {
-            t1PhotoWrap.style.display = 'block';
+            if (t1Placeholder) t1Placeholder.style.display = 'none';
             if (ui.team1Photo.startsWith('data:video') || ui.team1Photo.includes('.mp4')) {
                 t1PhotoImg.style.display = 'none';
                 t1VideoEl.src = ui.team1Photo;
@@ -919,8 +1002,10 @@
                 t1PhotoImg.style.display = 'block';
             }
         } else {
-            t1PhotoWrap.style.display = 'none';
+            if (t1Placeholder) t1Placeholder.style.display = 'flex';
+            t1PhotoImg.style.display = 'none';
             t1VideoEl.src = '';
+            t1VideoEl.style.display = 'none';
         }
  
         /* ЛОГІКА АВТОМАТИЧНОГО ПЕРЕМИКАННЯ ФОТО / ВІДЕО ЗІ ЗВУКОМ ДЛЯ КОМАНДИ 2 */
@@ -928,8 +1013,11 @@
         const t2VideoEl = document.getElementById('intro-t2-video');
         const t2PhotoWrap = document.getElementById('intro-t2-photo-wrap');
         
+        // photo-wrap завжди видима, placeholder схований якщо є фото
+        t2PhotoWrap.style.display = 'flex';
+        const t2Placeholder = document.getElementById('intro-t2-placeholder');
         if (ui.team2Photo) {
-            t2PhotoWrap.style.display = 'block';
+            if (t2Placeholder) t2Placeholder.style.display = 'none';
             if (ui.team2Photo.startsWith('data:video') || ui.team2Photo.includes('.mp4')) {
                 t2PhotoImg.style.display = 'none';
                 t2VideoEl.src = ui.team2Photo;
@@ -943,8 +1031,10 @@
                 t2PhotoImg.style.display = 'block';
             }
         } else {
-            t2PhotoWrap.style.display = 'none';
+            if (t2Placeholder) t2Placeholder.style.display = 'flex';
+            t2PhotoImg.style.display = 'none';
             t2VideoEl.src = '';
+            t2VideoEl.style.display = 'none';
         }
  
         const t1LogoImg = document.getElementById('intro-t1-logo');
@@ -1422,28 +1512,11 @@
         const games = state.games || [0,0];
         const activeSetIndex = state.activeSetIndex || 0;
  
-        // Names
         const p1El = document.getElementById('bso-p1-name');
         const p2El = document.getElementById('bso-p2-name');
         if (p1El) p1El.textContent = n1;
         if (p2El) p2El.textContent = n2;
  
-        // Logo
-        const logoImg = document.getElementById('bso-logo-img');
-        const logoPlaceholder = document.getElementById('bso-logo-placeholder');
-        const logoSrc = (window._currentUi && window._currentUi.logoSrc) || '';
-        if (logoImg && logoPlaceholder) {
-            if (logoSrc) {
-                logoImg.src = logoSrc;
-                logoImg.style.display = 'block';
-                logoPlaceholder.style.display = 'none';
-            } else {
-                logoImg.style.display = 'none';
-                logoPlaceholder.style.display = 'block';
-            }
-        }
- 
-        // Sets: show completed sets + current active
         const totalSets = Math.max(activeSetIndex + 1, (sh[0] || []).length, 1);
         let s1 = [], s2 = [];
         for (let i = 0; i < totalSets; i++) {
@@ -1473,3 +1546,4 @@
 </script>
 </body>
 </html>
+ 
