@@ -237,6 +237,14 @@
             <label class="switch"><input type="checkbox" id="tog-logo" onchange="sendToggle('showLogo', this.checked)"><span class="slider"></span></label>
         </div>
         
+        <div class="toggle-row">
+            <div>
+                <div class="toggle-label" style="color: #f39c12;">📊 Статистика (перерва)</div>
+                <div class="toggle-sublabel">Показати таблицю рахунку посередині екрана</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="tog-break-stats" onchange="sendToggle('showBreakStats', this.checked)"><span class="slider"></span></label>
+        </div>
+        
         <div class="toggle-row" style="background: rgba(0, 85, 255, 0.05); border-bottom: 1px solid var(--border);">
             <div>
                 <div class="toggle-label" style="color: #5599ff;">Заставка на весь екран (Камера)</div>
@@ -645,7 +653,7 @@
         isGameActive: false, isTiebreak: false, isAmerican: false,
         isProset: false, deuceCycles: 0, setTimes: [0,0,0], activeSetIndex: 0,
         notifText: "", showFinish: false, showIntro: false, showLogo: false,
-        showBoard: true, showStats: false, deuceMode: "golden", prosetLimit: 8,
+        showBoard: true, showStats: false, showBreakStats: false, deuceMode: "golden", prosetLimit: 8,
         americanLimit: 15, p1name: "Команда А", p2name: "Команда Б",
         courtName: `COURT ${currentCourt}`, alertKey: "", alertText: "", alertMode: "", faultTeam: null, isGoldenActive: false, hideScoreOnly: false, goldenWinnerKey: "", qrUrl: "", qrText: "", showCameraCover: false
     };
@@ -1028,7 +1036,7 @@
             deuceCycles: 0, isGoldenActive: false,
             setTimes: [0,0,0], activeSetIndex: 0,
             notifText: "", showFinish: false, showIntro: false,
-            showLogo: state.showLogo, showBoard: true, showStats: false,
+            showLogo: state.showLogo, showBoard: true, showStats: false, showBreakStats: false,
             prosetLimit: state.prosetLimit, americanLimit: state.americanLimit,
             p1name: "", p2name: "", courtName: `COURT ${currentCourt}`,
             alertKey: "", alertText: "", alertMode: "",
@@ -1082,6 +1090,7 @@
         document.getElementById('tog-intro').checked = !!state.showIntro;
         document.getElementById('tog-logo').checked = !!state.showLogo;
         document.getElementById('tog-camera-cover').checked = !!state.showCameraCover;
+        if (document.getElementById('tog-break-stats')) document.getElementById('tog-break-stats').checked = !!state.showBreakStats;
  
         document.getElementById('btn-score-p1').textContent = getL(0);
         document.getElementById('btn-score-p2').textContent = getL(1);
@@ -1197,3 +1206,4 @@
 </script>
 </body>
 </html>
+ 
