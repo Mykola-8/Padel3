@@ -548,11 +548,12 @@
         <div class="settings-card">
             <div class="settings-input-row" style="flex-direction:column; align-items:flex-start; gap:10px; padding:14px 16px;">
                 <div class="toggle-label" style="font-size:11px; color:rgba(255,255,255,0.5);">Вибери готову тему оформлення</div>
-                <div style="display:flex; gap:8px; width:100%;">
-                    <button id="theme-btn-blue" onclick="applyTheme('blue')" style="flex:1; padding:12px 6px; border-radius:10px; border:2px solid #0055ff; background:rgba(0,85,255,0.15); color:white; font-size:11px; font-weight:900; cursor:pointer; letter-spacing:1px; transition:0.2s;">🔵 СИНЄ</button>
-                    <button id="theme-btn-grey" onclick="applyTheme('grey')" style="flex:1; padding:12px 6px; border-radius:10px; border:2px solid #888; background:rgba(136,136,136,0.15); color:white; font-size:11px; font-weight:900; cursor:pointer; letter-spacing:1px; transition:0.2s;">⚪ СІРЕ</button>
-                    <button id="theme-btn-dark" onclick="applyTheme('dark')" style="flex:1; padding:12px 6px; border-radius:10px; border:2px solid #333; background:rgba(30,30,30,0.4); color:white; font-size:11px; font-weight:900; cursor:pointer; letter-spacing:1px; transition:0.2s;">⚫ ТЕМНЕ</button>
-                    <button id="theme-btn-wta" onclick="applyTheme('wta')" style="flex:1; padding:12px 6px; border-radius:10px; border:2px solid #29a9e0; background:rgba(41,169,224,0.2); color:white; font-size:11px; font-weight:900; cursor:pointer; letter-spacing:1px; transition:0.2s;">🩵 WTA</button>
+                <div style="display:flex; gap:8px; width:100%; flex-wrap:wrap;">
+                    <button onclick="applyTheme('blue')"    style="flex:1; min-width:60px; padding:12px 6px; border-radius:10px; border:2px solid #0055ff; background:rgba(0,85,255,0.15); color:white; font-size:11px; font-weight:900; cursor:pointer; letter-spacing:1px;">🔵 СИНЄ</button>
+                    <button onclick="applyTheme('grey')"    style="flex:1; min-width:60px; padding:12px 6px; border-radius:10px; border:2px solid #888; background:rgba(136,136,136,0.15); color:white; font-size:11px; font-weight:900; cursor:pointer; letter-spacing:1px;">⚪ СІРЕ</button>
+                    <button onclick="applyTheme('dark')"    style="flex:1; min-width:60px; padding:12px 6px; border-radius:10px; border:2px solid #333; background:rgba(30,30,30,0.4); color:white; font-size:11px; font-weight:900; cursor:pointer; letter-spacing:1px;">⚫ ТЕМНЕ</button>
+                    <button onclick="applyTheme('wta')"     style="flex:1; min-width:60px; padding:12px 6px; border-radius:10px; border:2px solid #29a9e0; background:rgba(41,169,224,0.2); color:white; font-size:11px; font-weight:900; cursor:pointer; letter-spacing:1px;">🩵 WTA</button>
+                    <button onclick="applyTheme('premier')" style="flex:1; min-width:60px; padding:12px 6px; border-radius:10px; border:2px solid #3a7bd5; background:rgba(26,39,68,0.5); color:white; font-size:11px; font-weight:900; cursor:pointer; letter-spacing:1px;">🏆 PREMIER</button>
                 </div>
             </div>
         </div>
@@ -638,15 +639,6 @@
                 if (d.state) state = { ...state, ...d.state };
                 if (d.ui) ui = { ...ui, ...d.ui };
             }
-            if (!ui.themeSettings) {
-                ui.themeSettings = {
-                    blue: { ...THEME_DEFAULTS.blue },
-                    grey: { ...THEME_DEFAULTS.grey },
-                    dark: { ...THEME_DEFAULTS.dark },
-                    wta:  { ...THEME_DEFAULTS.wta  }
-                };
-            }
-            if (!ui.activeTheme) ui.activeTheme = 'blue';
             updateControlUI();
         }, { onlyOnce: true });
     }
@@ -700,20 +692,6 @@
             if (d.state) state = { ...state, ...d.state };
             if (d.ui) ui = { ...ui, ...d.ui };
         }
-        // Ініціалізуємо themeSettings якщо відсутні
-        if (!ui.themeSettings) {
-            ui.themeSettings = {
-                blue: { ...THEME_DEFAULTS.blue },
-                grey: { ...THEME_DEFAULTS.grey },
-                dark: { ...THEME_DEFAULTS.dark },
-                wta:  { ...THEME_DEFAULTS.wta  }
-            };
-        }
-        // Зберігаємо поточні ui в активну тему (якщо activeTheme вже є)
-        if (ui.activeTheme && ui.themeSettings[ui.activeTheme]) {
-            // вже завантажено — просто оновлюємо кнопки
-        }
-        if (!ui.activeTheme) ui.activeTheme = 'blue';
         updateControlUI();
     }, { onlyOnce: true });
  
@@ -937,119 +915,40 @@
     }
  
     // ── ГОТОВІ ТЕМИ ──
-    // ── ДЕФОЛТНІ НАЛАШТУВАННЯ ДЛЯ КОЖНОЇ ТЕМИ ──
-    const THEME_DEFAULTS = {
-        blue: {
-            accentBlue: '#0055ff', ballColor: '#ccff00',
-            teamNameColor: '#ffffff', scoreColor: '#ffffff',
-            panelBg: 'rgba(30,30,50,0.82)', drawerBg: 'rgba(20,20,40,0.88)',
-            popupBg: '#1a1a3e', fontFamily: "'Oswald', sans-serif",
-            sbW: '680px', sbH: '120px', sbSkew: '0deg', sbRadius: '10px',
-            sbTop: 40, sbLeft: 40, sbScale: '1.00'
-        },
-        grey: {
-            accentBlue: '#888888', ballColor: '#cccccc',
-            teamNameColor: '#ffffff', scoreColor: '#ffffff',
-            panelBg: 'rgba(80,80,80,0.75)', drawerBg: 'rgba(60,60,60,0.80)',
-            popupBg: '#555555', fontFamily: "'Oswald', sans-serif",
-            sbW: '680px', sbH: '120px', sbSkew: '0deg', sbRadius: '10px',
-            sbTop: 40, sbLeft: 40, sbScale: '1.00'
-        },
-        dark: {
-            accentBlue: '#333333', ballColor: '#aaaaaa',
-            teamNameColor: '#eeeeee', scoreColor: '#eeeeee',
-            panelBg: 'rgba(18,18,18,0.90)', drawerBg: 'rgba(10,10,10,0.92)',
-            popupBg: '#222222', fontFamily: "'Oswald', sans-serif",
-            sbW: '680px', sbH: '120px', sbSkew: '0deg', sbRadius: '10px',
-            sbTop: 40, sbLeft: 40, sbScale: '1.00'
-        },
-        wta: {
-            accentBlue: '#29a9e0', ballColor: '#29a9e0',
-            teamNameColor: '#ffffff', scoreColor: '#ffffff',
-            panelBg: 'rgba(41,169,224,0.92)', drawerBg: 'rgba(255,255,255,0.18)',
-            popupBg: '#1a8fc0', fontFamily: "'Oswald', sans-serif",
-            sbW: '680px', sbH: '120px', sbSkew: '0deg', sbRadius: '14px',
-            sbTop: 40, sbLeft: 40, sbScale: '1.00'
-        }
-    };
- 
-    // Ініціалізуємо сховище налаштувань тем (якщо не завантажено з Firebase)
-    if (!ui.themeSettings) {
-        ui.themeSettings = {
-            blue: { ...THEME_DEFAULTS.blue },
-            grey: { ...THEME_DEFAULTS.grey },
-            dark: { ...THEME_DEFAULTS.dark },
-            wta:  { ...THEME_DEFAULTS.wta  }
-        };
-    }
-    if (!ui.activeTheme) ui.activeTheme = 'blue';
- 
-    function getActiveTheme() { return ui.activeTheme || 'blue'; }
- 
-    function updateThemeButtons() {
-        const t = getActiveTheme();
-        const map = { blue: 'theme-btn-blue', grey: 'theme-btn-grey', dark: 'theme-btn-dark', wta: 'theme-btn-wta' };
-        Object.entries(map).forEach(([key, id]) => {
-            const btn = document.getElementById(id);
-            if (!btn) return;
-            btn.style.opacity = (key === t) ? '1' : '0.45';
-            btn.style.transform = (key === t) ? 'scale(1.04)' : 'scale(1)';
-            btn.style.boxShadow = (key === t) ? '0 0 0 2px white' : 'none';
-        });
-    }
- 
-    function applyThemeToUI(settings) {
-        // Застосовуємо налаштування теми до об'єкту ui
-        Object.assign(ui, settings);
-    }
- 
     function applyTheme(theme) {
-        // Зберігаємо поточні налаштування активної теми перед перемиканням
-        saveCurrentThemeSettings();
- 
-        ui.activeTheme = theme;
-        if (!ui.themeSettings) ui.themeSettings = {};
-        if (!ui.themeSettings[theme]) ui.themeSettings[theme] = { ...THEME_DEFAULTS[theme] };
- 
-        applyThemeToUI(ui.themeSettings[theme]);
-        updateThemeButtons();
-        // Оновлюємо поля в налаштуваннях
-        fillSettingsFromUI();
+        ui.themeId = theme;
+        if (theme === 'blue') {
+            ui.accentBlue = '#0055ff'; ui.ballColor = '#ccff00';
+            ui.teamNameColor = '#ffffff'; ui.scoreColor = '#ffffff';
+            ui.panelBg = 'rgba(30,30,50,0.82)'; ui.drawerBg = 'rgba(20,20,40,0.88)';
+            ui.popupBg = '#1a1a3e';
+        } else if (theme === 'grey') {
+            ui.accentBlue = '#888888'; ui.ballColor = '#cccccc';
+            ui.teamNameColor = '#ffffff'; ui.scoreColor = '#ffffff';
+            ui.panelBg = 'rgba(80,80,80,0.75)'; ui.drawerBg = 'rgba(60,60,60,0.80)';
+            ui.popupBg = '#555555';
+        } else if (theme === 'dark') {
+            ui.accentBlue = '#333333'; ui.ballColor = '#aaaaaa';
+            ui.teamNameColor = '#eeeeee'; ui.scoreColor = '#eeeeee';
+            ui.panelBg = 'rgba(18,18,18,0.90)'; ui.drawerBg = 'rgba(10,10,10,0.92)';
+            ui.popupBg = '#222222';
+        } else if (theme === 'wta') {
+            ui.accentBlue = '#29a9e0'; ui.ballColor = '#ffffff';
+            ui.teamNameColor = '#ffffff'; ui.scoreColor = '#ffffff';
+            ui.panelBg = 'rgba(41,169,224,0.95)'; ui.drawerBg = 'rgba(25,130,185,0.95)';
+            ui.popupBg = '#1a8fc0'; ui.sbRadius = '14px';
+            ui.fontFamily = "'Oswald', sans-serif";
+        } else if (theme === 'premier') {
+            // Premier Padel — темно-синій, білі імена, синя рамка
+            ui.accentBlue = '#3a7bd5'; ui.ballColor = '#ffffff';
+            ui.teamNameColor = '#1a2744'; ui.scoreColor = '#ffffff';
+            ui.panelBg = 'rgba(255,255,255,0.96)'; ui.drawerBg = 'rgba(26,39,68,0.97)';
+            ui.popupBg = '#1a2744'; ui.sbRadius = '10px';
+            ui.fontFamily = "'Oswald', sans-serif";
+        }
         pushState();
     }
     window.applyTheme = applyTheme;
- 
-    function saveCurrentThemeSettings() {
-        const t = getActiveTheme();
-        if (!ui.themeSettings) ui.themeSettings = {};
-        ui.themeSettings[t] = {
-            accentBlue: ui.accentBlue, ballColor: ui.ballColor,
-            teamNameColor: ui.teamNameColor, scoreColor: ui.scoreColor,
-            panelBg: ui.panelBg, drawerBg: ui.drawerBg,
-            popupBg: ui.popupBg, fontFamily: ui.fontFamily,
-            sbW: ui.sbW, sbH: ui.sbH, sbSkew: ui.sbSkew, sbRadius: ui.sbRadius,
-            sbTop: ui.sbTop, sbLeft: ui.sbLeft, sbScale: ui.sbScale
-        };
-    }
- 
-    function fillSettingsFromUI() {
-        if (ui.accentBlue) document.getElementById('c-accent').value = rgbaToHex(ui.accentBlue);
-        if (ui.ballColor)  document.getElementById('c-ball').value   = rgbaToHex(ui.ballColor);
-        if (ui.teamNameColor) document.getElementById('c-names').value = rgbaToHex(ui.teamNameColor);
-        if (ui.scoreColor) document.getElementById('c-score').value  = rgbaToHex(ui.scoreColor);
-        if (ui.panelBg)    document.getElementById('c-panel').value  = rgbaToHex(ui.panelBg);
-        if (ui.popupBg)    document.getElementById('c-popup').value  = rgbaToHex(ui.popupBg);
-        if (ui.panelBg) { const a = rgbaAlpha(ui.panelBg); document.getElementById('c-panel-alpha').value = a; document.getElementById('c-panel-alpha-val').textContent = a; }
-        if (ui.drawerBg) { const a = rgbaAlpha(ui.drawerBg); document.getElementById('c-drawer-alpha').value = a; document.getElementById('c-drawer-alpha-val').textContent = a; }
-        if (ui.fontFamily) document.getElementById('s-font').value = ui.fontFamily;
-        if (ui.sbW) { document.getElementById('g-w').value = parseInt(ui.sbW); document.getElementById('g-w-val').textContent = parseInt(ui.sbW); }
-        if (ui.sbH) { document.getElementById('g-h').value = parseInt(ui.sbH); document.getElementById('g-h-val').textContent = parseInt(ui.sbH); }
-        if (ui.sbSkew) { document.getElementById('g-skew').value = parseInt(ui.sbSkew); document.getElementById('g-skew-val').textContent = parseInt(ui.sbSkew); }
-        if (ui.sbRadius) { document.getElementById('g-radius').value = parseInt(ui.sbRadius); document.getElementById('g-radius-val').textContent = parseInt(ui.sbRadius); }
-        if (ui.sbTop !== undefined) { document.getElementById('g-y').value = ui.sbTop; document.getElementById('g-y-val').textContent = ui.sbTop; }
-        if (ui.sbLeft !== undefined) { document.getElementById('g-x').value = ui.sbLeft; document.getElementById('g-x-val').textContent = ui.sbLeft; }
-        if (ui.sbScale) { document.getElementById('g-scale').value = Math.round(parseFloat(ui.sbScale) * 100); document.getElementById('g-scale-val').textContent = Math.round(parseFloat(ui.sbScale) * 100); }
-    }
  
     function liveUpdateUI() {
         const hexToRgba = (hex, a) => {
@@ -1077,9 +976,6 @@
         ui.sbLeft   = parseInt(document.getElementById('g-x').value);
         ui.sbScale  = (document.getElementById('g-scale').value / 100).toFixed(2);
         ui.sponsorLogoSize = parseInt(document.getElementById('g-sponsor-size').value) || 80;
- 
-        // Зберігаємо в активну тему
-        saveCurrentThemeSettings();
         debouncedPush(300);
     }
  
@@ -1215,32 +1111,16 @@
         document.getElementById('btn-score-p2').textContent = getL(1);
     }
  
-    function rgbaToHex(rgba) {
-        // Convert "rgba(r,g,b,a)" or "#rrggbb" to "#rrggbb"
-        if (!rgba) return '#000000';
-        if (rgba.trim().startsWith('#')) return rgba.trim().substring(0,7);
-        const m = rgba.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-        if (!m) return '#000000';
-        return '#' + [m[1],m[2],m[3]].map(x => parseInt(x).toString(16).padStart(2,'0')).join('');
-    }
-    function rgbaAlpha(rgba) {
-        if (!rgba) return 70;
-        const m = rgba.match(/rgba?\(\d+,\s*\d+,\s*\d+,?\s*([\d.]+)?\)/);
-        if (!m || m[1] === undefined) return 100;
-        return Math.round(parseFloat(m[1]) * 100);
-    }
- 
     window.openSettings = function() {
-        document.getElementById('s-p1').value = state.p1name || "Команда А";
-        document.getElementById('s-p2').value = state.p2name || "Команда Б";
-        document.getElementById('s-court').value = state.courtName || "COURT 1";
+        document.getElementById('s-p1').value = state.p1name || "";
+        document.getElementById('s-p2').value = state.p2name || "";
+        document.getElementById('s-court').value = state.courtName || `COURT ${currentCourt}`;
         document.getElementById('s-american').checked = !!state.isAmerican;
         document.getElementById('s-proset').checked = !!state.isProset;
         document.getElementById('s-deuce-mode').value = state.deuceMode || "golden";
         document.getElementById('s-proset-limit').value = state.prosetLimit || 8;
         document.getElementById('s-american-limit').value = state.americanLimit || 15;
         document.getElementById('s-hide-score-only').checked = !!state.hideScoreOnly;
-        
         document.getElementById('s-qr-url').value = state.qrUrl || "";
         document.getElementById('s-qr-text').value = state.qrText || "";
         const splitUrlEl = document.getElementById('s-split-url');
@@ -1248,10 +1128,38 @@
         const splitScEl = document.getElementById('s-split-screen');
         if (splitScEl) splitScEl.checked = !!state.showSplitScreen;
  
-        // Заповнюємо поля з поточних ui-значень активної теми
-        fillSettingsFromUI();
-        updateThemeButtons();
+        // ── Синхронізуємо кольорові пікери з поточного ui ──
+        const rgbaToHex = (rgba) => {
+            const m = rgba.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+            if (!m) return rgba.startsWith('#') ? rgba : '#3c3c3c';
+            return '#' + [m[1],m[2],m[3]].map(x => parseInt(x).toString(16).padStart(2,'0')).join('');
+        };
+        const rgbaToAlpha = (rgba) => {
+            const m = rgba.match(/rgba?\(\d+,\s*\d+,\s*\d+,?\s*([\d.]*)\)/);
+            return m && m[1] !== '' ? Math.round(parseFloat(m[1]) * 100) : 70;
+        };
+        document.getElementById('c-accent').value = ui.accentBlue || '#0055ff';
+        document.getElementById('c-ball').value   = ui.ballColor  || '#ccff00';
+        document.getElementById('c-names').value  = ui.teamNameColor || '#ffffff';
+        document.getElementById('c-score').value  = ui.scoreColor || '#ffffff';
+        const panelHex = rgbaToHex(ui.panelBg || 'rgba(60,60,60,0.7)');
+        document.getElementById('c-panel').value  = panelHex;
+        document.getElementById('c-popup').value  = ui.popupBg || '#444444';
+        const panelAlpha = rgbaToAlpha(ui.panelBg || 'rgba(60,60,60,0.7)');
+        const drawerAlpha = rgbaToAlpha(ui.drawerBg || 'rgba(40,40,40,0.8)');
+        document.getElementById('c-panel-alpha').value = panelAlpha;
+        document.getElementById('c-panel-alpha-val').textContent = panelAlpha;
+        document.getElementById('c-drawer-alpha').value = drawerAlpha;
+        document.getElementById('c-drawer-alpha-val').textContent = drawerAlpha;
+        if (ui.fontFamily) document.getElementById('s-font').value = ui.fontFamily;
  
+        if(ui.sbW)     { document.getElementById('g-w').value = parseInt(ui.sbW); document.getElementById('g-w-val').textContent = parseInt(ui.sbW); }
+        if(ui.sbH)     { document.getElementById('g-h').value = parseInt(ui.sbH); document.getElementById('g-h-val').textContent = parseInt(ui.sbH); }
+        if(ui.sbSkew)  { document.getElementById('g-skew').value = parseInt(ui.sbSkew); document.getElementById('g-skew-val').textContent = parseInt(ui.sbSkew); }
+        if(ui.sbRadius){ document.getElementById('g-radius').value = parseInt(ui.sbRadius); document.getElementById('g-radius-val').textContent = parseInt(ui.sbRadius); }
+        if(ui.sbTop  !== undefined) { document.getElementById('g-y').value = ui.sbTop;  document.getElementById('g-y-val').textContent = ui.sbTop; }
+        if(ui.sbLeft !== undefined) { document.getElementById('g-x').value = ui.sbLeft; document.getElementById('g-x-val').textContent = ui.sbLeft; }
+        if(ui.sbScale) { const sv = Math.round(ui.sbScale * 100); document.getElementById('g-scale').value = sv; document.getElementById('g-scale-val').textContent = sv; }
         if(ui.sponsorLogoSize) { document.getElementById('g-sponsor-size').value = ui.sponsorLogoSize; document.getElementById('g-sponsor-size-val').textContent = ui.sponsorLogoSize; }
  
         const list = document.getElementById('sponsor-logo-list'); list.innerHTML = '';
@@ -1308,7 +1216,7 @@
     buildCourtBar(); 
     document.getElementById('topbar-court').textContent = 'COURT ' + currentCourt;
     updateControlUI();
-    // updateThemeButtons викликається після відкриття налаштувань — OK
 </script>
 </body>
 </html>
+ 
