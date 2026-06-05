@@ -476,7 +476,7 @@
             background: linear-gradient(145deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));
             border: 1px solid rgba(255,255,255,0.12); overflow: hidden; 
             box-shadow: 0 20px 45px rgba(0,0,0,0.65); 
-            margin-bottom: 20px; display: flex; opacity: 0;
+            margin-bottom: 20px; display: none; opacity: 0;
             align-items: center; justify-content: center;
         }
         .intro-photo-placeholder {
@@ -571,83 +571,185 @@
             50% { opacity: 0.4; background-color: rgba(255, 215, 0, 0.15); }
         }
         .gp-winner-shimmer { animation: gp-shimmer 0.6s ease-in-out 5; }
-        /* ── BREAK STATS OVERLAY (перерва) ── */
-        @keyframes bso-in  { 0%{opacity:0;transform:translateX(-50%) translateY(24px) scale(0.95)} 70%{transform:translateX(-50%) translateY(-3px) scale(1.01)} 100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)} }
-        @keyframes bso-out { 0%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)} 100%{opacity:0;transform:translateX(-50%) translateY(16px) scale(0.96)} }
+        /* ── BREAK STATS OVERLAY (перерва) — Premier Padel style ── */
+        @keyframes bso-in {
+            0%   { opacity:0; transform:translateX(-50%) translateY(32px) scale(0.93); }
+            65%  { transform:translateX(-50%) translateY(-4px) scale(1.015); }
+            100% { opacity:1; transform:translateX(-50%) translateY(0) scale(1); }
+        }
+        @keyframes bso-out {
+            0%   { opacity:1; transform:translateX(-50%) translateY(0) scale(1); }
+            100% { opacity:0; transform:translateX(-50%) translateY(20px) scale(0.94); }
+        }
         #break-stats-overlay {
             position: fixed;
             left: 50%;
-            top: 55%;
-            transform: translateX(-50%) translateY(0);
+            top: 56%;
+            transform: translateX(-50%);
             opacity: 0;
             pointer-events: none;
             z-index: 14000;
         }
-        #break-stats-overlay.bso-show { animation: bso-in  0.55s cubic-bezier(0.25,1,0.5,1) forwards; }
-        #break-stats-overlay.bso-hide { animation: bso-out 0.35s cubic-bezier(0.4,0,0.2,1) forwards; }
+        #break-stats-overlay.bso-show { animation: bso-in  0.60s cubic-bezier(0.22,1,0.36,1) forwards; }
+        #break-stats-overlay.bso-hide { animation: bso-out 0.38s cubic-bezier(0.4,0,0.2,1) forwards; }
+ 
+        /* ── Обгортка: логотип зліва + команди праворуч ── */
         .bso-card {
-            background: rgba(8,8,14,0.62);
-            backdrop-filter: blur(22px);
-            -webkit-backdrop-filter: blur(22px);
-            border: 1px solid rgba(255,255,255,0.13);
-            border-radius: 16px;
+            display: flex;
+            flex-direction: row;
+            background: #ffffff;
+            border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 18px 52px rgba(0,0,0,0.6);
+            box-shadow: 0 24px 64px rgba(0,0,0,0.75), 0 0 0 2.5px var(--accent-blue, #0055ff);
+            min-width: 680px;
+        }
+ 
+        /* ── Ліва колонка з логотипом ── */
+        .bso-logo-col {
+            width: 130px;
+            flex-shrink: 0;
+            background: var(--accent-blue, #0d1f3c);
             display: flex;
             flex-direction: column;
-            min-width: 560px;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 10px;
+            gap: 6px;
         }
-        .bso-header {
-            padding: 9px 22px 7px;
-            font-size: 11px;
+        .bso-logo-col img {
+            max-width: 100px;
+            max-height: 70px;
+            object-fit: contain;
+            display: block;
+        }
+        .bso-logo-text {
+            font-size: 9px;
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            color: rgba(255,255,255,0.32);
+            letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.55);
             text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.07);
         }
-        .bso-teams-col { display: flex; flex-direction: column; }
+ 
+        /* ── Права частина: рядки команд ── */
+        .bso-teams-col { display: flex; flex-direction: column; flex: 1; }
+ 
         .bso-team-row {
             display: flex;
             align-items: stretch;
-            border-bottom: 1px solid rgba(255,255,255,0.07);
-            min-height: 64px;
+            flex: 1;
+            min-height: 66px;
+            border-bottom: 1.5px solid rgba(0,0,0,0.07);
         }
         .bso-team-row:last-child { border-bottom: none; }
+ 
+        /* Порядковий номер (сіяння) */
+        .bso-seed {
+            width: 28px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 900;
+            color: rgba(0,0,0,0.28);
+            padding-left: 6px;
+        }
+ 
+        /* Ім'я команди */
         .bso-team-name {
             flex: 1;
             font-family: var(--team-font-family);
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 900;
             text-transform: uppercase;
-            color: #ffffff;
-            padding: 0 22px;
+            color: #0d1930;
+            padding: 0 14px 0 8px;
             display: flex;
             align-items: center;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.4px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
         }
-        .bso-sets-row { display: flex; align-items: stretch; }
-        .bso-set-cell {
-            width: 60px;
+ 
+        /* Рахунок очок (поточна гра) */
+        .bso-points-cell {
+            width: 58px;
+            flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: var(--team-font-family);
-            font-size: 28px;
+            font-size: 22px;
             font-weight: 900;
-            color: rgba(255,255,255,0.65);
-            border-left: 1px solid rgba(255,255,255,0.08);
+            color: #ffffff;
+            background: var(--accent-blue, #0055ff);
+            border-left: 1.5px solid rgba(255,255,255,0.15);
+        }
+ 
+        /* Комірки сетів */
+        .bso-sets-row { display: flex; align-items: stretch; }
+        .bso-set-cell {
+            width: 54px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--team-font-family);
+            font-size: 26px;
+            font-weight: 900;
+            color: #0d1930;
+            border-left: 1.5px solid rgba(0,0,0,0.08);
+            background: #f0f3f8;
         }
         .bso-set-cell.bso-current {
+            background: var(--accent-blue, #0055ff);
             color: #ffffff;
-            background: rgba(255,255,255,0.09);
         }
-        .bso-set-cell.bso-winner { color: var(--gold, #ffd700); }
+        .bso-set-cell.bso-won {
+            color: #0d1930;
+            background: #e8edf5;
+            font-weight: 900;
+        }
+        .bso-set-cell.bso-lost {
+            color: rgba(0,0,0,0.35);
+            background: #f7f8fa;
+        }
+ 
+        /* Заголовок колонок (S1 / S2 / очки) */
+        .bso-col-headers {
+            display: flex;
+            flex-direction: row;
+            background: var(--accent-blue, #0055ff);
+            border-top: none;
+        }
+        .bso-col-headers .bso-ch-spacer { flex: 1; }
+        .bso-col-headers .bso-ch-seed { width: 28px; flex-shrink:0; }
+        .bso-col-headers .bso-ch-cell {
+            width: 54px;
+            flex-shrink: 0;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.65);
+            padding: 5px 0;
+            border-left: 1.5px solid rgba(255,255,255,0.15);
+        }
+        .bso-col-headers .bso-ch-pts {
+            width: 58px;
+            flex-shrink: 0;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.65);
+            padding: 5px 0;
+            border-left: 1.5px solid rgba(255,255,255,0.15);
+        }
  
     </style>
 </head>
@@ -723,15 +825,29 @@
  
 <div id="break-stats-overlay">
     <div class="bso-card">
-        <div class="bso-header">Рахунок матчу</div>
+        <!-- Ліва колонка: логотип турніру -->
+        <div class="bso-logo-col" id="bso-logo-col">
+            <img id="bso-logo-img" src="" alt="">
+            <div class="bso-logo-text" id="bso-logo-text"></div>
+        </div>
+        <!-- Права частина: заголовок + рядки -->
         <div class="bso-teams-col">
-            <div class="bso-team-row">
-                <div class="bso-team-name" id="bso-p1-name">Команда А</div>
-                <div class="bso-sets-row" id="bso-p1-sets"></div>
+            <div class="bso-col-headers" id="bso-col-headers">
+                <div class="bso-ch-seed"></div>
+                <div class="bso-ch-spacer"></div>
+                <!-- set headers генеруються JS -->
             </div>
             <div class="bso-team-row">
+                <div class="bso-seed" id="bso-p1-seed"></div>
+                <div class="bso-team-name" id="bso-p1-name">Команда А</div>
+                <div class="bso-sets-row" id="bso-p1-sets"></div>
+                <div class="bso-points-cell" id="bso-p1-pts">0</div>
+            </div>
+            <div class="bso-team-row">
+                <div class="bso-seed" id="bso-p2-seed"></div>
                 <div class="bso-team-name" id="bso-p2-name">Команда Б</div>
                 <div class="bso-sets-row" id="bso-p2-sets"></div>
+                <div class="bso-points-cell" id="bso-p2-pts">0</div>
             </div>
         </div>
     </div>
@@ -984,10 +1100,9 @@
         const t1VideoEl = document.getElementById('intro-t1-video');
         const t1PhotoWrap = document.getElementById('intro-t1-photo-wrap');
         
-        // photo-wrap завжди видима, placeholder схований якщо є фото
-        t1PhotoWrap.style.display = 'flex';
         const t1Placeholder = document.getElementById('intro-t1-placeholder');
         if (ui.team1Photo) {
+            t1PhotoWrap.style.display = 'flex';
             if (t1Placeholder) t1Placeholder.style.display = 'none';
             if (ui.team1Photo.startsWith('data:video') || ui.team1Photo.includes('.mp4')) {
                 t1PhotoImg.style.display = 'none';
@@ -1002,7 +1117,7 @@
                 t1PhotoImg.style.display = 'block';
             }
         } else {
-            if (t1Placeholder) t1Placeholder.style.display = 'flex';
+            t1PhotoWrap.style.display = 'none';
             t1PhotoImg.style.display = 'none';
             t1VideoEl.src = '';
             t1VideoEl.style.display = 'none';
@@ -1013,10 +1128,9 @@
         const t2VideoEl = document.getElementById('intro-t2-video');
         const t2PhotoWrap = document.getElementById('intro-t2-photo-wrap');
         
-        // photo-wrap завжди видима, placeholder схований якщо є фото
-        t2PhotoWrap.style.display = 'flex';
         const t2Placeholder = document.getElementById('intro-t2-placeholder');
         if (ui.team2Photo) {
+            t2PhotoWrap.style.display = 'flex';
             if (t2Placeholder) t2Placeholder.style.display = 'none';
             if (ui.team2Photo.startsWith('data:video') || ui.team2Photo.includes('.mp4')) {
                 t2PhotoImg.style.display = 'none';
@@ -1031,7 +1145,7 @@
                 t2PhotoImg.style.display = 'block';
             }
         } else {
-            if (t2Placeholder) t2Placeholder.style.display = 'flex';
+            t2PhotoWrap.style.display = 'none';
             t2PhotoImg.style.display = 'none';
             t2VideoEl.src = '';
             t2VideoEl.style.display = 'none';
@@ -1510,28 +1624,81 @@
         const n2 = state.p2name || "Команда Б";
         const sh = state.setsHistory || [[],[]];
         const games = state.games || [0,0];
+        const scores = state.scores || [0,0];
         const activeSetIndex = state.activeSetIndex || 0;
+        const isTiebreak = state.isTiebreak || false;
+        const isAmerican = state.isAmerican || false;
+        const isGameActive = state.isGameActive || false;
+        const pts = ['0','15','30','40'];
  
+        // Імена
         const p1El = document.getElementById('bso-p1-name');
         const p2El = document.getElementById('bso-p2-name');
         if (p1El) p1El.textContent = n1;
         if (p2El) p2El.textContent = n2;
  
+        // Сіяння
+        const p1Seed = document.getElementById('bso-p1-seed');
+        const p2Seed = document.getElementById('bso-p2-seed');
+        if (p1Seed) p1Seed.textContent = state.p1seed ? `(${state.p1seed})` : '';
+        if (p2Seed) p2Seed.textContent = state.p2seed ? `(${state.p2seed})` : '';
+ 
+        // Логотип
+        const logoImg = document.getElementById('bso-logo-img');
+        const logoText = document.getElementById('bso-logo-text');
+        const logoSrc = window._currentUi && window._currentUi.logoSrc ? window._currentUi.logoSrc : '';
+        if (logoImg) {
+            if (logoSrc) { logoImg.src = logoSrc; logoImg.style.display = 'block'; }
+            else { logoImg.style.display = 'none'; }
+        }
+ 
+        // Рахунок очок поточної гри
+        function getPointLabel(i) {
+            if (!isGameActive) return '';
+            if (isTiebreak || isAmerican) return String(scores[i]);
+            if (scores[i] === 4) return 'AD';
+            if (scores[1-i] === 4) return '';
+            return pts[scores[i]];
+        }
+        const p1PtsEl = document.getElementById('bso-p1-pts');
+        const p2PtsEl = document.getElementById('bso-p2-pts');
+        if (p1PtsEl) p1PtsEl.textContent = getPointLabel(0);
+        if (p2PtsEl) p2PtsEl.textContent = getPointLabel(1);
+ 
+        // Сети
         const totalSets = Math.max(activeSetIndex + 1, (sh[0] || []).length, 1);
         let s1 = [], s2 = [];
         for (let i = 0; i < totalSets; i++) {
-            s1.push((sh[0] && sh[0][i] !== undefined) ? sh[0][i] : (activeSetIndex === i ? games[0] : '-'));
-            s2.push((sh[1] && sh[1][i] !== undefined) ? sh[1][i] : (activeSetIndex === i ? games[1] : '-'));
+            if (sh[0] && sh[0][i] !== undefined) {
+                s1.push(sh[0][i]); s2.push(sh[1][i]);
+            } else if (i === activeSetIndex) {
+                s1.push(games[0]); s2.push(games[1]);
+            } else {
+                s1.push('-'); s2.push('-');
+            }
+        }
+ 
+        // Заголовки колонок
+        const headersEl = document.getElementById('bso-col-headers');
+        if (headersEl) {
+            let hHtml = '<div class="bso-ch-seed"></div><div class="bso-ch-spacer"></div>';
+            for (let i = 0; i < totalSets; i++) {
+                const isCur = (sh[0] && sh[0][i] === undefined) && i === activeSetIndex;
+                hHtml += `<div class="bso-ch-cell" style="${isCur?'color:rgba(255,255,255,0.9)':''}">S${i+1}</div>`;
+            }
+            hHtml += '<div class="bso-ch-pts">Pts</div>';
+            headersEl.innerHTML = hHtml;
         }
  
         function buildSetCells(scores, oppScores) {
             let html = '';
             for (let i = 0; i < totalSets; i++) {
-                const isCurrent = (sh[0] && sh[0][i] === undefined) && i === activeSetIndex;
-                const isWon = !isCurrent && scores[i] !== '-' && oppScores[i] !== '-' && Number(scores[i]) > Number(oppScores[i]);
+                const isCur = (sh[0] && sh[0][i] === undefined) && i === activeSetIndex;
+                const sNum = Number(scores[i]), oNum = Number(oppScores[i]);
                 let cls = 'bso-set-cell';
-                if (isCurrent) cls += ' bso-current';
-                else if (isWon) cls += ' bso-winner';
+                if (isCur) cls += ' bso-current';
+                else if (!isNaN(sNum) && !isNaN(oNum) && sNum > oNum) cls += ' bso-won';
+                else if (!isNaN(sNum) && !isNaN(oNum) && sNum < oNum) cls += ' bso-lost';
                 html += `<div class="${cls}">${scores[i]}</div>`;
             }
             return html;
