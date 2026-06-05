@@ -237,12 +237,20 @@
             <label class="switch"><input type="checkbox" id="tog-logo" onchange="sendToggle('showLogo', this.checked)"><span class="slider"></span></label>
         </div>
         
-        <div class="toggle-row">
-            <div>
-                <div class="toggle-label" style="color: #f39c12;">📊 Статистика (перерва)</div>
-                <div class="toggle-sublabel">Показати таблицю рахунку посередині екрана</div>
+        <div class="toggle-row" style="flex-direction:column; align-items:stretch; gap:10px;">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+                <div>
+                    <div class="toggle-label" style="color: #f39c12;">📊 Статистика (перерва)</div>
+                    <div class="toggle-sublabel">Таблиця рахунку посередині екрана</div>
+                </div>
+                <label class="switch"><input type="checkbox" id="tog-break-stats" onchange="sendToggle('showBreakStats', this.checked)"><span class="slider"></span></label>
             </div>
-            <label class="switch"><input type="checkbox" id="tog-break-stats" onchange="sendToggle('showBreakStats', this.checked)"><span class="slider"></span></label>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button onclick="setBsoTheme('sport-dark')" id="bso-btn-sport-dark" style="flex:1; min-width:80px; padding:8px 4px; border-radius:8px; border:2px solid rgba(255,255,255,0.15); background:rgba(10,10,20,0.8); color:white; font-size:10px; font-weight:900; cursor:pointer; letter-spacing:0.5px; transition:0.2s;">⚫ DARK</button>
+                <button onclick="setBsoTheme('sport-blue')" id="bso-btn-sport-blue" style="flex:1; min-width:80px; padding:8px 4px; border-radius:8px; border:2px solid rgba(0,120,255,0.4); background:rgba(0,60,160,0.35); color:white; font-size:10px; font-weight:900; cursor:pointer; letter-spacing:0.5px; transition:0.2s;">🔵 SPORT</button>
+                <button onclick="setBsoTheme('premier')" id="bso-btn-premier" style="flex:1; min-width:80px; padding:8px 4px; border-radius:8px; border:2px solid rgba(255,255,255,0.25); background:rgba(255,255,255,0.92); color:#0d1930; font-size:10px; font-weight:900; cursor:pointer; letter-spacing:0.5px; transition:0.2s;">⚪ PREMIER</button>
+                <button onclick="setBsoTheme('gold')" id="bso-btn-gold" style="flex:1; min-width:80px; padding:8px 4px; border-radius:8px; border:2px solid rgba(212,175,55,0.5); background:rgba(100,70,0,0.35); color:#ffd700; font-size:10px; font-weight:900; cursor:pointer; letter-spacing:0.5px; transition:0.2s;">🥇 GOLD</button>
+            </div>
         </div>
         
         <div class="toggle-row" style="background: rgba(0, 85, 255, 0.05); border-bottom: 1px solid var(--border);">
@@ -434,8 +442,16 @@
                 <input type="color" value="#3c3c3c" id="c-panel" onchange="liveUpdateUI()">
             </div>
             <div class="settings-input-row">
-                <label>Фон вікон</label>
+                <label>Фон вікон (бали)</label>
                 <input type="color" value="#444444" id="c-popup" onchange="liveUpdateUI()">
+            </div>
+            <div class="settings-input-row">
+                <label>Фон блоку балів</label>
+                <input type="color" value="#2a2a2e" id="c-drawer" onchange="liveUpdateUI()">
+            </div>
+            <div class="settings-input-row">
+                <label>Колір тексту балів</label>
+                <input type="color" value="#ffffff" id="c-score-text" onchange="liveUpdateUI()">
             </div>
             <div class="settings-input-row">
                 <label>Прозорість табло %</label>
@@ -660,7 +676,7 @@
         courtName: `COURT ${currentCourt}`, alertKey: "", alertText: "", alertMode: "", faultTeam: null, isGoldenActive: false, hideScoreOnly: false, goldenWinnerKey: "", qrUrl: "", qrText: "", showCameraCover: false
     };
     let ui = {
-        accentBlue: '#0055ff', ballColor: '#ccff00', teamNameColor: '#ffffff',
+        accentBlue: '#0055ff', ballColor: '#ccff00', teamNameColor: '#ffffff', bsoTheme: 'sport-dark',
         scoreColor: '#ffffff', panelBg: 'rgba(60,60,60,0.7)', drawerBg: 'rgba(40,40,40,0.8)',
         popupBg: '#444444', popupText: '#ffffff', finishBg: 'rgba(255,255,255,0.03)',
         fontFamily: "'Oswald', sans-serif", sbW: '750px', sbH: '150px',
@@ -953,8 +969,11 @@
         ui.teamNameColor = document.getElementById('c-names').value;
         ui.scoreColor = document.getElementById('c-score').value;
         ui.panelBg = hexToRgba(document.getElementById('c-panel').value, pa);
-        ui.drawerBg = hexToRgba(document.getElementById('c-panel').value, da);
+        const drawerColorEl = document.getElementById('c-drawer');
+        ui.drawerBg = hexToRgba(drawerColorEl ? drawerColorEl.value : document.getElementById('c-panel').value, da);
         ui.popupBg = document.getElementById('c-popup').value;
+        const scoreTextEl = document.getElementById('c-score-text');
+        if (scoreTextEl) ui.scoreTextColor = scoreTextEl.value;
         ui.fontFamily = document.getElementById('s-font').value;
         ui.sbW      = document.getElementById('g-w').value + 'px';
         ui.sbH      = document.getElementById('g-h').value + 'px';
@@ -1095,6 +1114,14 @@
         document.getElementById('tog-logo').checked = !!state.showLogo;
         document.getElementById('tog-camera-cover').checked = !!state.showCameraCover;
         if (document.getElementById('tog-break-stats')) document.getElementById('tog-break-stats').checked = !!state.showBreakStats;
+        if (ui.bsoTheme) {
+            ['sport-dark','sport-blue','premier','gold'].forEach(t => {
+                const btn = document.getElementById('bso-btn-' + t);
+                if (!btn) return;
+                btn.style.outline = t === ui.bsoTheme ? '2px solid #f39c12' : 'none';
+                btn.style.outlineOffset = '2px';
+            });
+        }
  
         document.getElementById('btn-score-p1').textContent = getL(0);
         document.getElementById('btn-score-p2').textContent = getL(1);
@@ -1142,6 +1169,8 @@
         if (ui.scoreColor) document.getElementById('c-score').value  = rgbaToHex(ui.scoreColor);
         if (ui.panelBg)    document.getElementById('c-panel').value  = rgbaToHex(ui.panelBg);
         if (ui.popupBg)    document.getElementById('c-popup').value  = rgbaToHex(ui.popupBg);
+        if (ui.drawerBg) { const el = document.getElementById('c-drawer'); if (el) el.value = rgbaToHex(ui.drawerBg); }
+        if (ui.scoreTextColor) { const el = document.getElementById('c-score-text'); if (el) el.value = ui.scoreTextColor; }
         if (ui.panelBg) { const a = rgbaAlpha(ui.panelBg); document.getElementById('c-panel-alpha').value = a; document.getElementById('c-panel-alpha-val').textContent = a; }
         if (ui.drawerBg) { const a = rgbaAlpha(ui.drawerBg); document.getElementById('c-drawer-alpha').value = a; document.getElementById('c-drawer-alpha-val').textContent = a; }
         if (ui.fontFamily) document.getElementById('s-font').value = ui.fontFamily;
@@ -1203,6 +1232,18 @@
     
     window.addSponsorSlot = addSponsorSlot; window.removeSponsor = removeSponsor; window.toggleSponsor = toggleSponsor; window.uploadSponsor = uploadSponsor;
     window.uploadLogoUI = uploadLogoUI; window.clearLogo = clearLogo;
+ 
+    window.setBsoTheme = function(theme) {
+        ui.bsoTheme = theme;
+        pushState();
+        // підсвітити активну кнопку
+        ['sport-dark','sport-blue','premier','gold'].forEach(t => {
+            const btn = document.getElementById('bso-btn-' + t);
+            if (!btn) return;
+            btn.style.outline = t === theme ? '2px solid #f39c12' : 'none';
+            btn.style.outlineOffset = '2px';
+        });
+    };
     window.uploadIntroAsset = uploadIntroAsset; window.clearIntroAsset = clearIntroAsset;
     window.uploadCameraAsset = uploadCameraAsset; window.clearCameraAsset = clearCameraAsset;
  
