@@ -292,11 +292,13 @@
         <div class="settings-card">
             <div class="settings-input-row">
                 <label>Команда 1</label>
-                <input type="text" id="s-p1" value="Команда А" oninput="liveUpdateName()">
+                <input type="text" id="s-p1" value="Команда А" oninput="liveUpdateName()" style="flex:1;">
+                <input type="number" id="s-p1-seed" placeholder="(сіяння)" oninput="liveUpdateName()" style="width:72px; margin-left:6px;">
             </div>
             <div class="settings-input-row">
                 <label>Команда 2</label>
-                <input type="text" id="s-p2" value="Команда Б" oninput="liveUpdateName()">
+                <input type="text" id="s-p2" value="Команда Б" oninput="liveUpdateName()" style="flex:1;">
+                <input type="number" id="s-p2-seed" placeholder="(сіяння)" oninput="liveUpdateName()" style="width:72px; margin-left:6px;">
             </div>
             <div class="settings-input-row">
                 <label>Маркер корту</label>
@@ -902,6 +904,8 @@
         state.p1name = document.getElementById('s-p1').value || "Команда А";
         state.p2name = document.getElementById('s-p2').value || "Команда Б";
         state.courtName = document.getElementById('s-court').value || "COURT 1";
+        const _seed1 = document.getElementById('s-p1-seed'); if (_seed1) state.p1seed = _seed1.value ? parseInt(_seed1.value) : null;
+        const _seed2 = document.getElementById('s-p2-seed'); if (_seed2) state.p2seed = _seed2.value ? parseInt(_seed2.value) : null;
         updateControlUI();
         debouncedPush(400);
     }
@@ -1114,6 +1118,8 @@
     window.openSettings = function() {
         document.getElementById('s-p1').value = state.p1name || "Команда А";
         document.getElementById('s-p2').value = state.p2name || "Команда Б";
+        const _sEl1 = document.getElementById('s-p1-seed'); if (_sEl1) _sEl1.value = state.p1seed || '';
+        const _sEl2 = document.getElementById('s-p2-seed'); if (_sEl2) _sEl2.value = state.p2seed || '';
         document.getElementById('s-court').value = state.courtName || "COURT 1";
         document.getElementById('s-american').checked = !!state.isAmerican;
         document.getElementById('s-proset').checked = !!state.isProset;
