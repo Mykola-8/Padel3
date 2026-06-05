@@ -12,6 +12,7 @@
             --panel-bg: rgba(60, 60, 60, 0.7);
             --drawer-bg: rgba(40, 40, 40, 0.8);
             --score-num-color: #ffffff;
+            --score-text-color: #ffffff;
             --sets-num-color: #ffffff;
             --set-box-bg: rgba(255, 255, 255, 0.1);
             --team-name-color: #ffffff;
@@ -191,7 +192,7 @@
         
         .point-box {
             flex: 1; display: flex; align-items: center; justify-content: center;
-            font-size: calc(var(--sb-h) * 0.38); font-weight: 900; color: var(--score-num-color);
+            font-size: calc(var(--sb-h) * 0.38); font-weight: 900; color: var(--score-text-color);
             font-family: 'Inter', sans-serif; transform: skewX(calc(var(--sb-skew) * -1));
             border-bottom: 2px solid var(--cell-border);
             box-sizing: border-box; overflow: hidden; text-align: center; width: 100%;
@@ -751,6 +752,125 @@
             border-left: 1.5px solid rgba(255,255,255,0.15);
         }
  
+ 
+        /* ── BSO THEMES ── */
+        /* --- SPORT DARK (default) --- */
+        #break-stats-overlay.bso-theme-sport-dark .bso-card {
+            background: #0e0e14;
+            border: none;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 28px 70px rgba(0,0,0,0.85);
+        }
+        #break-stats-overlay.bso-theme-sport-dark .bso-logo-col {
+            background: #16161e;
+            border-right: 1px solid rgba(255,255,255,0.06);
+        }
+        #break-stats-overlay.bso-theme-sport-dark .bso-col-headers {
+            background: var(--accent-blue, #0055ff);
+        }
+        #break-stats-overlay.bso-theme-sport-dark .bso-team-row {
+            border-bottom-color: rgba(255,255,255,0.05);
+        }
+        #break-stats-overlay.bso-theme-sport-dark .bso-team-name { color: #e8eaf0; }
+        #break-stats-overlay.bso-theme-sport-dark .bso-seed { color: rgba(255,255,255,0.3); }
+        #break-stats-overlay.bso-theme-sport-dark .bso-set-cell {
+            background: #181820; color: rgba(255,255,255,0.55);
+            border-left-color: rgba(255,255,255,0.05);
+        }
+        #break-stats-overlay.bso-theme-sport-dark .bso-set-cell.bso-current {
+            background: var(--accent-blue,#0055ff); color: #fff;
+        }
+        #break-stats-overlay.bso-theme-sport-dark .bso-set-cell.bso-won { color: #fff; background: #1e2030; }
+        #break-stats-overlay.bso-theme-sport-dark .bso-set-cell.bso-lost { color: rgba(255,255,255,0.22); background: #111118; }
+        #break-stats-overlay.bso-theme-sport-dark .bso-points-cell {
+            background: var(--accent-blue,#0055ff); color: #fff;
+        }
+ 
+        /* --- SPORT BLUE --- */
+        #break-stats-overlay.bso-theme-sport-blue .bso-card {
+            background: linear-gradient(160deg, #08183a 0%, #0a1e4a 100%);
+            border: 1px solid rgba(80,140,255,0.2);
+            box-shadow: 0 0 0 1px rgba(60,120,255,0.12), 0 28px 70px rgba(0,10,50,0.9), inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+        #break-stats-overlay.bso-theme-sport-blue .bso-logo-col {
+            background: rgba(0,20,70,0.8);
+            border-right: 1px solid rgba(80,140,255,0.15);
+        }
+        #break-stats-overlay.bso-theme-sport-blue .bso-col-headers {
+            background: rgba(30,80,200,0.75);
+            backdrop-filter: blur(4px);
+        }
+        #break-stats-overlay.bso-theme-sport-blue .bso-team-row { border-bottom-color: rgba(80,140,255,0.1); }
+        #break-stats-overlay.bso-theme-sport-blue .bso-team-name { color: #e0ecff; }
+        #break-stats-overlay.bso-theme-sport-blue .bso-seed { color: rgba(180,210,255,0.4); }
+        #break-stats-overlay.bso-theme-sport-blue .bso-set-cell {
+            background: rgba(20,60,140,0.45); color: rgba(200,225,255,0.6);
+            border-left-color: rgba(80,140,255,0.1);
+        }
+        #break-stats-overlay.bso-theme-sport-blue .bso-set-cell.bso-current {
+            background: var(--accent-blue,#0055ff); color: #fff;
+        }
+        #break-stats-overlay.bso-theme-sport-blue .bso-set-cell.bso-won { color: #fff; background: rgba(30,90,200,0.7); }
+        #break-stats-overlay.bso-theme-sport-blue .bso-set-cell.bso-lost { color: rgba(180,210,255,0.25); background: rgba(10,30,80,0.3); }
+        #break-stats-overlay.bso-theme-sport-blue .bso-points-cell {
+            background: var(--accent-blue,#0055ff); color: #fff;
+        }
+ 
+        /* --- PREMIER (light) --- */
+        #break-stats-overlay.bso-theme-premier .bso-card {
+            background: #f5f7fa;
+            border: none;
+            box-shadow: 0 0 0 2px var(--accent-blue,#0055ff), 0 28px 70px rgba(0,0,0,0.7);
+        }
+        #break-stats-overlay.bso-theme-premier .bso-logo-col {
+            background: var(--accent-blue, #0d1f3c);
+        }
+        #break-stats-overlay.bso-theme-premier .bso-col-headers {
+            background: var(--accent-blue, #0d1f3c);
+        }
+        #break-stats-overlay.bso-theme-premier .bso-team-row { border-bottom-color: rgba(0,0,0,0.08); }
+        #break-stats-overlay.bso-theme-premier .bso-team-name { color: #0d1930; }
+        #break-stats-overlay.bso-theme-premier .bso-seed { color: rgba(0,0,0,0.3); }
+        #break-stats-overlay.bso-theme-premier .bso-set-cell {
+            background: #e8ecf2; color: #0d1930;
+            border-left-color: rgba(0,0,0,0.08);
+        }
+        #break-stats-overlay.bso-theme-premier .bso-set-cell.bso-current {
+            background: var(--accent-blue,#0055ff); color: #fff;
+        }
+        #break-stats-overlay.bso-theme-premier .bso-set-cell.bso-won { color: #0d1930; background: #dce2ed; font-weight:900; }
+        #break-stats-overlay.bso-theme-premier .bso-set-cell.bso-lost { color: rgba(0,0,0,0.3); background: #f0f2f7; }
+        #break-stats-overlay.bso-theme-premier .bso-points-cell {
+            background: var(--accent-blue,#0055ff); color: #fff;
+        }
+ 
+        /* --- GOLD --- */
+        #break-stats-overlay.bso-theme-gold .bso-card {
+            background: linear-gradient(160deg, #0c0a06 0%, #181208 100%);
+            border: 1px solid rgba(212,175,55,0.3);
+            box-shadow: 0 0 0 1px rgba(212,175,55,0.1), 0 28px 70px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,215,0,0.05);
+        }
+        #break-stats-overlay.bso-theme-gold .bso-logo-col {
+            background: rgba(20,14,0,0.9);
+            border-right: 1px solid rgba(212,175,55,0.15);
+        }
+        #break-stats-overlay.bso-theme-gold .bso-col-headers {
+            background: linear-gradient(90deg, #8b6914, #c8961e, #8b6914);
+        }
+        #break-stats-overlay.bso-theme-gold .bso-team-row { border-bottom-color: rgba(212,175,55,0.08); }
+        #break-stats-overlay.bso-theme-gold .bso-team-name { color: #f0e0a0; }
+        #break-stats-overlay.bso-theme-gold .bso-seed { color: rgba(212,175,55,0.35); }
+        #break-stats-overlay.bso-theme-gold .bso-set-cell {
+            background: rgba(30,22,4,0.7); color: rgba(212,175,55,0.55);
+            border-left-color: rgba(212,175,55,0.08);
+        }
+        #break-stats-overlay.bso-theme-gold .bso-set-cell.bso-current {
+            background: #b8860b; color: #fff4cc;
+        }
+        #break-stats-overlay.bso-theme-gold .bso-set-cell.bso-won { color: #ffd700; background: rgba(40,28,2,0.8); }
+        #break-stats-overlay.bso-theme-gold .bso-set-cell.bso-lost { color: rgba(212,175,55,0.2); background: rgba(15,10,0,0.5); }
+        #break-stats-overlay.bso-theme-gold .bso-points-cell {
+            background: linear-gradient(180deg, #c8961e, #8b6914); color: #fff4cc;
+        }
     </style>
 </head>
 <body>
@@ -1070,6 +1190,7 @@
         if (ui.popupText) updateStyle('--popup-text', ui.popupText);
         if (ui.teamNameColor) updateStyle('--team-name-color', ui.teamNameColor);
         if (ui.scoreColor) updateStyle('--score-num-color', ui.scoreColor);
+        if (ui.scoreTextColor) updateStyle('--score-text-color', ui.scoreTextColor);
         if (ui.finishBg) updateStyle('--finish-bg', ui.finishBg);
         if (ui.fontFamily) updateStyle('--team-font-family', ui.fontFamily);
         if (ui.sbW) updateStyle('--sb-w', ui.sbW);
@@ -1370,8 +1491,12 @@
         /* BREAK STATS OVERLAY — persistent toggle */
         const bsoEl = document.getElementById('break-stats-overlay');
         if (bsoEl) {
+            // Застосовуємо тему
+            const bsoTheme = (ui && ui.bsoTheme) || 'sport-dark';
+            ['sport-dark','sport-blue','premier','gold'].forEach(t => bsoEl.classList.remove('bso-theme-' + t));
+            bsoEl.classList.add('bso-theme-' + bsoTheme);
+ 
             const wantBso = !!(state.showBreakStats);
-            const hasBso  = bsoEl.classList.contains('bso-show') || bsoEl.classList.contains('bso-hide');
             const isShown = bsoEl.classList.contains('bso-show');
             if (wantBso && !isShown) {
                 updateBreakStatsPanel(state);
