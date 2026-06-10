@@ -237,21 +237,6 @@
             <label class="switch"><input type="checkbox" id="tog-logo" onchange="sendToggle('showLogo', this.checked)"><span class="slider"></span></label>
         </div>
         
-        <div class="toggle-row" style="flex-direction:column; align-items:stretch; gap:10px;">
-            <div style="display:flex; align-items:center; justify-content:space-between;">
-                <div>
-                    <div class="toggle-label" style="color: #f39c12;">📊 Статистика (перерва)</div>
-                    <div class="toggle-sublabel">Таблиця рахунку посередині екрана</div>
-                </div>
-                <label class="switch"><input type="checkbox" id="tog-break-stats" onchange="sendToggle('showBreakStats', this.checked)"><span class="slider"></span></label>
-            </div>
-            <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                <button onclick="setBsoTheme('sport-dark')" id="bso-btn-sport-dark" style="flex:1; min-width:80px; padding:8px 4px; border-radius:8px; border:2px solid rgba(255,255,255,0.15); background:rgba(10,10,20,0.8); color:white; font-size:10px; font-weight:900; cursor:pointer; letter-spacing:0.5px; transition:0.2s;">⚫ DARK</button>
-                <button onclick="setBsoTheme('sport-blue')" id="bso-btn-sport-blue" style="flex:1; min-width:80px; padding:8px 4px; border-radius:8px; border:2px solid rgba(0,120,255,0.4); background:rgba(0,60,160,0.35); color:white; font-size:10px; font-weight:900; cursor:pointer; letter-spacing:0.5px; transition:0.2s;">🔵 SPORT</button>
-                <button onclick="setBsoTheme('premier')" id="bso-btn-premier" style="flex:1; min-width:80px; padding:8px 4px; border-radius:8px; border:2px solid rgba(255,255,255,0.25); background:rgba(255,255,255,0.92); color:#0d1930; font-size:10px; font-weight:900; cursor:pointer; letter-spacing:0.5px; transition:0.2s;">⚪ PREMIER</button>
-                <button onclick="setBsoTheme('gold')" id="bso-btn-gold" style="flex:1; min-width:80px; padding:8px 4px; border-radius:8px; border:2px solid rgba(212,175,55,0.5); background:rgba(100,70,0,0.35); color:#ffd700; font-size:10px; font-weight:900; cursor:pointer; letter-spacing:0.5px; transition:0.2s;">🥇 GOLD</button>
-            </div>
-        </div>
         
         <div class="toggle-row" style="background: rgba(0, 85, 255, 0.05); border-bottom: 1px solid var(--border);">
             <div>
@@ -569,18 +554,7 @@
         </button>
     </div>
  
-    <div class="settings-section">
-        <div class="settings-section-title">Тема табла</div>
-        <div class="settings-card">
-            <div class="settings-input-row" style="flex-direction:column; align-items:flex-start; gap:10px; padding:14px 16px;">
-                <div class="toggle-label" style="font-size:11px; color:rgba(255,255,255,0.5);">Вибери готову тему оформлення</div>
-                <div style="display:flex; gap:8px; width:100%;">
-                    <button onclick="applyTheme('blue')" style="flex:1; padding:12px 6px; border-radius:10px; border:2px solid #0055ff; background:rgba(0,85,255,0.15); color:white; font-size:11px; font-weight:900; cursor:pointer; letter-spacing:1px;">🔵 СИНЄ</button>
-                                    </div>
-            </div>
-        </div>
-    </div>
- 
+     
     <button class="save-settings-btn" onclick="saveAllSettings()">💾 ЗБЕРЕГТИ ВСЕ</button>
     <div style="height:20px"></div>
 </div>
