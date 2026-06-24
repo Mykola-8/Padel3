@@ -404,6 +404,18 @@
     </div>
  
     <div class="settings-section">
+        <div class="settings-section-title">Готові теми табла</div>
+        <div class="settings-card" style="padding:12px 16px; display:flex; flex-direction:column; gap:8px;">
+            <div style="font-size:10px; color:rgba(255,255,255,0.35); letter-spacing:0.5px;">Обирає готовий набір кольорів табла (акцент, фон, текст). Можна потім донастроїти вручну нижче.</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                <button id="bso-btn-graydark" onclick="applyBoardColorTheme('graydark')" style="background:linear-gradient(135deg,#3a3a3e,#1a1a1e); border:1px solid rgba(255,255,255,0.12); color:#fff; border-radius:10px; padding:12px; font-weight:900; font-size:12px; letter-spacing:1px; text-transform:uppercase; cursor:pointer;">Сіро-темна</button>
+                <button id="bso-btn-blue" onclick="applyBoardColorTheme('blue')" style="background:linear-gradient(135deg,#0055ff,#003dd1); border:1px solid rgba(255,255,255,0.12); color:#fff; border-radius:10px; padding:12px; font-weight:900; font-size:12px; letter-spacing:1px; text-transform:uppercase; cursor:pointer;">Голубий</button>
+                <button id="bso-btn-gold" onclick="applyBoardColorTheme('gold')" style="background:linear-gradient(135deg,#b8862b,#5c3a17); border:1px solid rgba(255,255,255,0.12); color:#fff; border-radius:10px; padding:12px; font-weight:900; font-size:12px; letter-spacing:1px; text-transform:uppercase; cursor:pointer; grid-column: 1 / span 2;">Золотий (Коричневий)</button>
+            </div>
+        </div>
+    </div>
+ 
+    <div class="settings-section">
         <div class="settings-section-title">Кольори</div>
         <div class="settings-card">
             <div class="settings-input-row">
@@ -927,6 +939,65 @@
         pushState();
     }
     window.applyTheme = applyTheme;
+ 
+    // ── ДОДАТКОВІ ГОТОВІ ТЕМИ КОЛЬОРІВ ТАБЛА (Сіро-темна / Голубий / Золотий-Коричневий) ──
+    // Нова, окрема функція — не змінює і не викликає applyTheme/setBsoTheme,
+    // лише виставляє ті самі поля ui.*, які вже читає overlay.
+    const BOARD_COLOR_THEMES = {
+        graydark: {
+            accentBlue: '#9ca3af', ballColor: '#e5e7eb',
+            teamNameColor: '#ffffff', scoreColor: '#ffffff', scoreTextColor: '#ffffff',
+            panelBg: 'rgba(40,40,44,0.75)', drawerBg: 'rgba(24,24,27,0.85)',
+            popupBg: '#3a3a3e', popupText: '#ffffff'
+        },
+        blue: {
+            accentBlue: '#0055ff', ballColor: '#ccff00',
+            teamNameColor: '#ffffff', scoreColor: '#ffffff', scoreTextColor: '#ffffff',
+            panelBg: 'rgba(30,30,50,0.82)', drawerBg: 'rgba(20,20,40,0.88)',
+            popupBg: '#1a1a3e', popupText: '#ffffff'
+        },
+        gold: {
+            accentBlue: '#d4a23a', ballColor: '#f3d27a',
+            teamNameColor: '#fff6e3', scoreColor: '#fff6e3', scoreTextColor: '#2a1a08',
+            panelBg: 'rgba(58,38,16,0.8)', drawerBg: 'rgba(38,24,10,0.88)',
+            popupBg: '#3a2410', popupText: '#fff6e3'
+        }
+    };
+    function applyBoardColorTheme(theme) {
+        const t = BOARD_COLOR_THEMES[theme];
+        if (!t) return;
+        Object.assign(ui, t);
+        pushState();
+ 
+        // Підсвітити активну кнопку готової теми
+        Object.keys(BOARD_COLOR_THEMES).forEach(key => {
+            const btn = document.getElementById('bso-btn-' + key);
+            if (!btn) return;
+            btn.style.outline = key === theme ? '2px solid #f39c12' : 'none';
+            btn.style.outlineOffset = '2px';
+        });
+ 
+        // Синхронізувати ручні color-picker'и в налаштуваннях, якщо панель відкрита
+        const setIfExists = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined) el.value = val; };
+        setIfExists('c-accent', t.accentBlue);
+        setIfExists('c-ball', t.ballColor);
+        setIfExists('c-names', t.teamNameColor);
+        setIfExists('c-score', t.scoreColor);
+        setIfExists('c-score-text', t.scoreTextColor);
+        setIfExists('c-popup', t.popupBg);
+        const hexOnly = /^#[0-9a-f]{6}$/i;
+        const panelHexMatch = t.panelBg && t.panelBg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+        if (panelHexMatch) {
+            const toHex = n => parseInt(n).toString(16).padStart(2, '0');
+            setIfExists('c-panel', '#' + toHex(panelHexMatch[1]) + toHex(panelHexMatch[2]) + toHex(panelHexMatch[3]));
+        }
+        const drawerHexMatch = t.drawerBg && t.drawerBg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+        if (drawerHexMatch) {
+            const toHex = n => parseInt(n).toString(16).padStart(2, '0');
+            setIfExists('c-drawer', '#' + toHex(drawerHexMatch[1]) + toHex(drawerHexMatch[2]) + toHex(drawerHexMatch[3]));
+        }
+    }
+    window.applyBoardColorTheme = applyBoardColorTheme;
  
     function liveUpdateUI() {
         const hexToRgba = (hex, a) => {
